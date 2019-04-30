@@ -51,6 +51,7 @@
     "core-js": "2.6.5",
     "electron": "5.0.0",
     "electron-builder": "20.39.0",
+    "electron-rebuild": "^1.8.4",
     "electron-reload": "1.4.0",
     "jasmine-core": "3.3.0",
     "jasmine-spec-reporter": "4.2.1",
@@ -69,5 +70,9 @@
     "wait-on": "3.2.0",
     "webdriver-manager": "12.1.2",
     "zone.js": "0.9.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^5.4.0",
+    "winston": "^3.2.1"
   }
 }
