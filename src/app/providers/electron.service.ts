@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 
 // If you import a module but never use any of the imported values other than as TypeScript types,
 // the resulting javascript file will look as if you never imported the module at all.
@@ -36,7 +36,7 @@ export class ElectronService {
 
   isElectron = () => {
     return window && window.process && window.process.type;
-  }
+  };
 
   getAppPath(append: string): string {
     if (append) {
@@ -57,6 +57,22 @@ export class ElectronService {
   }
 
   ipcOnce(channel: string, listener: Function) {
+
     this.ipcRenderer.once(channel, listener);
+  }
+
+  ipcOn(channel: string, listener: Function) {
+    // if (channel.startsWith('table-get-all-')) {
+    //   console.log('ipc on: Registering channel ', channel);
+    // }
+    this.ipcRenderer.on(channel, listener);
+  }
+
+  ipcRemoveListener(channel: string, listener: Function) {
+    this.ipcRenderer.removeListener(channel, listener);
+  }
+
+  ipcRemoveAllListeners(channel: string) {
+    this.ipcRenderer.removeAllListeners(channel);
   }
 }

@@ -1,0 +1,43 @@
+<div (window:resize)="calcRowNumber()">
+  <div class="table-title-header mat-elevation-z3">
+    <button mat-button class="table-title-text" (click)="navigateToTablePage()">{{'TABLES.NAMES.' + tableName | translate}}</button>
+    <mat-paginator [pageSize]="rowNumber" [hidePageSize]="true" showFirstLastButtons [length]="dataLength"></mat-paginator>
+  </div>
+  <div class="overlay-container">
+    <table class="mat-elevation-z5" *ngIf="isLoaded" mat-table [dataSource]="data">
+      <ng-container *ngFor="let column of columns_def" [matColumnDef]="column.name">
+        <th mat-header-cell *matHeaderCellDef>{{ 'TABLES.COLUMNS.' + column.name | translate }}</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="cell" [ngSwitch]="column.type" [ngStyle]="{color: row['text_color']}">
+            <ng-container *ngSwitchCase="'boolean'">
+              <mat-checkbox *ngIf="row.table_ref" (change)="fireTableCellClicked(column.name, row)"  [checked]="row[column.name] === 1"></mat-checkbox>
+            </ng-container>
+            <span *ngSwitchCase="'date'" class="cell-text"  (click)="fireTableCellClicked(column.name, row)">{{row[column.name] | date: 'dd/MM' }}</span>
+            <span *ngSwitchDefault class="cell-text" (click)="fireTableCellClicked(column.name, row)">{{row[column.name]}}</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="slotNumber">
+        <th mat-header-cell  *matHeaderCellDef>#</th>
+        <td mat-cell [ngStyle]="{color: row['text_color']}" *matCellDef="let row" (click)="fireTableCellClicked('slot_number', row)">{{row.slot_number}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="buttons" *ngIf="showButtons">
+        <th mat-header-cell  *matHeaderCellDef [ngStyle]="{display: showButtons ? 'table-cell' : 'none'}"></th>
+        <td mat-cell *matCellDef="let row"></td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngStyle]="{height: rowSize + 'px'}"
+          dnd-draggable [draggable]="draggable" (onDragEnd)="onDragEvent('end')" (onDragStart)="onDragEvent('start')" [dragData]="row"
+          [dragEnabled]="row.date !== null"></tr>
+    </table>
+    <div class="overlay" [ngClass]="{showOverlay: showDndOverlay}" dnd-droppable [allowDrop]="isDropAllowed()" (onDropSuccess)="onDropData($event)">
+      <div class="overlay-content">
+        <mat-icon color="accent" inline="">cloud_download</mat-icon>
+        <!--        <span>{{'PAGES.HOME.RELEASE_ROW_HERE' | translate}}</span>-->
+      </div>
+    </div>
+  </div>
+</div>

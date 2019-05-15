@@ -1,0 +1,60 @@
+<form *ngIf="formGroup" (ngSubmit)="onSubmit()" [formGroup]="formGroup">
+  <div class="dialog-content" mat-dialog-content>
+    <div class="input-row">
+      <mat-form-field appearance="outline">
+        <mat-label>{{'TABLES.COLUMNS.slot_number' | translate}}</mat-label>
+        <mat-select tabIndex="-1" [formControlName]="'slot_number'" [id]="'slot_number'">
+          <mat-option value="">Auto</mat-option>
+          <mat-option *ngFor="let slot of availableSlots" [value]="slot">{{slot}}</mat-option>
+        </mat-select>
+        <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="input-row" *ngFor="let column of tableDefinition.columnsDefinition; let index">
+      <div [ngSwitch]="typeOf(column.type)">
+        <div *ngSwitchCase="'string'" [ngSwitch]="column.type">
+          <mat-form-field *ngSwitchCase="'date'" appearance="outline">
+            <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
+            <input matInput [matDatepicker]="datePicker" [formControlName]="column.name" [id]="column.name">
+            <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+            <mat-datepicker #datePicker></mat-datepicker>
+          </mat-form-field>
+          <mat-checkbox *ngSwitchCase="'boolean'" [formControlName]="column.name" [id]="column.name">{{'TABLES.COLUMNS.' + column.name | translate}}</mat-checkbox>
+          <ng-container *ngSwitchDefault>
+            <mat-form-field [ngSwitch]="column.type" appearance="outline">
+              <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
+              <input [tabindex]="index" *ngSwitchCase="'string'" type="text" matInput [formControlName]="column.name" [id]="column.name">
+              <textarea rows="5" *ngSwitchCase="'text'" matInput [formControlName]="column.name" [id]="column.name"  placeholder="Placeholder"></textarea>
+              <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
+            </mat-form-field>
+          </ng-container>
+        </div>
+        <div *ngSwitchCase="'object'">
+          <mat-form-field [ngSwitch]="column.type.type" appearance="outline">
+            <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
+            <mat-select *ngSwitchCase="'select'" [formControlName]="column.name" [id]="column.name">
+              <mat-option value="">Default</mat-option>
+              <mat-option *ngFor="let opt of column.type.options" [value]="opt.value" [ngStyle]="{backgroundColor: opt.value, color: 'whitesmoke'}">{{'PAGES.ROW_DIALOG.COLORS.' + opt.name | translate}}</mat-option>
+            </mat-select>
+            <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+  <mat-dialog-actions align="end">
+<!--    <div style="display: inline">{{printFormGroupStatus() | json}}</div>-->
+    <div class="mat-error" *ngIf="error">{{'PAGES.ROW_DIALOG.SUBMIT_ERROR' | translate}}</div>
+    <div style="display: inline">
+      <button mat-button mat-dialog-close="canceled">{{'COMMONS.CANCEL' | translate}}</button>
+      <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
+      <button mat-button type="submit" [disabled]="!formGroup.valid">
+        <span *ngIf="dialogType === 'insert'">{{'COMMONS.ADD' | translate}}</span>
+        <span *ngIf="dialogType === 'update'">{{'COMMONS.SAVE' | translate}}</span>
+      </button>
+    </div>
+  </mat-dialog-actions>
+</form>
+
+
+

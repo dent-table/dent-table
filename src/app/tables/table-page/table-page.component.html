@@ -1,0 +1,9 @@
+<mat-card >
+  <mat-card-content>
+    <app-table-widget (cellClick)="cellClicked($event)" [tableId]="tableId" rowSize="36" showButtons="true"></app-table-widget>
+<!--    <app-row-dialog></app-row-dialog>-->
+  </mat-card-content>
+  <button mat-fab>
+    <mat-icon aria-label="Add Row" (click)="openRowDialog()">add</mat-icon>
+  </button>
+</mat-card>

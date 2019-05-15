@@ -24,45 +24,55 @@ function createDatabase() {
       "id INTEGER PRIMARY KEY AUTOINCREMENT," +
       "name TEXT," +
       "type TEXT," +
-      "date INTEGER" +
+      "note TEXT," +
+      "date INTEGER NOT NULL DEFAULT 0," +
+      "text_color TEXT" +
       ")"),
     db.prepare("CREATE TABLE to_deliver (" +
       "id INTEGER PRIMARY KEY AUTOINCREMENT," +
       "name TEXT," +
       "type TEXT," +
-      "date INTEGER" +
+      "note TEXT," +
+      "date INTEGER NOT NULL DEFAULT 0," +
+      "verified INTEGER(1) DEFAULT 0," +
+      "text_color TEXT" +
       ")"),
     db.prepare("CREATE TABLE outgoing (" +
       "id INTEGER PRIMARY KEY AUTOINCREMENT," +
       "name TEXT," +
-      "type TEXT," +
+      "note TEXT," +
       "lab TEXT," +
-      "date INTEGER" +
+      "date INTEGER NOT NULL DEFAULT 0," +
+      "date_out INTEGER DEFAULT 0," +
+      "text_color TEXT" +
       ")"),
-    db.prepare("CREATE TABLE chir (" +
+    db.prepare("CREATE TABLE plan_chir (" +
       "id INTEGER PRIMARY KEY AUTOINCREMENT," +
       "name TEXT," +
       "type TEXT," +
-      "lab TEXT," +
-      "date INTEGER" +
+      "note TEXT," +
+      "date INTEGER NOT NULL DEFAULT 0," +
+      "text_color TEXT" +
       ")"),
-    db.prepare("CREATE TABLE planning (" +
+    db.prepare("CREATE TABLE plan_orto (" +
       "id INTEGER PRIMARY KEY AUTOINCREMENT," +
       "name TEXT," +
       "type TEXT," +
-      "orto TEXT," +
-      "date INTEGER" +
+      "note TEXT," +
+      "date INTEGER NOT NULL DEFAULT 0," +
+      "text_color TEXT" +
       ")"),
-    db.prepare("CREATE TABLE table_ids (" +
+    db.prepare("CREATE TABLE tables_definition (" +
       "id INTEGER PRIMARY KEY," +
-      "name TEXT NOT NULL" +
+      "name TEXT NOT NULL," +
+      "columns_def TEXT NOT NULL" +
       ")"),
     db.prepare("CREATE TABLE tables_slots (" +
       "slot_number INTEGER NOT NULL," +
       "table_id INTEGER NOT NULL," +
       "table_ref INTEGER DEFAULT NULL," +
       "PRIMARY KEY (slot_number, table_id)," +
-      "FOREIGN KEY (table_id) REFERENCES table_ids (id)" +
+      "FOREIGN KEY (table_id) REFERENCES tables_definition (id)" +
       ")")
   ];
 
@@ -76,13 +86,76 @@ function createDatabase() {
   );
   createTransaction();
 
-  let tableIdsInsertStatement = db.prepare("INSERT INTO table_ids(id, name) VALUES (1, 'to_do'), (2, 'to_deliver'), (3, 'outgoing'), (4, 'chir'), (5, 'planning')");
+  const material_colors = [
+    {name: 'red', value: '#e53935'},
+    {name: 'pink', value: '#d81b60'},
+    {name: 'purple', value: '#8e24aa'},
+    {name: 'deep_purple', value: '#5e35b1'},
+    {name: 'indigo', value: '#3949ab'},
+    {name: 'blue', value: '#1e88e5'},
+    {name: 'cyan', value: '#00acc1'},
+    {name: 'teal', value: '#00897b'},
+    {name: 'green', value: '#43a047'},
+    {name: 'yellow', value: '#fdd835'},
+    {name: 'orange', value: '#fb8c00'},
+    {name: 'deep_orange', value: '#f4511e'}
+  ];
+
+  let tables_definition = [
+    {}, //table index starts form 1
+
+    [ //to_do
+      {name: 'name', type: 'string', required: true, displayed: true},
+      {name: 'type', type: 'string', required: false, displayed: true},
+      {name: 'note', type: 'text', required: false, displayed: true},
+      {name: 'date', type: 'date', required: true, displayed: true},
+      {name: 'text_color', type: {type: 'select', options: material_colors}, required: false, displayed: false}
+    ],
+    [ //to_deliver
+      {name: 'name', type: 'string', required: true, displayed: true},
+      {name: 'type', type: 'string', required: false, displayed: true},
+      {name: 'note', type: 'text', required: false, displayed: true},
+      {name: 'date', type: 'date', required: true, displayed: true},
+      {name: 'verified', type: 'boolean', required: false, displayed: true},
+      {name: 'text_color', type: {type: 'select', options: material_colors}, required: false, displayed: false}
+    ],
+    [ //outgoing
+      {name: 'name', type: 'string', required: true, displayed: true},
+      {name: 'note', type: 'text', required: false, displayed: true},
+      {name: 'lab', type: 'string', required: false, displayed: true},
+      {name: 'date', type: 'date', required: true, displayed: true},
+      {name: 'date_out', type: 'date', required: false, displayed: true},
+      {name: 'text_color', type: {type: 'select', options: material_colors}, required: false, displayed: false}
+    ], //plan_chir
+    [
+      {name: 'name', type: 'string', required: true, displayed: true},
+      {name: 'type', type: 'string', required: false, displayed: true},
+      {name: 'note', type: 'text', required: false, displayed: true},
+      {name: 'date', type: 'date', required: true, displayed: true},
+      {name: 'text_color', type: {type: 'select', options: material_colors}, required: false, displayed: false}
+    ],
+    [ //plan_orto
+      {name: 'name', type: 'string', required: true, displayed: true},
+      {name: 'type', type: 'string', required: false, displayed: true},
+      {name: 'note', type: 'text', required: false, displayed: true},
+      {name: 'date', type: 'date', required: true, displayed: true},
+      {name: 'text_color', type: {type: 'select', options: material_colors}, required: false, displayed: false}
+    ]
+  ];
+
+  let tableIdsInsertStatement = db.prepare("INSERT INTO tables_definition" +
+    " VALUES (1, 'to_do', '" + JSON.stringify(tables_definition[1]) + "'), " +
+    " (2, 'to_deliver', '" + JSON.stringify(tables_definition[2]) + "'), " +
+    " (3, 'outgoing', '" + JSON.stringify(tables_definition[3]) + "'), " +
+    " (4, 'plan_chir', '" + JSON.stringify(tables_definition[4]) + "'), " +
+    " (5, 'plan_orto', '" + JSON.stringify(tables_definition[5]) + "')"
+  );
 
   let tablesSlotsPopulateStatement = db.prepare("INSERT INTO tables_slots(slot_number, table_id) values(?, ?)");
 
 
   let populateTransaction = db.transaction(() => {
-    logger.info('Populating table_ids table');
+    logger.info('Populating tables_definition table');
     tableIdsInsertStatement.run();
 
     logger.info('Populating tables_slots table');
@@ -136,26 +209,41 @@ function checkMutualParameters(...params) {
   }
 }
 /**
- * Return the table name from its id
+ * Return the table's name and its columns definition from given id
  * @param tableId
- * @returns {{}|*} If tableId is defined, the table's name given its id, otherwise an object with id and name of all the
+ * @returns {{}|*} If tableId is defined, the table's info given its id, otherwise an object with id infos of all the
  * tables.
  */
-function getTableName(tableId) {
+function getTableDefinition(tableId) {
+  logger.debug('Requested definition of table ' + tableId);
   if(tableNames === undefined) {
     logger.info('tableNames property is undefined. Getting table names from database');
     tableNames = {};
-    let stmt = db.prepare("SELECT * FROM table_ids");
+    let stmt = db.prepare("SELECT * FROM tables_definition");
     for (const table of stmt.iterate()) {
       tableNames[table.id] = table;
     }
   }
 
   if(tableId !== undefined) {
-    return tableNames[tableId].name;
+    return tableNames[tableId];
   } else {
     return tableNames;
   }
+}
+
+function getAvailableSlots(tableId) {
+  let toReturn = [];
+
+  let queryString = "SELECT slot_number FROM tables_slots WHERE table_id=? AND table_ref is null ORDER BY slot_number";
+  let stmt = db.prepare(queryString);
+  let result = stmt.all(tableId);
+
+  for(const slotObject of result) {
+    toReturn.push(slotObject.slot_number);
+  }
+
+  return toReturn;
 }
 
 /**
@@ -167,15 +255,15 @@ function getTableName(tableId) {
 function getAllFromTable({tableId, limit}) {
   checkRequiredParameters(tableId);
   logger.info('Getting rows from table with id ' + tableId + ' (limit ' + limit + ')');
-  let tableName = getTableName(tableId);
+  let tableName = getTableDefinition(tableId).name;
 
   let queryString = "SELECT * FROM tables_slots ts LEFT JOIN " + tableName + " t ON ts.table_ref = t.id WHERE ts.table_id = ?";
+  queryString = queryString + " ORDER BY t.date DESC";
   if(limit) {
     queryString = queryString + " LIMIT " + limit;
   }
-  queryString = queryString + " ORDER BY t.date DESC";
 
-  stmt = db.prepare(queryString);
+  let stmt = db.prepare(queryString);
   return stmt.all(tableId);
 }
 
@@ -199,7 +287,7 @@ function getRowFromTable({tableId, slotNumber, refId}) {
   checkRequiredParameters(tableId);
   checkMutualParameters(slotNumber, refId);
 
-  let tableName = getTableName(tableId);
+  let tableName = getTableDefinition(tableId).name;
   let queryString = "SELECT * FORM tables_slots ts LEFT JOIN " + tableName + " t ON ts.ref_id=t.id WHERE table_id=?";
   if(slotNumber !== undefined) {
     queryString = queryString + " AND slot_number=" + slotNumber;
@@ -213,28 +301,59 @@ function getRowFromTable({tableId, slotNumber, refId}) {
   return stmt.all();
 }
 
-
-function insertIntoTable({tableId, values}) {
+/**
+ * Insert a row into the specified table, and insert the new created row into the first empty slot (referred to passed tableId)
+ * of the tables_slots table
+ * @param tableId identifier (from tablesId table) of the table into insert new row.
+ * @param values values to add into table. If for some target table's fields values are missing into values that fields
+ * are set to null.
+ * @param slot_number optional slot number where insert the row
+ * @returns {{newId: *, changes: *, slotNumber: *, tableId: *}} <ul>
+ *     <li>changes: number of row inserted into target table (must always be 1)</li>
+ *     <li>tableId: id of the target table</li>
+ *     <li>id: The id of new row inserted into target table</li>
+ *     <li>slotNumber: the slot number of <i>slots_numbers</i> table where the new row was inserted
+ *  </ul>
+ */
+function insertIntoTable({tableId, values, slot_number}) {
   checkRequiredParameters(tableId, values);
 
-  let tableName = getTableName(tableId);
-  // let tableColumns = db.pragma('table_info(' + tableName + ')');
-  // let columnNames = [];
-  //
-  // tableColumns.forEach((column) => {
-  //     if (column.name !== 'id') {
-  //       columnNames.push(column.name);
-  //     }
-  //   }
-  // );
+  let tableName = getTableDefinition(tableId).name;
+  let tableColumns = db.pragma('table_info(' + tableName + ')');
+  let columnNames = [];
+  let slotNumber;
 
-  let valueKeys = Object.keys(values);
+  if(values['slot_number']) {
+    slotNumber = values['slot_number'];
+    delete values['slot_number'];
+  } else if(slot_number) {
+    slotNumber = slot_number;
+  }
 
-  let queryString = "INSERT INTO " + tableName + "(" + valueKeys.toString() + ') VALUES (';
+  tableColumns.forEach((column) => {
+      if (column.name !== 'id') {
+        columnNames.push(column.name);
+      }
+    }
+  );
 
-  for(const name of valueKeys) {
+  // let valueKeys = Object.keys(values);
+
+  //Insert row into table
+  console.log(Object.keys(values), columnNames);
+  let queryString = "INSERT INTO " + tableName + "(" + columnNames.toString() + ') VALUES (';
+
+  for(const name of columnNames) {
+    if(values[name] === undefined) { //given values not contains that column
+      values[name] = null //so set that column value to null
+    }
+
     queryString = queryString + '$' + name + ', ';
   }
+
+  console.log(queryString, values);
+
+
   queryString = queryString.substr(0, queryString.length - 2) + ')';
   let stmt = db.prepare(queryString);
   let res = stmt.run(values);
@@ -244,30 +363,37 @@ function insertIntoTable({tableId, values}) {
   }
   let newId = res.lastInsertRowid;
 
-  queryString = "SELECT slot_number FROM tables_slots WHERE table_id=? AND table_ref is null ORDER BY slot_number";
-  stmt = db.prepare(queryString);
-  res = stmt.all(tableId);
-
-  if(res.length === 0) {
-    throw Error('All slots are full for table id ' + tableId);
+  //Select slot number
+  let availableSlots = getAvailableSlots(tableId);
+  if(!slotNumber || slotNumber === '') {
+    if (availableSlots.length === 0) {
+      throw Error('All slots are full for table id ' + tableId);
+    }
+    slotNumber = availableSlots[0]; //first empty slot number
+  } else {
+    if(!availableSlots.includes(slotNumber)) {
+      throw Error(`${slotNumber} is not available`);
+    }
   }
 
-  console.log(res);
-
-  const slotNumber = res[0].slot_number; //first empty slot number
-
-  console.log(slotNumber);
+  //Insert row into slot
   queryString = "UPDATE tables_slots SET table_ref=? WHERE table_id=? AND slot_number=?";
   stmt = db.prepare(queryString);
 
   res = stmt.run(newId, tableId, slotNumber);
-  return res;
+  return {changes: res.changes, newId: newId, tableId: tableId, slotNumber: slotNumber};
 }
 
+/**
+ * Frees the given slot number (related to the given table id) and delete the referenced row into the target table
+ * @param tableId target table id of the row
+ * @param slotNumber slot number of <i>tables_slots</i> table to free
+ * @returns {*} the deleted row's field (ONLY taken form the target table, so without field referred to <i>tables_slots</i> table)
+ */
 function deleteFromTable({tableId, slotNumber}) {
   checkRequiredParameters(tableId, slotNumber);
 
-  let tableName = getTableName(tableId);
+  let tableName = getTableDefinition(tableId).name;
   let queryString = "SELECT table_ref FROM tables_slots WHERE table_id=? AND slot_number=?";
   let stmt = db.prepare(queryString);
   let result = stmt.get(tableId, slotNumber);
@@ -285,11 +411,14 @@ function deleteFromTable({tableId, slotNumber}) {
     throw Error('Slot ' + slotNumber + ' not found for tableId ' + tableId);
   }
 
+  queryString = "SELECT * FROM " + tableName + " WHERE id=?";
+  stmt = db.prepare(queryString);
+  let deletedValues = stmt.get(refId);
+
   queryString = "UPDATE tables_slots SET table_ref=null WHERE table_id=? AND slot_number=?";
   stmt = db.prepare(queryString);
   result = stmt.run(tableId, slotNumber);
 
-  console.log(result);
 
   if (result.changes === 0) {
     throw Error('Slot ' + slotNumber + ' not found for tableId ' + tableId);
@@ -299,18 +428,85 @@ function deleteFromTable({tableId, slotNumber}) {
   stmt = db.prepare(queryString);
   result = stmt.run(refId);
 
-  return result;
+  return deletedValues;
 }
 
-function updateRow({tableId, rowId, column_name, value}) {
-  checkRequiredParameters(tableId, rowId, column_name, value);
+function updateRow({tableId, rowId, values}) {
+  checkRequiredParameters(tableId, rowId, values);
+  let tableName = getTableDefinition(tableId).name;
+  let queryString;
+  let stmt;
+  let result;
 
-  let tableName = getTableName(tableId);
+  let changes = 0;
 
-  let queryString = "UPDATE " + tableName + " SET " + column_name + "=? WHERE id=?";
-  // let queryString = "UPDATE ? SET ?=? WHERE id=?";
-  let stmt = db.prepare(queryString);
-  return stmt.run(value, rowId);
+  if(values['slot_number']) {
+    //check if values['slot_number'] is empty
+    queryString = "SELECT table_ref FROM tables_slots WHERE table_id=? AND slot_number=?";
+    stmt = db.prepare(queryString);
+    result = stmt.get(tableId, values['slot_number']);
+    if(result.table_ref !== null) {
+      throw Error('Selected slot already contains a row');
+    }
+    console.log('1', result);
+
+    //frees current table slot
+    queryString = "UPDATE tables_slots SET table_ref=null WHERE table_id=? AND table_ref=?";
+    stmt = db.prepare(queryString);
+    result = stmt.run(tableId, rowId);
+    if(result.changes === 0) {
+      throw Error('No slot found in table ' + tableId + ' that contains row with id ' + rowId);
+    }
+    console.log('2', result);
+
+    //setting new table_slot
+    queryString = "UPDATE tables_slots SET table_ref=? WHERE table_id=? AND slot_number=?";
+    stmt = db.prepare(queryString);
+    result = stmt.run(rowId, tableId, values['slot_number']);
+    changes = result.changes;
+    console.log('3', result);
+
+    if(result.changes === 0) {
+      throw Error(`Row insertion in slot ${values['slot_number']} failed`);
+    }
+
+    delete values['slot_number'];
+  }
+  const columns = Object.keys(values);
+
+  if(columns.length === 0) { //No columns to update. Maybe updated only slot_number
+    return {changes: changes};
+  }
+
+  queryString = "UPDATE " + tableName + " SET";
+
+  for (const column of columns) {
+    queryString = queryString + ` ${column}=$${column},`;
+  }
+
+  queryString = queryString.substr(0, queryString.length - 1) + ' WHERE id=?';
+  console.log('4', queryString);
+
+  stmt = db.prepare(queryString);
+  result = stmt.run(values, rowId);
+  console.log('5', result);
+  return {changes: result.changes + changes};
+}
+
+/**
+ * Delete a row form the given <i>fromTableId</i> and slot number and insert the deleted values into the given <i>toTableId</i>
+ * @see deleteFromTable
+ * @see insertIntoTable
+ * @param fromTableId
+ * @param slotNumber
+ * @param toTableId
+ * @returns {{newId: *, changes: *, slotNumber: *, tableId: *}} the same values returned by insertIntoTable function
+ */
+function moveRow({fromTableId, slotNumber, toTableId}) {
+  checkRequiredParameters(fromTableId, slotNumber, toTableId);
+
+  let deletedValues = deleteFromTable({tableId: fromTableId, slotNumber: slotNumber});
+  return insertIntoTable({tableId: toTableId, values: deletedValues})
 }
 
 if (!dbExists) {
@@ -319,7 +515,7 @@ if (!dbExists) {
   fs.openSync(dbPath, "w");
 }
 
-let db = new Database(dbPath, {verbose: logger.verbose});
+let db = new Database(dbPath, {verbose: logger.info});
 
 if (!dbExists) {
   logger.info('Creating tables');
@@ -330,24 +526,62 @@ let getAllFromTableTransaction = db.transaction((params) => {
   return getAllFromTable(params);
 });
 
+let moveRowTransaction = db.transaction((params) => {
+  return moveRow(params);
+});
+
+let insertRowTransaction = db.transaction((params) => {
+  return insertIntoTable(params);
+});
+
+let updateRowTransaction = db.transaction((params) => {
+  return updateRow(params);
+});
+
+/** see README.md **/
 ipc.on('database-op', (event, values) => {
+  console.log(values);
   let senderId = event.senderId;
   if(values.operation === undefined) {
     event.sender.sendTo(senderId, 'database-op-res', {result: 'error', message:'no operation defined'});
   }
   let parameters = values.parameters;
+  let returnChannel = values.operation;
+  if(parameters.tableId) {
+    returnChannel = returnChannel + '-' + parameters.tableId;
+  }
 
   console.log(senderId, values);
   let result;
   try {
     switch (values.operation) {
+      case 'table-get-available-slots':
+        result = getAvailableSlots(parameters.tableId); break;
       case 'table-get-all':
-        result = getAllFromTableTransaction(parameters); break;
+        result = getAllFromTable(parameters); break;
+      case 'table-get-definition':
+        result = getTableDefinition(parameters.tableId); break;
+      case 'table-insert-row':
+        result = insertRowTransaction(parameters); break;
+      case 'table-update-row':
+        result = updateRowTransaction(parameters); break;
+      case 'move-row': {
+        result = moveRowTransaction(parameters);
+        if (result.changes === 1) {
+          result = parameters; //returns fromTableId and toTableId
+        }
+        break;
+      }
     }
 
     console.log(result);
-    event.sender.sendTo(senderId, values.operation, {result: 'success', response: result})
+
+    //Result sent on two channel, the second permits to filter on table id
+    event.sender.sendTo(senderId, values.operation, {result: 'success', response: result});
+    event.sender.sendTo(senderId, returnChannel, {result: 'success', response: result});
   } catch (e) {
-    event.sender.sendTo(senderId, values.operation, {result: 'error', message: e.message})
+    event.sender.sendTo(senderId, returnChannel, {result: 'error', message: e.message})
   }
 });
+
+// db.close();

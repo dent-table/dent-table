@@ -18,6 +18,8 @@ import { WebviewDirective } from './directives/webview.directive';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
+import {MaterialModule} from './material/material.module';
+import {TablesModule} from './tables/tables.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -41,7 +43,9 @@ export function HttpLoaderFactory(http: HttpClient) {
         useFactory: (HttpLoaderFactory),
         deps: [HttpClient]
       }
-    })
+    }),
+    MaterialModule,
+    TablesModule,
   ],
   providers: [ElectronService],
   bootstrap: [AppComponent]

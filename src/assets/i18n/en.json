@@ -1,7 +1,55 @@
 {
   "PAGES": {
-      "HOME": {
-          "TITLE": "App works !"
+    "HOME": {
+      "TITLE": "App works !",
+      "RELEASE_ROW_HERE": "Rilascia la riga quì"
+    },
+    "ROW_DIALOG": {
+      "SUBMIT_ERROR": "Impossibile completare l'operazione",
+      "REQUIRED_FIELD": "Campo obbligatorio",
+      "COLORS": {
+        "red": "Rosso",
+        "pink": "Rosa",
+        "purple":  "Viola",
+        "deep_purple": "Viola scuro",
+        "indigo":  "Indaco",
+        "blue": "Blu",
+        "cyan":  "Ciano",
+        "teal": "Verde acqua",
+        "green":  "Verde",
+        "yellow": "Giallo",
+        "orange":  "Arancione",
+        "deep_orange": "Arancione scuro"
       }
+    }
+  },
+  "TABLES": {
+    "NAMES": {
+      "to_do": "Da fare",
+      "to_deliver": "Da consegnare",
+      "plan_chir": "Pian. chirurgica",
+      "outgoing": "In uscita",
+      "plan_orto": "Pian. ortoestetica"
+    },
+    "COLUMNS": {
+      "slot_number": "Slot",
+      "name":  "Nome",
+      "note": "Note",
+      "type": "Tipo",
+      "lab":  "Lab",
+      "date": "Data",
+      "date_out":  "Data consegna",
+      "verified": "Verificato",
+      "text_color": "Colore"
+    }
+  },
+  "COMMONS": {
+    "YES": "Si",
+    "NO": "No",
+    "CLOSE": "Chiudi",
+    "CANCEL": "Annulla",
+    "ADD": "Aggiungi",
+    "REMOVE": "Rimuovi",
+    "SAVE": "Salva"
   }
 }

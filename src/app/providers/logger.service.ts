@@ -18,7 +18,7 @@ export class LoggerService {
 
     return winston.createLogger({
       transports: [
-        new winston.transports.Console(),
+        new winston.transports.Console({level: 'debug'}),
         new winston.transports.File({dirname: this.electronService.getLogPath(), filename: filename})
       ]
     });

@@ -1,29 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import {LoggerService} from '../../providers/logger.service';
-import {Logger} from 'winston';
-import {DatabaseService} from '../../providers/database.service';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  logger: Logger;
 
-  constructor(private loggerService: LoggerService, private databaseService: DatabaseService) {
-    this.logger = loggerService.getLogger('home.component.ts');
+  constructor() {
   }
 
-  ngOnInit() {
-    this.logger.info('ngOnInit');
-  }
-
-  getAll() {
-    this.databaseService.getAll(1).then((rows) => {
-      console.log(rows);
-    }).catch((error) => {
-      console.log(error);
-    });
-  }
+  ngOnInit() {}
 }

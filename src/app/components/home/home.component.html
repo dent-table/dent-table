@@ -1,7 +1,26 @@
-<div class="container">
-  <h1 class="title">
-    {{ 'PAGES.HOME.TITLE' | translate }}
-  </h1>
-
-  <button type="button" (click)="getAll()">Get ALL</button>
+<!--
+<div class="container" fxLayout="row" fxLayoutGap="5px">
+  <div fxLayout="column" fxLayoutGap="4px" fxFlex="1 1 60">
+    <app-table-widget draggable="true" fxFlex="1 1 45" tableId="1"></app-table-widget>
+    <div fxLayout="row" fxFlex="1 1 55" fxLayoutGap="5px" >
+      <app-table-widget draggable="true" fxFlex="1 1 50" tableId="3" ></app-table-widget>
+      <div fxLayout="column" fxFlex="1 1 50" fxLayoutGap="3px">
+        <app-table-widget draggable="true" fxFlex="1 1 50" tableId="5"></app-table-widget>
+        <app-table-widget draggable="true" fxFlex="1 1 50" tableId="4"></app-table-widget>
+      </div>
+    </div>
+  </div>
+  <app-table-widget draggable="true" tableId="2" fxFlex="1 1 auto"></app-table-widget>
 </div>
+-->
+ <div class="container" fxLayout="column" fxLayoutGap="5px">
+   <div fxLayout="row" fxLayoutGap="3px" fxFlex="1 1 55">
+     <app-table-widget draggable="true" fxFlex="1 1 auto" tableId="1" showButtons="false"></app-table-widget>
+     <app-table-widget draggable="true" fxFlex="1 1 auto" tableId="2" showButtons="false"></app-table-widget>
+   </div>
+   <div fxLayout="row" fxLayoutGap="3px" fxFlex="1 1 45">
+     <app-table-widget draggable="true" fxFlex="1 1 auto" tableId="3" showButtons="false"></app-table-widget>
+     <app-table-widget draggable="true" fxFlex="1 1 auto" tableId="4" showButtons="false"></app-table-widget>
+     <app-table-widget draggable="true" fxFlex="1 1 auto" tableId="5" showButtons="false"></app-table-widget>
+   </div>
+ </div>
