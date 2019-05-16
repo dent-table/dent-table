@@ -1,0 +1,15 @@
+@import '~@angular/material/theming';
+
+@mixin element-theme($theme) {
+  $primary: map-get($theme, primary);
+
+
+  .foreground-color {
+    color: mat-color($primary);
+  }
+
+  .background-color {
+    background-color: mat-color($primary);
+    color: mat-color($primary, default-contrast);
+  }
+}

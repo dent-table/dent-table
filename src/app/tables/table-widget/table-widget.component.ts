@@ -18,6 +18,7 @@ import {TablesDndService} from '../../providers/tables-dnd.service';
 import {Router} from '@angular/router';
 import {ViewRef_} from '@angular/core/src/view';
 import {ColumnDefinition, TableDefinition} from '../../model/model';
+import * as moment from 'moment';
 
 export interface CellClickEvent {
   columnName;
@@ -170,8 +171,9 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   calcRowNumber() {
+    const headersSize = 73;
     // const newRowNumber = Math.floor((this.el.nativeElement.offsetHeight - 69) / this.rowSize);
-    const newRowNumber = Math.floor((this.el.nativeElement.offsetHeight - 73) / this.rowSize);
+    const newRowNumber = Math.floor((this.el.nativeElement.offsetHeight - headersSize) / this.rowSize);
     if (newRowNumber !== this.rowNumber) {
       this.rowNumber = newRowNumber;
       this.matPaginator._changePageSize(this.rowNumber);
@@ -228,5 +230,13 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     }, 250);
 
     this.cdr.detectChanges();
+  }
+
+  // Return true if row date is under 7 day until today
+  checkDateRow(row: any) {
+    const rowDate = moment(row['date'], 'x');
+    const currentDate = moment();
+
+    return currentDate.add(7, 'd').isAfter(rowDate);
   }
 }

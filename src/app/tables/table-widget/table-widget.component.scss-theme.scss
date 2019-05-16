@@ -1,0 +1,48 @@
+@import '~@angular/material/theming';
+
+@mixin table-widget-theme($theme) {
+  $primary: map-get($theme, primary);
+  $warn: map-get($theme, warn);
+  $accent: map-get($theme, accent);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  div .dnd-drag-over {
+    border-color: mat-color($warn);
+  }
+
+  .overlay-content mat-icon {
+    color: mat-color($primary, darker);
+  }
+
+  .table-title-header {
+    background-color: mat-color($primary);
+  }
+
+  .mat-paginator {
+    background-color: mat-color($primary);
+    color: mat-color($primary, default-contrast);
+  }
+
+  .mat-header-row {
+    background-color: mat-color($primary);
+  }
+
+  .table-title-text {
+    color: mat-color($primary, default-contrast);
+  }
+
+  .mat-header-cell {
+    color: mat-color($primary, default-contrast);
+  }
+
+  .mat-row:hover {
+    background-color: mat-color($background, background)
+  }
+
+  .date-warn {
+    background-color: mat-color($primary, darker);
+    border-color: mat-color($warn);
+    color: mat-color($primary, default-contrast);
+  }
+}

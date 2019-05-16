@@ -20,6 +20,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import {MaterialModule} from './material/material.module';
 import {TablesModule} from './tables/tables.module';
+import {OverlayContainer} from '@angular/cdk/overlay';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -50,4 +51,8 @@ export function HttpLoaderFactory(http: HttpClient) {
   providers: [ElectronService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(overlayContainer: OverlayContainer) {
+    overlayContainer.getContainerElement().classList.add('app-light-theme');
+  }
+}

@@ -1,3 +1,23 @@
+@mixin container-theme($theme) {
+  $primary: map-get($theme, primary);
+  $warn: map-get($theme, warn);
+  $accent: map-get($theme, accent);
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  .app-container {
+    background-color: mat-color($background, background);
+    //background-image: linear-gradient(to bottom right, mat-color($accent), mat-color($primary));
+  }
+}
+
 mat-toolbar {
   height: 5%;
 }
+
+.app-container {
+  width: 100%;
+  height: 100%;
+}
+
+

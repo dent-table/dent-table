@@ -1,10 +1,117 @@
-/* You can add global styles to this file, and also import other style files */
-@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+@import '~@angular/material/theming';
+
+// always include only once per project
+@include mat-core();
+
+// import our custom theme
+@import 'app-themes.scss';
+@import "app/tables/table-widget/table-widget.component.scss-theme.scss";
+@import "element-color";
+@import "app/app.component.scss";
+
+// specify theme class eg: <body class="my-theme"> ... </body>
+.app-light-theme {
+  // use our theme with angular-material-theme mixin
+  @include angular-material-theme($app-light-theme);
+  @include table-widget-theme($app-light-theme);
+  @include container-theme($app-light-theme);
+
+  .table-widget-red {
+    @include table-widget-theme($red-theme-light);
+  }
+
+  .table-widget-pink {
+    @include table-widget-theme($pink-theme-light);
+  }
+
+  .table-widget-deep-purple {
+    @include table-widget-theme($deep-purple-theme-light);
+  }
+
+  .table-widget-blue {
+    @include table-widget-theme($blue-theme-light);
+  }
+
+  .table-widget-cyan {
+    @include table-widget-theme($cyan-theme-light);
+  }
+
+  .table-widget-teal {
+    @include table-widget-theme($teal-theme-light);
+  }
+
+  .table-widget-green {
+    @include table-widget-theme($green-theme-light);
+  }
+
+  .table-widget-amber {
+    @include table-widget-theme($amber-theme-light);
+  }
+
+  .table-widget-deep-orange {
+    @include table-widget-theme($deep-orange-theme-light);
+  }
+
+  .table-widget-brown {
+    @include table-widget-theme($brown-theme-light);
+  }
+
+}
+
+.app-dark-theme {
+  // use our theme with angular-material-theme mixin
+  @include angular-material-theme($app-dark-theme);
+  @include table-widget-theme($app-dark-theme);
+  @include container-theme($app-dark-theme);
+
+  .table-widget-red {
+    @include table-widget-theme($red-theme-dark);
+  }
+
+  .table-widget-pink {
+    @include table-widget-theme($pink-theme-dark);
+  }
+
+  .table-widget-deep-purple {
+    @include table-widget-theme($deep-purple-theme-dark);
+  }
+
+  .table-widget-blue {
+    @include table-widget-theme($blue-theme-dark);
+  }
+
+  .table-widget-cyan {
+    @include table-widget-theme($cyan-theme-dark);
+  }
+
+  .table-widget-teal {
+    @include table-widget-theme($teal-theme-dark);
+  }
+
+  .table-widget-green {
+    @include table-widget-theme($green-theme-dark);
+  }
+
+  .table-widget-amber {
+    @include table-widget-theme($amber-theme-dark);
+  }
+
+  .table-widget-deep-orange {
+    @include table-widget-theme($deep-orange-theme-dark);
+  }
+
+  .table-widget-brown {
+    @include table-widget-theme($brown-theme-dark);
+  }
+}
+
+.brown {
+  @include element-theme($brown-theme-light);
+}
 
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  width: 100%;
 }
-
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
