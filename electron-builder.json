@@ -1,29 +1,41 @@
 {
-  "productName": "dent-table",
+  "productName": "MyOdPlan",
   "directories": {
     "output": "release/"
   },
-    "files": [
-        "**/*",
-        "!**/*.ts",
-        "!*.code-workspace",
-        "!LICENSE.md",
-        "!package.json",
-        "!package-lock.json",
-        "!src/",
-        "!e2e/",
-        "!hooks/",
-        "!angular.json",
-        "!_config.yml",
-        "!karma.conf.js",
-        "!tsconfig.json",
-        "!tslint.json"
-    ],
+  "files": [
+    "**/*",
+    "!**/*.ts",
+    "!*.code-workspace",
+    "!LICENSE.md",
+    "!package.json",
+    "!package-lock.json",
+    "!src/",
+    "!e2e/",
+    "!hooks/",
+    "!angular.json",
+    "!_config.yml",
+    "!karma.conf.js",
+    "!tsconfig.json",
+    "!tslint.json"
+  ],
+  "extraFiles": [
+    "src/assets/preferences.json"
+  ],
   "win": {
     "icon": "dist",
     "target": [
-      "portable"
+      "portable",
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
     ]
+  },
+  "nsis": {
+    "oneClick": false
   },
   "mac": {
     "icon": "dist",

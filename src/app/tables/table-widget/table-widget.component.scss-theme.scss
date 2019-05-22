@@ -45,4 +45,8 @@
     border-color: mat-color($warn);
     color: mat-color($primary, default-contrast);
   }
+
+  .table-widget-row-icon {
+    color: mat-color($primary);
+  }
 }

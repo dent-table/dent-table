@@ -21,7 +21,7 @@ export interface DialogData {
   styleUrls: ['./row-dialog.component.scss'],
 })
 export class RowDialogComponent implements OnInit, AfterViewInit {
-  logger: Logger;
+  logTag = RowDialogComponent.name;
 
   typeOf = Utils.typeof;
 
@@ -38,9 +38,8 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     private dialogRef: MatDialogRef<RowDialogComponent>,
     private databaseService: DatabaseService,
     private cdr: ChangeDetectorRef,
-    private loggerService: LoggerService
+    private logger: LoggerService
   ) {
-    this.logger = loggerService.getLogger('row-dialog.component.ts');
     if ('string' === typeof data.tableId) {
       this.data.tableId = Number.parseInt(this.data.tableId, 10);
     }
@@ -112,7 +111,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
       this.databaseService.insertRow(this.data.tableId, values).toPromise().then((result) => {
         this.dialogRef.close(result);
       }).catch((error) => {
-        this.logger.error(error);
+        this.logger.error(this.logTag, error);
         this.error = error;
       });
     }
@@ -134,7 +133,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
         this.databaseService.updateRow(this.data.tableId, this.data.element.table_ref, toUpdate).toPromise().then((result) => {
           this.dialogRef.close(result);
         }).catch((error) => {
-          this.logger.error(error);
+          this.logger.error(this.logTag, error);
           this.error = error;
         });
       }

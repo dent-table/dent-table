@@ -4,21 +4,22 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef, EventEmitter,
-  Input, OnDestroy,
+  ElementRef, EventEmitter, Inject,
+  Input, LOCALE_ID, OnDestroy,
   OnInit, Output,
   ViewChild
 } from '@angular/core';
 import {DatabaseService} from '../../providers/database.service';
 import {LoggerService} from '../../providers/logger.service';
-import {Logger} from 'winston';
 import {MatPaginator, MatTableDataSource, MatTooltip} from '@angular/material';
 import {DragDropData} from 'ng2-dnd';
-import {TablesDndService} from '../../providers/tables-dnd.service';
+import {TablesService} from '../../providers/tables.service';
 import {Router} from '@angular/router';
 import {ViewRef_} from '@angular/core/src/view';
 import {ColumnDefinition, TableDefinition} from '../../model/model';
 import * as moment from 'moment';
+import {polyfill} from 'mobile-drag-drop';
+import {formatDate} from '@angular/common';
 
 export interface CellClickEvent {
   columnName;
@@ -37,6 +38,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   @Input() rowNumber = 1;
   @Input() draggable = false;
   @Input() rowSize = 24;
+  @Input() buttonsSize = 16;
   @Input() showButtons = true;
 
   @ViewChild(MatPaginator) matPaginator: MatPaginator;
@@ -44,7 +46,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
 
   @Output() cellClick: EventEmitter<CellClickEvent> = new EventEmitter();
 
-  logger: Logger;
+  logTag = TableWidgetComponent.name;
 
   data = new MatTableDataSource();
   dataLength = 0;
@@ -60,16 +62,45 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   dragStartedObservableSubscription;
   dragEndedObservableSubscription;
   rowMovedObservableSubscription;
+  searchEventSubscription;
+
+
+  // taken from official MatTableDataSource implementation, added date timestamp to string conversion
+  filterPredicate: ((data: any, filter: string) => boolean) = (data: any, filter: string): boolean => {
+    // Transform the data into a lowercase string of all property values.
+    const dataStr = Object.keys(data).reduce((currentTerm: string, key: string) => {
+      // Use an obscure Unicode character to delimit the words in the concatenated string.
+      // This avoids matches where the values of two columns combined will match the user's query
+      // (e.g. `Flute` and `Stop` will match `Test`). The character is intended to be something
+      // that has a very low chance of being typed in by somebody in a text field. This one in
+      // particular is "White up-pointing triangle with dot" from
+      // https://en.wikipedia.org/wiki/List_of_Unicode_characters
+      let dataString = (data as {[key: string]: any})[key];
+
+      if (key.indexOf('date') != -1) {
+        dataString = formatDate(dataString, 'dd/MM', this.locale);
+      }
+
+      return currentTerm + dataString + '◬';
+    }, '').toLowerCase();
+
+    // Transform the filter by converting it to lowercase and removing whitespace.
+    const transformedFilter = filter.trim().toLowerCase();
+
+    return dataStr.indexOf(transformedFilter) != -1;
+  };
 
   constructor(
     private databaseService: DatabaseService,
-    private loggerService: LoggerService,
-    private dndService: TablesDndService,
+    private logger: LoggerService,
+    private tablesService: TablesService,
     private el: ElementRef,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    @Inject(LOCALE_ID) private locale: string
   ) {
-    this.logger = loggerService.getLogger('table-widget.component.ts');
+    // this.logger = loggerService.getLogger('table-widget.component.ts');
+    polyfill({});
   }
 
   ngOnInit() {
@@ -82,17 +113,20 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     if ('boolean' !== typeof  this.showButtons) {
       this.showButtons = this.showButtons === 'true';
     }
+
+
+    this.data.filterPredicate = this.filterPredicate;
   }
 
   ngAfterViewInit(): void {
     this.databaseService.getTableDefinition(this.tableId).subscribe(
       (data) => { this.tableConstruction(data); },
-      errors => this.logger.error
+      errors => { this.logger.error(this.logTag, errors); }
     );
 
     this.reload();
 
-    this.dragStartedObservableSubscription = this.dndService.dragStartedObservable.subscribe((sourceTableId) => {
+    this.dragStartedObservableSubscription = this.tablesService.dragStartedObservable.subscribe((sourceTableId) => {
       if (sourceTableId !== this.tableId) {
         this.showDndOverlay = true;
         try {
@@ -103,7 +137,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
       }
     });
 
-    this.dragEndedObservableSubscription = this.dndService.dragEndedObservable.subscribe((sourceTableId) => {
+    this.dragEndedObservableSubscription = this.tablesService.dragEndedObservable.subscribe((sourceTableId) => {
       if (sourceTableId !== this.tableId) {
         this.showDndOverlay = false;
         try {
@@ -114,10 +148,14 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
       }
     });
 
-    this.rowMovedObservableSubscription = this.dndService.rowMovedObservable.subscribe((data) => {
+    this.rowMovedObservableSubscription = this.tablesService.rowMovedObservable.subscribe((data) => {
       if (data.fromTableId === this.tableId || data.toTableId === this.tableId) {
         this.reload();
       }
+    });
+
+    this.searchEventSubscription = this.tablesService.onSearchEvent.subscribe((query) => {
+      this.data.filter = query.trim().toLowerCase();
     });
   }
 
@@ -129,12 +167,13 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     this.dragStartedObservableSubscription.unsubscribe();
     this.dragEndedObservableSubscription.unsubscribe();
     this.rowMovedObservableSubscription.unsubscribe();
+    this.searchEventSubscription.unsubscribe();
   }
 
   reload() {
     this.databaseService.getAll(this.tableId, this.limit).subscribe((data) => {
-        console.log(data);
-        this.data = new MatTableDataSource(data);
+        // this.data = new MatTableDataSource(data);
+      this.data.data = [...data];
         this.dataLength = data.length;
         this.data.paginator = this.matPaginator;
 
@@ -143,14 +182,14 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
         } catch (e) {
           this.delayDetectChanges();
         }
-      }, errors => this.logger.error,
+      }, errors => { this.logger.error(this.logTag, errors); },
       () =>  {
       });
   }
 
   tableConstruction(values: TableDefinition) {
-    this.logger.debug('' + this.showButtons, typeof this.showButtons);
-    this.logger.debug(typeof this.showButtons);
+    this.logger.debug(this.logTag, '' + this.showButtons, typeof this.showButtons);
+    this.logger.debug(this.logTag, typeof this.showButtons);
     this.tableName = values.name;
     this.columns_def = values.columnsDefinition;
     const displayedCols: string[] = ['slotNumber'];
@@ -162,7 +201,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     }
 
     if (this.showButtons === true) {
-      this.logger.debug('pushing');
+      this.logger.debug(this.logTag, 'pushing');
       displayedCols.push('buttons');
     }
 
@@ -189,7 +228,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     this.databaseService.moveRow(dragData.table_id, dragData.slot_number, this.tableId).subscribe(
       (next) => {
         // nothing to do
-      }, error1 => this.logger.error
+      }, error1 => this.logger.error(this.logTag, error1)
     );
   }
 
@@ -204,10 +243,16 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
 
   onDragEvent(event: string) {
     if (event === 'start') {
-      this.dndService.onDragStarted(this.tableId);
+      this.tablesService.onDragStarted(this.tableId);
     } else if (event === 'end') {
-      this.dndService.onDragEnded(this.tableId);
+      this.tablesService.onDragEnded(this.tableId);
     }
+  }
+
+  // prevent default on some drag events on dnd-droppable (important!)
+  public preventDefault(event) {
+    event.mouseEvent.preventDefault();
+    return false;
   }
 
   fireTableCellClicked(columnName: string, element?: any) {
@@ -215,7 +260,6 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     this.cellClick.emit({columnName: columnName, element: element});
     // });
   }
-
 
   // https://github.com/akserg/ng2-dnd/issues/177
   delayDetectChanges () {

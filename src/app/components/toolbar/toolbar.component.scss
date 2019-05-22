@@ -1,0 +1,25 @@
+mat-toolbar {
+  height: 5%;
+  max-height: 5%;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.toolbar-empty-space {
+  flex: 1 1 auto;
+}
+
+.toolbar-search-bar {
+  //flex: 1 1 30;
+  justify-self: flex-end;
+
+  .mat-form-field-wrapper {
+    padding-bottom: 15px;
+  }
+  .mat-input-element {
+    font-size: 15px;
+    height: 24px;
+  }
+}

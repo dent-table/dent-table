@@ -1,8 +1,9 @@
 {
   "name": "dent-table",
-  "version": "0.0.1",
-  "description": "DentTable. Electron + Angular + Sqlite3",
-  "homepage": "",
+  "version": "0.1.0",
+  "author": "vincios",
+  "description": "MyOdPlan",
+  "homepage": "https://github.com/vincios/dent-table",
   "main": "main.js",
   "private": true,
   "scripts": {
@@ -79,7 +80,9 @@
     "@angular/material-moment-adapter": "^7.3.7",
     "better-sqlite3": "^5.4.0",
     "hammerjs": "^2.0.8",
+    "mobile-drag-drop": "^2.3.0-rc.1",
     "moment": "^2.24.0",
+    "ng-mat-search-bar": "^3.1.0",
     "ng2-dnd": "^5.0.2",
     "winston": "^3.2.1"
   }

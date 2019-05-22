@@ -1,0 +1,26 @@
+@import '~@angular/material/theming';
+
+@mixin global-elements-theme($theme) {
+  $accent: map-get($theme, accent);
+
+  ::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: mat-color($accent);
+    -webkit-border-radius: 1ex;
+    //-webkit-box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.75);
+  }
+
+  /*::-webkit-scrollbar-corner {
+    background: #000;
+  }*/
+
+  ::-webkit-scrollbar-track {
+    background: whitesmoke;
+    -webkit-border-radius: 1ex;
+  }
+
+}

@@ -4,19 +4,47 @@ let ipc = require('electron').ipcRenderer;
 let path = require('path');
 let fs = require('fs');
 let Database = require('better-sqlite3');
+let crypto = require('crypto');
 
 const appPath = remote.app.getPath('userData');
 const logPath = appPath + path.sep + 'logs';
-const dbPath = appPath + path.sep + 'database.db';
+const dbPath = appPath + path.sep + 'data' + path.sep + 'database.db';
 const dbExists = fs.existsSync(dbPath);
 let tableNames;
 
+const logFormat = winston.format.combine(
+  winston.format.timestamp({
+    format: 'DD-MM-YYYY HH:mm:ss'
+  }),
+  winston.format.simple()
+);
+
 let logger = winston.createLogger({
   transports: [
-    new winston.transports.Console({level: 'debug', format: winston.format.simple()}),
+    new winston.transports.Console({level: 'debug'}),
     new winston.transports.File({dirname: logPath, filename: 'data_entry.js.log'})
-  ]
+  ],
+  format: logFormat
 });
+
+logger.info('Database initialization...');
+
+const algorithm = 'aes-192-cbc';
+const password = '3b41iTniwy';
+
+function encrypt(msg) {
+// Use the async `crypto.scrypt()` instead.
+  const key = crypto.scryptSync(password, 'salt', 24);
+
+  const iv = Buffer.alloc(16, 18);
+
+// shown here.
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+
+  let encrypted = cipher.update(msg, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return encrypted;
+}
 
 function createDatabase() {
   let createStatements = [
@@ -73,13 +101,18 @@ function createDatabase() {
       "table_ref INTEGER DEFAULT NULL," +
       "PRIMARY KEY (slot_number, table_id)," +
       "FOREIGN KEY (table_id) REFERENCES tables_definition (id)" +
-      ")")
+      ")"),
+    db.prepare("CREATE TABLE users (" +
+      "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+      "username TEXT NOT NULL UNIQUE," +
+      "password TEXT NOT NULL" +
+      ")"),
   ];
 
   let createTransaction = db.transaction(() => {
-      logger.info('Executing create transaction');
-      logger.info('Creating tables');
-      for(const createStatement of createStatements) {
+      logger.info('Executing create transaction...');
+      logger.info('Creating tables...');
+      for (const createStatement of createStatements) {
         createStatement.run();
       }
     }
@@ -153,17 +186,20 @@ function createDatabase() {
 
   let tablesSlotsPopulateStatement = db.prepare("INSERT INTO tables_slots(slot_number, table_id) values(?, ?)");
 
-
+  let defaultUserInsertStatement = db.prepare("INSERT INTO users(username, password) VALUES (?,?)");
   let populateTransaction = db.transaction(() => {
-    logger.info('Populating tables_definition table');
+    logger.info('Populating tables_definition table...');
     tableIdsInsertStatement.run();
 
-    logger.info('Populating tables_slots table');
+    logger.info('Populating tables_slots table...');
     for (let i = 1; i <= 5; i++) { // table ids
       for (let j = 1; j <= 50; j++) { //slot numbers
         tablesSlotsPopulateStatement.run(j, i);
       }
     }
+
+    logger.info('Creating user...');
+    defaultUserInsertStatement.run('carbone', '9f409e3a8ffdadf787dc034b83bddda3');
 
     //TODO: remove this
     let queries = [db.prepare("insert into to_do(name, type, date) values ('Nome1', 'Tipo1', 123456), ('Nome2', 'Tipo2', 123456), ('Nome3', 'Tipo3', 123456), ('Nome4', 'Tipo4', 123456), ('Nome5', 'Tipo5', 123456)"),
@@ -176,7 +212,7 @@ function createDatabase() {
       db.prepare("update tables_slots set table_ref = 5 where table_id = 1 and slot_number = 3")
     ];
 
-    for(const query of queries) {
+    for (const query of queries) {
       query.run();
     }
   });
@@ -208,6 +244,43 @@ function checkMutualParameters(...params) {
     return true;
   }
 }
+
+function insertUserOrUpdate(user, password) {
+  checkRequiredParameters(user, password);
+
+  let query = "SELECT * FROM users WHERE username=?";
+  let stmt = db.prepare(query);
+  let result = stmt.get(user);
+
+  const cryptoPass = encrypt(password);
+
+  if (result) {
+    query = "UPDATE users SET password=? WHERE id=?";
+    stmt = db.prepare(query);
+    result = stmt.run(cryptoPass, result.id);
+  } else {
+    query = "INSERT INTO users (username, password) VALUES (?, ?)";
+    stmt = db.prepare(query);
+    result = stmt.run(user, cryptoPass);
+  }
+
+  return result;
+}
+
+function login(user, cryptoPass) {
+  let query = "SELECT * FROM users WHERE username=?";
+  let stmt = db.prepare(query);
+  let result = stmt.get(user);
+
+  if(!result) return 404;
+
+  if(cryptoPass === result.password) {
+    return 200;
+  } else {
+    return 401;
+  }
+}
+
 /**
  * Return the table's name and its columns definition from given id
  * @param tableId
@@ -258,7 +331,7 @@ function getAllFromTable({tableId, limit}) {
   let tableName = getTableDefinition(tableId).name;
 
   let queryString = "SELECT * FROM tables_slots ts LEFT JOIN " + tableName + " t ON ts.table_ref = t.id WHERE ts.table_id = ?";
-  queryString = queryString + " ORDER BY t.date DESC";
+  queryString = queryString + " ORDER BY t.date IS NULL, t.date ASC";
   if(limit) {
     queryString = queryString + " LIMIT " + limit;
   }
@@ -515,7 +588,11 @@ if (!dbExists) {
   fs.openSync(dbPath, "w");
 }
 
+logger.info('Starting database');
+
 let db = new Database(dbPath, {verbose: logger.info});
+
+logger.info('Database started successfully');
 
 if (!dbExists) {
   logger.info('Creating tables');
@@ -534,9 +611,15 @@ let insertRowTransaction = db.transaction((params) => {
   return insertIntoTable(params);
 });
 
+let deleteRowTransaction = db.transaction((params) => {
+  return deleteFromTable(params);
+});
+
 let updateRowTransaction = db.transaction((params) => {
   return updateRow(params);
 });
+
+logger.info('Setting ipc events callback');
 
 /** see README.md **/
 ipc.on('database-op', (event, values) => {
@@ -555,6 +638,8 @@ ipc.on('database-op', (event, values) => {
   let result;
   try {
     switch (values.operation) {
+      case 'login':
+        result = login(parameters.username, parameters.password); break;
       case 'table-get-available-slots':
         result = getAvailableSlots(parameters.tableId); break;
       case 'table-get-all':
@@ -563,6 +648,8 @@ ipc.on('database-op', (event, values) => {
         result = getTableDefinition(parameters.tableId); break;
       case 'table-insert-row':
         result = insertRowTransaction(parameters); break;
+      case 'table-delete-row':
+        result = deleteRowTransaction(parameters); break;
       case 'table-update-row':
         result = updateRowTransaction(parameters); break;
       case 'move-row': {
@@ -584,4 +671,11 @@ ipc.on('database-op', (event, values) => {
   }
 });
 
+remote.getCurrentWindow().on('close', (event) => {
+  logger.info('Closing database...');
+  db.close();
+});
+logger.info('Database initialization completed');
+
 // db.close();
+// console.log(crypto.getCiphers());

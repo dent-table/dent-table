@@ -4,12 +4,13 @@ import {ElectronService} from './electron.service';
 @Injectable({
   providedIn: 'root'
 })
-export class TablesDndService implements OnDestroy {
+export class TablesService implements OnDestroy {
 
   dragStartedObservable: EventEmitter<number> = new EventEmitter(true);
   dragEndedObservable: EventEmitter<number> = new EventEmitter(true);
   rowMovedObservable: EventEmitter<{fromTableId, toTableId}> = new EventEmitter(true);
 
+  onSearchEvent: EventEmitter<string> = new EventEmitter(true);
 
   private moveRowIpcListener = (event, data) => {
     if (data.result === 'success') {
@@ -27,6 +28,10 @@ export class TablesDndService implements OnDestroy {
 
   onDragEnded(tableId: number) {
     this.dragEndedObservable.emit(tableId);
+  }
+
+  search(query: string) {
+    this.onSearchEvent.emit(query);
   }
 
   ngOnDestroy(): void {

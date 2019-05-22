@@ -1,11 +1,15 @@
 @import '~@angular/material/theming';
+@import "~mobile-drag-drop/default.css";
 
 // always include only once per project
 @include mat-core();
 
 // import our custom theme
 @import 'app-themes.scss';
+@import 'styles.scss-theme.scss';
 @import "app/tables/table-widget/table-widget.component.scss-theme.scss";
+@import "app/components/login/login.component.scss-theme";
+//@import "app/tables/row-dialog/row-dialog.component.scss-theme";
 @import "element-color";
 @import "app/app.component.scss";
 
@@ -15,6 +19,8 @@
   @include angular-material-theme($app-light-theme);
   @include table-widget-theme($app-light-theme);
   @include container-theme($app-light-theme);
+  @include login-page-theme($app-light-theme);
+  @include global-elements-theme($app-light-theme);
 
   .table-widget-red {
     @include table-widget-theme($red-theme-light);
@@ -63,6 +69,8 @@
   @include angular-material-theme($app-dark-theme);
   @include table-widget-theme($app-dark-theme);
   @include container-theme($app-dark-theme);
+  @include login-page-theme($app-dark-theme);
+  @include global-elements-theme($app-light-theme);
 
   .table-widget-red {
     @include table-widget-theme($red-theme-dark);

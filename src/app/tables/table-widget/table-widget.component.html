@@ -36,7 +36,16 @@
 
       <ng-container matColumnDef="buttons" *ngIf="showButtons">
         <mat-header-cell *matHeaderCellDef [ngStyle]="{display: showButtons ? 'table-cell' : 'none'}"></mat-header-cell>
-        <mat-cell *matCellDef="let row"></mat-cell>
+        <mat-cell *matCellDef="let row">
+          <button (click)="fireTableCellClicked('delete_row', row)" class="table-widget-row-button"
+                  *ngIf="row.table_ref" mat-icon-button>
+            <mat-icon [ngStyle]="{'font-size': buttonsSize + 'px'}" class="table-widget-row-icon">cancel</mat-icon>
+          </button>
+          <button (click)="fireTableCellClicked('insert_row', row)" class="table-widget-row-button"
+                  *ngIf="!row.table_ref" mat-icon-button>
+            <mat-icon [ngStyle]="{'font-size': buttonsSize + 'px'}" class="table-widget-row-icon">add_circle</mat-icon>
+          </button>
+        </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -44,7 +53,9 @@
                dnd-draggable [draggable]="draggable" (onDragEnd)="onDragEvent('end')" (onDragStart)="onDragEvent('start')" [dragData]="row"
                [dragEnabled]="row.date !== null" matRipple></mat-row>
     </mat-table>
-    <div class="overlay" [ngClass]="{showOverlay: showDndOverlay}" dnd-droppable [allowDrop]="isDropAllowed()" (onDropSuccess)="onDropData($event)">
+    <div class="overlay" [ngClass]="{showOverlay: showDndOverlay}" dnd-droppable [allowDrop]="isDropAllowed()"
+         (onDropSuccess)="onDropData($event)" (onDragEnter)="preventDefault($event)" (onDragOver)="preventDefault($event)"
+         (onDragLeave)="preventDefault($event)">
       <div class="overlay-content">
         <mat-icon color="accent" inline="">cloud_download</mat-icon>
         <!--        <span>{{'PAGES.HOME.RELEASE_ROW_HERE' | translate}}</span>-->

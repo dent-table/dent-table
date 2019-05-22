@@ -1,9 +1,5 @@
 @mixin container-theme($theme) {
-  $primary: map-get($theme, primary);
-  $warn: map-get($theme, warn);
-  $accent: map-get($theme, accent);
   $background: map-get($theme, background);
-  $foreground: map-get($theme, foreground);
 
   .app-container {
     background-color: mat-color($background, background);
@@ -11,13 +7,9 @@
   }
 }
 
-mat-toolbar {
-  height: 5%;
-}
-
 .app-container {
   width: 100%;
-  height: 100%;
+  //height: 95%;
+  height: calc(100% - 23px);
+  padding-top: 23px;
 }
-
-

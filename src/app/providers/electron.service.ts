@@ -75,4 +75,26 @@ export class ElectronService {
   ipcRemoveAllListeners(channel: string) {
     this.ipcRenderer.removeAllListeners(channel);
   }
+
+  close() {
+    this.remote.getCurrentWindow().close();
+  }
+
+  minimize() {
+    this.remote.getCurrentWindow().minimize();
+  }
+
+  toggleMaximize() {
+    if (!this.remote.getCurrentWindow().isMaximized()) {
+      this.remote.getCurrentWindow().maximize();
+    } else {
+      this.remote.getCurrentWindow().unmaximize();
+    }
+  }
+
+  toggleFullscreen() {
+    const isFullscreen = this.remote.getCurrentWindow().isFullScreen();
+    this.remote.getCurrentWindow().setFullScreen(!isFullscreen);
+    this.remote.getCurrentWindow().setAlwaysOnTop(!isFullscreen);
+  }
 }

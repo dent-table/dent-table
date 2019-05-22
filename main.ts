@@ -2,80 +2,137 @@ import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import { createLogger, transports, format } from 'winston';
+import * as fs from 'fs';
 
-let win, databaseWin, serve = null;
+let mainWindow, databaseWin, serve = null;
 const args = process.argv.slice(1);
+const appPath = app.getPath('userData');
+const dataPath = appPath + path.sep + 'data' + path.sep;
+
 serve = args.some(val => val === '--serve');
 
 // logger creation
-const pathname = app.getPath('userData') + path.sep + 'logs';
+const logPathname =  appPath + path.sep + 'logs';
+const logFormat = format.combine(
+  format.timestamp({
+    format: 'DD-MM-YYYY HH:mm:ss'
+  }),
+  format.simple()
+);
+
 const logger = createLogger({
   transports: [
     new transports.Console(),
-    new transports.File({dirname: pathname, filename: 'main.ts.log'})
+    new transports.File({dirname: logPathname, filename: 'main.ts.log', handleExceptions: true})
   ],
-  format: format.combine(
-    format.timestamp(),
-  )
+  format: logFormat
 });
 
 function createMainWindow() {
 
   const electronScreen = screen;
   const size = electronScreen.getPrimaryDisplay().workAreaSize;
+  let windowConf;
+
+  if (serve) {
+    windowConf = {
+      x: 0,
+      y: 0,
+      width: size.width,
+      height: size.height,
+      icon: 'src/favicon.png',
+      webPreferences: {
+        nodeIntegration: true,
+      }
+    };
+  } else {
+    windowConf = {
+      x: 0,
+      y: 0,
+      width: size.width,
+      height: size.height,
+      icon: 'src/favicon.png',
+      webPreferences: {
+        nodeIntegration: true,
+      },
+      frame: false,
+      // alwaysOnTop: true,
+      titleBarStyle: 'hidden',
+      fullscreen: true
+    };
+  }
 
   // Create the browser window.
-  win = new BrowserWindow({
-    x: 0,
-    y: 0,
-    width: size.width,
-    height: size.height,
-    webPreferences: {
-      nodeIntegration: true,
-    },
-  });
+  mainWindow = new BrowserWindow(windowConf);
 
   if (serve) {
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/node_modules/electron`)
     });
-    win.loadURL('http://localhost:4200');
+    mainWindow.loadURL('http://localhost:4200');
   } else {
-    win.loadURL(url.format({
+    mainWindow.loadURL(url.format({
       pathname: path.join(__dirname, 'dist/index.html'),
       protocol: 'file:',
       slashes: true
     }));
   }
 
+  // mainWindow.webContents.openDevTools();
+
   if (serve) {
-    win.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
+  } else {
+    mainWindow.setMenu(null);
   }
 
-  // Emitted when the window is closed.
-  win.on('closed', () => {
+
+// Emitted when the window is closed.
+  mainWindow.on('closed', () => {
+    logger.info('Main window closed');
     // Dereference the window object, usually you would store window
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    win = null;
+    mainWindow = null;
+
+    if (databaseWin) {
+      databaseWin.close();
+    }
   });
 
 }
 
 function createDatabaseWindow() {
+  logger.info('Create database windows');
   const electronScreen = screen;
   const size = electronScreen.getPrimaryDisplay().workAreaSize;
+  let windowConf;
+
+  if (serve) {
+    windowConf = {
+      x: 0,
+      y: 0,
+      width: size.width,
+      height: size.height,
+      webPreferences: {
+        nodeIntegration: true,
+      },
+    };
+  } else {
+    windowConf = {
+      x: 0,
+      y: 0,
+      width: size.width,
+      height: size.height,
+      webPreferences: {
+        nodeIntegration: true,
+      },
+      show: false
+    };
+  }
 
   // Create the browser window.
-  databaseWin = new BrowserWindow({
-    x: 0,
-    y: 0,
-    width: size.width,
-    height: size.height,
-    webPreferences: {
-      nodeIntegration: true,
-    },
-  });
+  databaseWin = new BrowserWindow(windowConf);
 
   if (serve) {
     require('electron-reload')(__dirname, {
@@ -83,6 +140,7 @@ function createDatabaseWindow() {
     });
     databaseWin.loadURL('http://localhost:4200/data/index.html');
   } else {
+    logger.info('Loading ' + path.join(__dirname, 'dist/data/index.html'));
     databaseWin.loadURL(url.format({
       pathname: path.join(__dirname, 'dist/data/index.html'),
       protocol: 'file:',
@@ -100,6 +158,7 @@ function createDatabaseWindow() {
 
   // Emitted when the window is closed.
   databaseWin.on('closed', () => {
+    logger.info('Database window closed');
     // Dereference the window object, usually you would store window
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
@@ -108,8 +167,8 @@ function createDatabaseWindow() {
 }
 
 function createWindows() {
-  logger.info('win=' + win + ' databaseWin=' + databaseWin);
-  if (!win) {
+  logger.info('mainWindow=' + mainWindow + ' databaseWin=' + databaseWin);
+  if (!mainWindow) {
     createMainWindow();
   }
 
@@ -119,6 +178,39 @@ function createWindows() {
 }
 
 try {
+/*  const shouldQuit = !app.requestSingleInstanceLock();
+
+  app.on('second-instance', function (argv, cwd) {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) { mainWindow.restore(); }
+      if (!mainWindow.isVisible()) { mainWindow.show(); }
+      mainWindow.focus();
+    }
+  });
+
+  if (shouldQuit) {
+    app.quit();
+    // return;
+  }*/
+
+  if (!fs.existsSync(dataPath)) {
+    fs.mkdirSync(dataPath);
+  }
+
+  let preferencePath;
+  
+  if (serve) {
+    preferencePath = __dirname + path.sep + 'src' + path.sep + 'assets' + path.sep + 'preferences.json';
+  } else {
+    preferencePath = 'src' + path.sep + 'assets' + path.sep + 'preferences.json';
+  }
+
+  if (!fs.existsSync(dataPath + 'preferences.json')) {
+    fs.copyFileSync(
+      preferencePath,
+      dataPath + 'preferences.json'
+    );
+  }
 
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
@@ -137,7 +229,7 @@ try {
   app.on('activate', () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (win || databaseWin == null) {
+    if (mainWindow || databaseWin == null) {
       createWindows();
     }
   });
@@ -145,4 +237,6 @@ try {
 } catch (e) {
   // Catch Error
   // throw e;
+
+  logger.error(e);
 }

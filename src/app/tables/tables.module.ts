@@ -8,6 +8,7 @@ import { TablePageComponent } from './table-page/table-page.component';
 import { RowDialogComponent } from './row-dialog/row-dialog.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatBadgeModule, MatDialogModule, MatFormFieldModule, MatSelectModule} from '@angular/material';
+import {ConfirmDialogComponent} from '../components/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [TableWidgetComponent, TablePageComponent, RowDialogComponent],
@@ -18,6 +19,6 @@ import {MatBadgeModule, MatDialogModule, MatFormFieldModule, MatSelectModule} fr
     CommonModule, MaterialModule, TranslateModule, DndModule.forRoot(), ReactiveFormsModule,
     FormsModule, MatFormFieldModule, MatDialogModule, MatSelectModule, MatBadgeModule
   ],
-  entryComponents: [ RowDialogComponent ]
+  entryComponents: [ RowDialogComponent, ConfirmDialogComponent ]
 })
 export class TablesModule { }

@@ -1,3 +1,5 @@
+import {MatSnackBar} from '@angular/material';
+
 export class Utils {
   static typeof(element: any, type?: string): boolean | string {
     if (type) {
@@ -12,5 +14,15 @@ export class Utils {
     if (Utils.typeof(value, 'string')) {
       return value.trim() === '';
     }
+  }
+
+  static openSnackbar(snackBar: MatSnackBar, text: string, duration?: number, actionText?: string, actionCallback?: () => void) {
+    const snackBarRef = snackBar.open(text, actionText, {duration: duration});
+
+    if (actionText) {
+      snackBarRef.onAction().subscribe(actionCallback);
+    }
+
+    return snackBarRef;
   }
 }

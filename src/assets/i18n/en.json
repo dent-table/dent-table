@@ -1,7 +1,15 @@
 {
   "PAGES": {
+    "LOGIN": {
+      "WELCOME": "Benvenuto",
+      "LOGIN": "Effettua il login",
+      "USER": "User",
+      "PASSWORD": "Password",
+      "REMEMBER_USER": "Ricorda user",
+      "USER_NOT_FOUND": "Username non valido",
+      "INVALID_PASSWORD": "Password errata"
+    },
     "HOME": {
-      "TITLE": "App works !",
       "RELEASE_ROW_HERE": "Rilascia la riga quì"
     },
     "ROW_DIALOG": {
@@ -21,6 +29,10 @@
         "orange":  "Arancione",
         "deep_orange": "Arancione scuro"
       }
+    },
+    "CONFIRM_DIALOG": {
+      "SURE": "Sei sicuro?",
+      "CANNOT_UNDONE": "Questa operazione non è annullabile"
     }
   },
   "TABLES": {
@@ -51,5 +63,12 @@
     "ADD": "Aggiungi",
     "REMOVE": "Rimuovi",
     "SAVE": "Salva"
+  },
+  "SUCCESSES": {
+    "GENERIC": "Operazione effettuata con successo",
+    "DELETE": "Eliminazione effettuata con successo"
+  },
+  "ERRORS": {
+    "GENERIC": "Si è verificato un errore"
   }
 }

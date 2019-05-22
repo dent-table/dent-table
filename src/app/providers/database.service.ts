@@ -4,6 +4,7 @@ import {Observable, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {TableDefinition, ToDeliver, ToDo} from '../model/model';
 import * as moment from 'moment';
+import * as crypto from 'crypto';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,7 @@ export class DatabaseService {
     )));
     return res;
   });
+
   static toDeliverMapFunction: OperatorFunction<Array<any>, Array<ToDeliver>> = map((values: Array<any>) => {
     const res: Array<ToDeliver> = [];
     values.forEach(value => res.push(new ToDeliver(
@@ -42,6 +44,9 @@ export class DatabaseService {
 
   databaseWebContentId: number;
 
+  algorithm = 'aes-192-cbc';
+  password = '3b41iTniwy';
+
   private sendToDatabase(operation: string, data: any) {
     const params = {
       operation: operation,
@@ -49,6 +54,21 @@ export class DatabaseService {
     };
 
     this.electronService.ipcSendTo(this.databaseWebContentId, 'database-op', params);
+  }
+
+  private encrypt(msg: string) {
+// Use the async `crypto.scrypt()` instead.
+    const key = crypto.scryptSync(this.password, 'salt', 24);
+
+    const iv = Buffer.alloc(16, 18);
+
+// shown here.
+    const cipher = crypto.createCipheriv(this.algorithm, key, iv);
+
+    let encrypted = cipher.update(msg, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
+
   }
 
   private valueSanitize(value: any, valueName?: string) {
@@ -78,6 +98,22 @@ export class DatabaseService {
     }
 
     return values;
+  }
+
+  login(user: string, password: string): Observable<number> {
+    const params = {username: user, password: this.encrypt(password)};
+
+    return new Observable((subscriber) => {
+      this.sendToDatabase('login', params);
+      this.electronService.ipcOnce('login', (event, response) => {
+        if (response.result === 'error') {
+          subscriber.error(response.message);
+        } else {
+          subscriber.next(response.response);
+          subscriber.complete();
+        }
+      });
+    });
   }
 
   getAll<R>(tableId: number, limit?: number, mapFun?: OperatorFunction<Array<any>, Array<R>>): Observable<Array<R>> {
@@ -113,6 +149,21 @@ export class DatabaseService {
     return new Observable((subscriber => {
       this.sendToDatabase('table-insert-row', params);
       this.electronService.ipcOnce('table-insert-row-' + tableId, (event, data) => {
+        if (data.result === 'error') {
+          subscriber.error(data.message);
+        } else {
+          subscriber.next(data.response);
+          subscriber.complete();
+        }
+      });
+    }));
+  }
+
+  deleteRow(tableId: number, slotNumber: any): Observable<any> {
+    const params = {tableId: tableId, slotNumber: slotNumber};
+    return new Observable((subscriber => {
+      this.sendToDatabase('table-delete-row', params);
+      this.electronService.ipcOnce('table-delete-row-' + tableId, (event, data) => {
         if (data.result === 'error') {
           subscriber.error(data.message);
         } else {

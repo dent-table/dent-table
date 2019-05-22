@@ -13,14 +13,19 @@
   <app-table-widget draggable="true" tableId="2" fxFlex="1 1 auto"></app-table-widget>
 </div>
 -->
- <div class="container" fxLayout="column" fxLayoutGap="5px">
-   <div fxLayout="row" fxLayoutGap="3px" fxFlex="1 1 55">
-     <app-table-widget class="table-widget-red" draggable="true" fxFlex="1 1 50" tableId="1" showButtons="false"></app-table-widget>
-     <app-table-widget class="table-widget-blue" draggable="true" fxFlex="1 1 50" tableId="2" showButtons="false"></app-table-widget>
-   </div>
-   <div fxLayout="row" fxLayoutGap="3px" fxFlex="1 1 45">
-     <app-table-widget class="table-widget-deep-purple" draggable="true" fxFlex="1 1 34" tableId="3" showButtons="false"></app-table-widget>
-     <app-table-widget class="table-widget-teal" draggable="true" fxFlex="1 1 33" tableId="4" showButtons="false"></app-table-widget>
-     <app-table-widget class="table-widget-pink" draggable="true" fxFlex="1 1 33" tableId="5" showButtons="false"></app-table-widget>
-   </div>
- </div>
+<div class="home-container" fxLayout="column" fxLayoutGap="5px">
+  <div fxLayout="row" fxLayoutGap="3px" fxFlex="1 1 55">
+    <app-table-widget #table1 class="table-widget-red" draggable="true" fxFlex="1 1 50" tableId="1" showButtons="true"
+                      (cellClick)="cellClicked(1, $event)"></app-table-widget>
+    <app-table-widget #table2 class="table-widget-blue" draggable="true" fxFlex="1 1 50" tableId="2" showButtons="true"
+                      (cellClick)="cellClicked(2, $event)"></app-table-widget>
+  </div>
+  <div fxLayout="row" fxLayoutGap="3px" fxFlex="1 1 45">
+    <app-table-widget #table3 class="table-widget-deep-purple" draggable="true" fxFlex="1 1 34" tableId="3" showButtons="true"
+                      (cellClick)="cellClicked(3, $event)"></app-table-widget>
+    <app-table-widget #table4 class="table-widget-teal" draggable="true" fxFlex="1 1 33" tableId="4" showButtons="true"
+                      (cellClick)="cellClicked(4, $event)"></app-table-widget>
+    <app-table-widget #table5 class="table-widget-pink" draggable="true" fxFlex="1 1 33" tableId="5" showButtons="true"
+                      (cellClick)="cellClicked(5, $event)"></app-table-widget>
+  </div>
+</div>

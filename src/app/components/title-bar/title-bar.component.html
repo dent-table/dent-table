@@ -1,0 +1,13 @@
+<mat-toolbar class="app-title-bar">
+  <span class="title-bar-text">MyOdPlan v0.1.0</span>
+  <span class="toolbar-empty-space"></span>
+  <button mat-icon-button class="title-bar-button" (click)="electronService.minimize()">
+    <mat-icon class="title-bar-icon">remove</mat-icon>
+  </button>
+  <button mat-icon-button class="title-bar-button" (click)="electronService.toggleFullscreen()">
+    <mat-icon class="title-bar-icon">add</mat-icon>
+  </button>
+  <button mat-icon-button class="title-bar-button" (click)="electronService.close()">
+    <mat-icon class="title-bar-icon">close</mat-icon>
+  </button>
+</mat-toolbar>

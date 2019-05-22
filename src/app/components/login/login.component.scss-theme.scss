@@ -1,0 +1,9 @@
+@import '~@angular/material/theming';
+
+@mixin login-page-theme($theme) {
+  $warn: map-get($theme, warn);
+
+  .login-errors-panel {
+    color: mat-color($warn);
+  }
+}
