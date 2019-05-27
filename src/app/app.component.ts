@@ -29,14 +29,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.electronService.remote.getCurrentWindow().on('close', (event) => {
-
+      this.logger.info(AppComponent.name, 'Closing app...');
       this.zone.run(() => {
-        this.logger.info(AppComponent.name, 'Closing app...');
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {data: {title: 'PAGES.CONFIRM_DIALOG.SURE'}});
-
         dialogRef.afterClosed().subscribe(result => {
-          if (!result) {
-            event.preventDefault();
+          if (result) {
+            this.logger.info(AppComponent.name, 'Starting app shutdown...');
+            this.electronService.ipcSend('start-app-shutdown');
           }
         });
       });

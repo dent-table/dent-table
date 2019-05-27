@@ -8,8 +8,8 @@ import {
   MatCardModule,
   MatCheckboxModule, MatChipsModule, MatDatepickerModule, MatFormFieldModule,
   MatIconModule, MatInputModule,
-  MatPaginatorModule, MatRippleModule, MatSnackBarModule,
-  MatTableModule,
+  MatPaginatorModule, MatProgressSpinnerModule, MatRippleModule, MatSnackBarModule, MatSortModule,
+  MatTableModule, MatTabsModule,
   MatToolbarModule, MatTooltipModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -21,12 +21,12 @@ import {NgMatSearchBarModule} from 'ng-mat-search-bar';
   imports: [
     CommonModule, BrowserAnimationsModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, MatFormFieldModule, MatInputModule,
     FlexLayoutModule, MatPaginatorModule, MatIconModule, MatToolbarModule, MatCardModule, MatDatepickerModule, MatMomentDateModule,
-    MatRippleModule, NgMatSearchBarModule, MatSnackBarModule
+    MatRippleModule, NgMatSearchBarModule, MatSnackBarModule, MatProgressSpinnerModule, MatTabsModule
   ],
   exports: [
     BrowserAnimationsModule, MatButtonModule, MatCheckboxModule, MatTableModule, MatTooltipModule, MatFormFieldModule, MatInputModule,
     FlexLayoutModule, MatPaginatorModule, MatIconModule, MatToolbarModule, MatCardModule, MatDatepickerModule, MatMomentDateModule,
-    MatRippleModule, NgMatSearchBarModule, MatSnackBarModule
+    MatRippleModule, NgMatSearchBarModule, MatSnackBarModule, MatProgressSpinnerModule, MatTabsModule
   ],
   providers: [
     {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},

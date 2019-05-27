@@ -7,6 +7,7 @@ import {ElectronService} from '../../providers/electron.service';
   styleUrls: ['./title-bar.component.scss']
 })
 export class TitleBarComponent implements OnInit {
+  appVersion = this.electronService.appVersion;
 
   constructor(public electronService: ElectronService) { }
 

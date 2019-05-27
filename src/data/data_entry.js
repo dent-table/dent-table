@@ -248,6 +248,7 @@ function checkMutualParameters(...params) {
 function insertUserOrUpdate(user, password) {
   checkRequiredParameters(user, password);
 
+
   let query = "SELECT * FROM users WHERE username=?";
   let stmt = db.prepare(query);
   let result = stmt.get(user);
@@ -664,7 +665,7 @@ ipc.on('database-op', (event, values) => {
     console.log(result);
 
     //Result sent on two channel, the second permits to filter on table id
-    event.sender.sendTo(senderId, values.operation, {result: 'success', response: result});
+    // event.sender.sendTo(senderId, values.operation, {result: 'success', response: result});
     event.sender.sendTo(senderId, returnChannel, {result: 'success', response: result});
   } catch (e) {
     event.sender.sendTo(senderId, returnChannel, {result: 'error', message: e.message})
@@ -675,6 +676,13 @@ remote.getCurrentWindow().on('close', (event) => {
   logger.info('Closing database...');
   db.close();
 });
+
+ipc.on('shutdown', (event) => {
+  logger.info('Requested database shutdown');
+  db.close();
+    ipc.send('database-shutdown', true);
+});
+
 logger.info('Database initialization completed');
 
 // db.close();

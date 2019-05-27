@@ -5,6 +5,7 @@ import {map} from 'rxjs/operators';
 import {TableDefinition, ToDeliver, ToDo} from '../model/model';
 import * as moment from 'moment';
 import * as crypto from 'crypto';
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -72,31 +73,33 @@ export class DatabaseService {
   }
 
   private valueSanitize(value: any, valueName?: string) {
-    switch (value) {
-      case '':
-        value = null; break;
-      case true:
-        value = 1; break;
-      case false:
-        value = 0; break;
+    if (_.isString(value) && _.isEmpty(_.trim(value))) {
+      value = null;
+    } else if (_.isBoolean(value)) {
+      value = value ? 1 : 0;
+    } else if (!_.isNil(value) && !_.isNil(valueName) && valueName.indexOf('date') >= 0) {
+      // string date conversion to timestamp milliseconds
+      value = moment(value, ['DD/MM/YYYY', 'MM/DD/YYYY', 'x', 'X']).valueOf();
     }
-
-    if (value && valueName && valueName.indexOf('date') >= 0) { // string date conversion to timestamp
-      value = moment(value, ['DD/MM/YYYY', 'MM/DD/YYYY', 'X', 'x']).format('x');
-    }
+    console.log(value, typeof value);
     return value;
   }
 
   private valuesSanitize(values: any) {
-    if ('object' === typeof values) {
-      const keys = Object.keys(values);
-      for (const key of keys) {
-        values[key] = this.valueSanitize(values[key], key);
-      }
+    if (_.isObjectLike(values)) {
+      // const keys = Object.keys(values);
+      // for (const key of keys) {
+      //   values[key] = this.valueSanitize(values[key], key);
+      // }
+
+      _.forEach(values, (value, key) => {
+        values[key] = this.valueSanitize(value, key);
+      });
     } else {
       values = this.valueSanitize(values);
     }
 
+    console.log(values);
     return values;
   }
 
@@ -204,7 +207,6 @@ export class DatabaseService {
         if (data.result === 'error') {
           subscriber.error(data.message);
         } else {
-          console.log(data.response, typeof data.response);
           subscriber.next(data.response);
           subscriber.complete();
         }

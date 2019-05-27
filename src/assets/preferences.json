@@ -2,5 +2,15 @@
   "login": {
     "rememberUser": false,
     "username": ""
+  },
+  "tables_color": {
+    "1": "red",
+    "2": "blue",
+    "3": "deep-purple",
+    "4": "teal",
+    "5": "pink"
+  },
+  "general": {
+    "days_before_alert": 7
   }
 }

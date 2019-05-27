@@ -18,7 +18,7 @@ export class ElectronService {
   fs: typeof fs;
 
   databaseWebContentId: number;
-  ipcEvents: Observable<any>;
+  appVersion = require('../../../package.json').version;
 
   constructor() {
     // Conditional imports
@@ -54,6 +54,10 @@ export class ElectronService {
 
   ipcSendTo(webContentId: number, channel: string, data: any) {
     this.ipcRenderer.sendTo(webContentId, channel, data);
+  }
+
+  ipcSend(channel: string, data?: any) {
+    this.ipcRenderer.send(channel, data);
   }
 
   ipcOnce(channel: string, listener: Function) {

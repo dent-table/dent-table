@@ -13,13 +13,16 @@ mat-toolbar {
 
 .toolbar-search-bar {
   //flex: 1 1 30;
-  justify-self: flex-end;
-
   .mat-form-field-wrapper {
     padding-bottom: 15px;
   }
+
   .mat-input-element {
     font-size: 15px;
     height: 24px;
   }
+}
+
+.preferences-button {
+  padding-left: 10px;
 }

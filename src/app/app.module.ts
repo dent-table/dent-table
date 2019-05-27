@@ -25,8 +25,9 @@ import { LoginComponent } from './components/login/login.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import {NgMatSearchBarModule} from 'ng-mat-search-bar';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
-import {MatDialogModule} from '@angular/material';
+import {MatDialogModule, MatSelectModule, MatTabsModule} from '@angular/material';
 import { TitleBarComponent } from './components/title-bar/title-bar.component';
+import { PreferencesDialogComponent } from './components/preferences-dialog/preferences-dialog.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -40,7 +41,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     LoginComponent,
     ToolbarComponent,
     ConfirmDialogComponent,
-    TitleBarComponent
+    TitleBarComponent,
+    PreferencesDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,7 +61,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     FormsModule,
     ReactiveFormsModule,
     NgMatSearchBarModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTabsModule,
+    MatSelectModule
   ],
   providers: [ElectronService],
   bootstrap: [AppComponent]

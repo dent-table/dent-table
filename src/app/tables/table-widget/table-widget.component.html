@@ -1,11 +1,27 @@
-<div (window:resize)="calcRowNumber()">
+<div (window:resize)="calcRowNumber()" [ngClass]="{'max-height': !isLoaded}">
   <div class="table-title-header mat-elevation-z3">
-    <button mat-button class="table-title-text" (click)="navigateToTablePage()">{{'TABLES.NAMES.' + tableName | translate}}</button>
-    <mat-paginator [pageSize]="rowNumber" [hidePageSize]="true" showFirstLastButtons [length]="dataLength"></mat-paginator>
+    <button mat-button class="table-title-text" (click)="navigateToTablePage()">
+      <span *ngIf="table_def">{{'TABLES.NAMES.' + table_def.name | translate}}</span>
+    </button>
+    <mat-paginator style="display: none" [pageSize]="rowNumber" [hidePageSize]="true" showFirstLastButtons [length]="dataLength"></mat-paginator>
+    <div class="paginator">
+      <button [disabled]="!matPaginator.hasPreviousPage()" type="button" (click)="matPaginator.firstPage()" mat-icon-button class="paginator-btn">
+        <mat-icon class="paginator-btn-icon">first_page</mat-icon>
+      </button>
+      <button  [disabled]="!matPaginator.hasPreviousPage()" type="button" (click)="matPaginator.previousPage()" mat-icon-button class="paginator-btn">
+        <mat-icon class="paginator-btn-icon">chevron_left</mat-icon>
+      </button>
+      <button type="button" [disabled]="!matPaginator.hasNextPage()" (click)="matPaginator.nextPage()" mat-icon-button class="paginator-btn">
+        <mat-icon class="paginator-btn-icon">chevron_right</mat-icon>
+      </button>
+      <button [disabled]="!matPaginator.hasNextPage()" type="button" (click)="matPaginator.lastPage()" mat-icon-button class="paginator-btn">
+        <mat-icon class="paginator-btn-icon">last_page</mat-icon>
+      </button>
+    </div>
   </div>
   <div class="overlay-container">
     <mat-table class="mat-elevation-z5" *ngIf="isLoaded" [dataSource]="data">
-      <ng-container *ngFor="let column of columns_def" [matColumnDef]="column.name">
+      <ng-container *ngFor="let column of table_def.columnsDefinition" [matColumnDef]="column.name">
         <mat-header-cell *matHeaderCellDef>
           <div class="cell">
             <span class="cell-text">{{ 'TABLES.COLUMNS.' + column.name | translate }}</span>
@@ -28,7 +44,7 @@
       </ng-container>
 
       <ng-container matColumnDef="slotNumber">
-        <mat-header-cell  *matHeaderCellDef>#</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
         <mat-cell [ngStyle]="{color: row['text_color']}" *matCellDef="let row" (click)="fireTableCellClicked('slot_number', row)">
           {{row.slot_number}}
         </mat-cell>
@@ -53,12 +69,12 @@
                dnd-draggable [draggable]="draggable" (onDragEnd)="onDragEvent('end')" (onDragStart)="onDragEvent('start')" [dragData]="row"
                [dragEnabled]="row.date !== null" matRipple></mat-row>
     </mat-table>
-    <div class="overlay" [ngClass]="{showOverlay: showDndOverlay}" dnd-droppable [allowDrop]="isDropAllowed()"
+    <div class="overlay" [ngClass]="{showOverlay: showDndOverlay || !isLoaded}" dnd-droppable [allowDrop]="isDropAllowed()"
          (onDropSuccess)="onDropData($event)" (onDragEnter)="preventDefault($event)" (onDragOver)="preventDefault($event)"
          (onDragLeave)="preventDefault($event)">
       <div class="overlay-content">
-        <mat-icon color="accent" inline="">cloud_download</mat-icon>
-        <!--        <span>{{'PAGES.HOME.RELEASE_ROW_HERE' | translate}}</span>-->
+        <mat-icon *ngIf="showDndOverlay" color="accent" inline="">cloud_download</mat-icon>
+        <mat-spinner *ngIf="!isLoaded"></mat-spinner>
       </div>
     </div>
   </div>

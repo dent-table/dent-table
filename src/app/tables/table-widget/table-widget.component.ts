@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {DatabaseService} from '../../providers/database.service';
 import {LoggerService} from '../../providers/logger.service';
-import {MatPaginator, MatTableDataSource, MatTooltip} from '@angular/material';
+import {MatPaginator, MatSort, MatTableDataSource, MatTooltip} from '@angular/material';
 import {DragDropData} from 'ng2-dnd';
 import {TablesService} from '../../providers/tables.service';
 import {Router} from '@angular/router';
@@ -20,6 +20,7 @@ import {ColumnDefinition, TableDefinition} from '../../model/model';
 import * as moment from 'moment';
 import {polyfill} from 'mobile-drag-drop';
 import {formatDate} from '@angular/common';
+import * as _ from 'lodash';
 
 export interface CellClickEvent {
   columnName;
@@ -42,6 +43,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   @Input() showButtons = true;
 
   @ViewChild(MatPaginator) matPaginator: MatPaginator;
+  @ViewChild(MatSort) matSort: MatSort;
   @ViewChild('tooltip') tooltip: MatTooltip;
 
   @Output() cellClick: EventEmitter<CellClickEvent> = new EventEmitter();
@@ -51,11 +53,12 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   data = new MatTableDataSource();
   dataLength = 0;
 
-  tableName: string;
-  columns_def: ColumnDefinition[] = null;
+  // tableName: string;
+  table_def: TableDefinition = null;
   displayedColumns: string[] = [];
 
   isLoaded = false;
+  firstRowCalc = false;
   showDndOverlay = false;
 
   // https://stackoverflow.com/questions/38081878/objectunsubscribederror-when-trying-to-prevent-subscribing-twice
@@ -104,16 +107,15 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   ngOnInit() {
-    if ('number' !== typeof this.tableId) {
-      this.tableId = Number.parseInt(this.tableId, 10);
+    if (!_.isInteger(this.tableId)) {
+      this.tableId = _.toInteger(this.tableId);
     }
-    if ('number' !== typeof this.rowSize) {
-      this.rowSize = Number.parseInt(this.rowSize, 10);
+    if (!_.isInteger(this.rowSize)) {
+      this.rowSize = _.toInteger(this.rowSize);
     }
-    if ('boolean' !== typeof  this.showButtons) {
+    if (!_.isBoolean(this.showButtons)) {
       this.showButtons = this.showButtons === 'true';
     }
-
 
     this.data.filterPredicate = this.filterPredicate;
   }
@@ -160,7 +162,10 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   ngAfterContentChecked(): void {
-    this.calcRowNumber();
+    if (!this.firstRowCalc) {
+      this.calcRowNumber();
+      this.firstRowCalc = true;
+    }
   }
 
   ngOnDestroy(): void {
@@ -176,6 +181,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
       this.data.data = [...data];
         this.dataLength = data.length;
         this.data.paginator = this.matPaginator;
+        this.data.sort = this.matSort;
 
         try {
           this.cdr.detectChanges();
@@ -188,20 +194,17 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   tableConstruction(values: TableDefinition) {
-    this.logger.debug(this.logTag, '' + this.showButtons, typeof this.showButtons);
-    this.logger.debug(this.logTag, typeof this.showButtons);
-    this.tableName = values.name;
-    this.columns_def = values.columnsDefinition;
+    // this.tableName = values.name;
+    this.table_def = values;
     const displayedCols: string[] = ['slotNumber'];
 
-    for (const column of this.columns_def) {
+    for (const column of this.table_def.columnsDefinition) {
       if (column.displayed) {
         displayedCols.push(column.name);
       }
     }
 
     if (this.showButtons === true) {
-      this.logger.debug(this.logTag, 'pushing');
       displayedCols.push('buttons');
     }
 
@@ -210,6 +213,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   calcRowNumber() {
+    console.log('calcRowNumber');
     const headersSize = 73;
     // const newRowNumber = Math.floor((this.el.nativeElement.offsetHeight - 69) / this.rowSize);
     const newRowNumber = Math.floor((this.el.nativeElement.offsetHeight - headersSize) / this.rowSize);

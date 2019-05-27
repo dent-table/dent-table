@@ -5,6 +5,10 @@
   //align-items: stretch;
 }
 
+.max-height {
+  height: 100%;
+}
+
 .overlay {
   width: 99.5%;
   height: 99.5%;
@@ -60,11 +64,15 @@ div .dnd-drag-over {
   min-height: 28px;
 }*/
 
-.mat-paginator {
+.paginator {
   //background-color: $primary;
-  padding: 0;
+  padding-top: 3px;
   //color: whitesmoke;
   font-size: 10px;
+}
+
+.paginator-btn-icon {
+  font-size: 20px;
 }
 
 .table-title-text {

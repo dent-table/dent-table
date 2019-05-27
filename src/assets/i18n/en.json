@@ -33,6 +33,13 @@
     "CONFIRM_DIALOG": {
       "SURE": "Sei sicuro?",
       "CANNOT_UNDONE": "Questa operazione non è annullabile"
+    },
+    "PREFERENCES_DIALOG": {
+     "GENERALS": {
+       "TITLE": "Generali",
+       "ALERT_DAYS_LABEL": "Notifica date inferiori a",
+       "DAYS_LABEL": "giorni"
+     }
     }
   },
   "TABLES": {

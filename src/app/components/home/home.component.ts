@@ -83,6 +83,8 @@ export class HomeComponent implements OnInit {
     let snackbarText, snackbarDuration, snackbarActionText, snackbarActionCallback, snackbarRef;
 
     this.databaseService.deleteRow(el.table_id, el.slot_number).subscribe((result) => {
+      console.log(result);
+      console.log(result.date, typeof result.date);
         this.logger.debug(this.logTag, 'Delete result', result);
         snackbarText = this.translateService.instant('SUCCESSES.DELETE');
         snackbarDuration = 5000;
@@ -90,6 +92,7 @@ export class HomeComponent implements OnInit {
         snackbarActionCallback = () => {
           this.logger.info(this.logTag, 'Delete undo requested');
           result['slot_number'] = el.slot_number;
+          console.log(result);
           this.databaseService.insertRow(tableId, result).subscribe((result2) => {
             this.logger.info(this.logTag, 'Delete undo success');
             this.reloadTable(tableId);

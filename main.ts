@@ -4,7 +4,7 @@ import * as url from 'url';
 import { createLogger, transports, format } from 'winston';
 import * as fs from 'fs';
 
-let mainWindow, databaseWin, serve = null;
+let mainWindow, databaseWin, serve = null, canQuit = false;
 const args = process.argv.slice(1);
 const appPath = app.getPath('userData');
 const dataPath = appPath + path.sep + 'data' + path.sep;
@@ -43,7 +43,8 @@ function createMainWindow() {
       icon: 'src/favicon.png',
       webPreferences: {
         nodeIntegration: true,
-      }
+      },
+      frame: false
     };
   } else {
     windowConf = {
@@ -87,6 +88,29 @@ function createMainWindow() {
   }
 
 
+  mainWindow.on('close', (event) => {
+    logger.debug('Closing main window');
+    if (!canQuit) {
+      event.preventDefault();
+      return false;
+    } else {
+      canQuit = false;
+      return true;
+    }
+  });
+
+
+  ipcMain.on('start-app-shutdown', (event) => {
+    logger.info('Requested app shutdown');
+    logger.info(databaseWin);
+    if (databaseWin) {
+      databaseWin.webContents.send('shutdown');
+      ipcMain.once('database-shutdown', (result) => {
+          databaseWin.close();
+      });
+    }
+  });
+
 // Emitted when the window is closed.
   mainWindow.on('closed', () => {
     logger.info('Main window closed');
@@ -94,10 +118,6 @@ function createMainWindow() {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
-
-    if (databaseWin) {
-      databaseWin.close();
-    }
   });
 
 }
@@ -116,7 +136,7 @@ function createDatabaseWindow() {
       height: size.height,
       webPreferences: {
         nodeIntegration: true,
-      },
+      }
     };
   } else {
     windowConf = {
@@ -159,6 +179,10 @@ function createDatabaseWindow() {
   // Emitted when the window is closed.
   databaseWin.on('closed', () => {
     logger.info('Database window closed');
+    if (mainWindow) {
+      canQuit = true;
+      mainWindow.close();
+    }
     // Dereference the window object, usually you would store window
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
@@ -167,7 +191,6 @@ function createDatabaseWindow() {
 }
 
 function createWindows() {
-  logger.info('mainWindow=' + mainWindow + ' databaseWin=' + databaseWin);
   if (!mainWindow) {
     createMainWindow();
   }
