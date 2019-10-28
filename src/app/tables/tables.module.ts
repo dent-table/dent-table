@@ -9,6 +9,7 @@ import { RowDialogComponent } from './row-dialog/row-dialog.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatBadgeModule, MatDialogModule, MatFormFieldModule, MatSelectModule} from '@angular/material';
 import {ConfirmDialogComponent} from '../components/confirm-dialog/confirm-dialog.component';
+import {SharedModule} from '../shared/shared.module';
 
 @NgModule({
   declarations: [TableWidgetComponent, TablePageComponent, RowDialogComponent],
@@ -17,7 +18,7 @@ import {ConfirmDialogComponent} from '../components/confirm-dialog/confirm-dialo
   ],
   imports: [
     CommonModule, MaterialModule, TranslateModule, DndModule.forRoot(), ReactiveFormsModule,
-    FormsModule, MatFormFieldModule, MatDialogModule, MatSelectModule, MatBadgeModule
+    FormsModule, MatFormFieldModule, MatDialogModule, MatSelectModule, MatBadgeModule, SharedModule
   ],
   entryComponents: [ RowDialogComponent, ConfirmDialogComponent ]
 })

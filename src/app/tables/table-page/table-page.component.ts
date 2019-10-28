@@ -98,6 +98,7 @@ export class TablePageComponent implements OnInit {
         snackbarActionText = this.translateService.instant('COMMONS.CANCEL');
         snackbarActionCallback = () => {
           this.logger.info(this.logTag, 'Delete undo requested');
+          this.logger.info(this.logTag, 'Element to reinsert: ', result);
           result['slot_number'] = el.slot_number;
           this.databaseService.insertRow(this.tableId, result).subscribe((result2) => {
             this.logger.info(this.logTag, 'Delete undo success');

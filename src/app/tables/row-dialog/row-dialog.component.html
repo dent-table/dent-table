@@ -5,6 +5,10 @@
         <mat-label>{{'TABLES.COLUMNS.slot_number' | translate}}</mat-label>
         <mat-select tabIndex="-1" [formControlName]="'slot_number'" [id]="'slot_number'">
           <mat-option value="">Auto</mat-option>
+<!--          <mat-option *ngIf="data.tableId == 1" value="CEREC">CEREC</mat-option>  &lt;!&ndash;     only for to_do     &ndash;&gt;-->
+          <ng-container *ngFor="let sCase of specialCases">
+            <mat-option [value]="sCase">{{sCase}}</mat-option>
+          </ng-container>
           <mat-option *ngFor="let slot of availableSlots" [value]="slot">{{slot}}</mat-option>
         </mat-select>
         <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>

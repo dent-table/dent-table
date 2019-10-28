@@ -44,9 +44,9 @@
       </ng-container>
 
       <ng-container matColumnDef="slotNumber">
-        <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef><span class="mat-column-slotNumber-span cell-text">#</span></mat-header-cell>
         <mat-cell [ngStyle]="{color: row['text_color']}" *matCellDef="let row" (click)="fireTableCellClicked('slot_number', row)">
-          {{row.slot_number}}
+          <span class="cell-text mat-column-slotNumber-span">{{row.slot_number | slotNumberTransform: tableId}}</span>
         </mat-cell>
       </ng-container>
 

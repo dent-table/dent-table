@@ -124,7 +124,10 @@ div .dnd-drag-over {
   display: block;
   width: 100%;
   height: 100%;
+}
 
+.mat-column-slotNumber-span {
+text-align: center;
 }
 
 .cell-text {
@@ -138,7 +141,7 @@ div .dnd-drag-over {
 }
 
 .mat-column-slotNumber {
-  padding-left: 2% !important;
+  padding-left: 0 !important;
   width: 5%;
   max-width: 5%;
 }

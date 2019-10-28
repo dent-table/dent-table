@@ -5,11 +5,22 @@ let path = require('path');
 let fs = require('fs');
 let Database = require('better-sqlite3');
 let crypto = require('crypto');
+let _ = require('lodash');
 
 const appPath = remote.app.getPath('userData');
 const logPath = appPath + path.sep + 'logs';
 const dbPath = appPath + path.sep + 'data' + path.sep + 'database.db';
 const dbExists = fs.existsSync(dbPath);
+
+const specialCases = {
+  'CEREC': {
+    tables: [1],
+    bounds: [9000, 9099]
+  }
+};
+
+const specialCasesKeys = _.keys(specialCases);
+
 let tableNames;
 
 const logFormat = winston.format.combine(
@@ -219,6 +230,51 @@ function createDatabase() {
   populateTransaction();
 }
 
+/**
+ * Check if slotNumber is a special case for the table identified by tableId
+ * @param slotNumber the slot number to check
+ * @param tableId identifier of the table to check
+ * @return the special case name if slotNumber is a special case, false otherwise
+ */
+function specialCase(slotNumber, tableId) {
+  if (_.isNumber(slotNumber)) {
+    for (const key of specialCasesKeys) {
+      const bounds = specialCases[key].bounds;
+      const applicableTables = specialCases[key].tables;
+      if (_.includes(applicableTables, _.toInteger(tableId)) && (slotNumber >= bounds[0] && slotNumber <= bounds[1])) {
+        return key;
+      }
+    }
+  }
+
+  if (_.isString(slotNumber) && specialCasesKeys.includes(slotNumber)) {
+    const applicableTables = specialCases[slotNumber].tables; // in this if we are sure that slotNumber is one of the keys of specialCases object
+    if (applicableTables.includes(tableId))
+    return slotNumber;
+  }
+
+  return false;
+}
+
+/**
+ * Find the first non present slot number in low-high range in a specified table
+ * @param tableId the table to check
+ * @param low lower bound of the range to check (included)
+ * @param high upper bound of the range to check (included)
+ *
+ */
+function firstEmptySlotNumberBetween(tableId, low, high) {
+  let queryString = "SELECT * FROM tables_slots WHERE table_id=$tableId AND slot_number BETWEEN $low AND $high ORDER BY slot_number DESC LIMIT 1";
+  let stmt = db.prepare(queryString);
+  let res = stmt.get({tableId: tableId, low:low, high:high});
+
+  if (res && res.slot_number >= high) {
+    throw Error("All slots are full");
+  }
+
+  return (_.isUndefined(res) ? low : res.slot_number) + 1
+}
+
 function checkRequiredParameters(...params) {
   params.forEach((param) => {
     if(param === undefined) {
@@ -376,6 +432,53 @@ function getRowFromTable({tableId, slotNumber, refId}) {
 }
 
 /**
+ * Create a new table slot for a given special case.
+ * The new slot number is selected as the first empty slot between special case's lower and upper bounds
+ * @param table_id id of the table where the slot will be inserted
+ * @param slot_number identifier of the special case (to identify its bounds)
+ * @param table_ref_id OPTIONAL a row's id of the table identified by table_id, for which this slot will be connected
+ * @returns {{changes: *, slotNumber: *, tableId: *}} changes: number of changes made in the database (should be 1)
+ * slotNumber: the new created slot number
+ * tableId: table id of the slot number
+ */
+function createSpecialSlot(table_id, slot_number, table_ref_id = null) {
+  let specialCaseName = specialCase(slot_number, table_id);
+  if (!specialCaseName) {
+    throw Error(`Slot number ${slot_number} doesn't match with any special case`);
+  }
+  let newSlotNumber = firstEmptySlotNumberBetween(table_id, specialCases[specialCaseName].bounds[0], specialCases[specialCaseName].bounds[1]);
+
+  let queryString = "INSERT INTO tables_slots(slot_number, table_id, table_ref) VALUES(?, ?, ?)";
+  let stmt = db.prepare(queryString);
+  let res = stmt.run(newSlotNumber, table_id, table_ref_id);
+
+  return {changes: res.changes, tableId: table_id, slotNumber: newSlotNumber};
+}
+
+/**
+ * Delete a slot in <i>tables_slots</i> table given a table id and a slot number
+ * @param tableId
+ * @param slotNumber
+ * @returns {*} result of the query
+ */
+function deleteSlotBySlotNumber(tableId, slotNumber) {
+  let queryString = "DELETE FROM tables_slots WHERE table_id=? AND slot_number=?";
+  let stmt = db.prepare(queryString);
+  return stmt.run(tableId, slotNumber);
+}
+
+/**
+ * Delete the slot in <i>tables_slots</i> that is connected to a table (identified by tableId) with a given tableRef
+ * @param tableId
+ * @param tableRef row's id of the table identified by tableId, for which this slot is connected
+ * @returns {*} result of the query
+ */
+function deleteSlotByTableRef(tableId, tableRef) {
+  let queryString = "DELETE FROM tables_slots WHERE table_id=? AND table_ref=?";
+  let stmt = db.prepare(queryString);
+  return stmt.run(tableId, tableRef);
+}
+/**
  * Insert a row into the specified table, and insert the new created row into the first empty slot (referred to passed tableId)
  * of the tables_slots table
  * @param tableId identifier (from tablesId table) of the table into insert new row.
@@ -438,6 +541,12 @@ function insertIntoTable({tableId, values, slot_number}) {
   let newId = res.lastInsertRowid;
 
   //Select slot number
+  if(specialCase(slotNumber, tableId) !== false) {
+    // if table slot is one of the special cases we dynamically add (and remove) a new slot s between its lower and upper bounds
+    res = createSpecialSlot(tableId, slotNumber, newId);
+    return {changes: res.changes, newId: newId, tableId: res.tableId, slotNumber: res.slotNumber};
+  }
+
   let availableSlots = getAvailableSlots(tableId);
   if(!slotNumber || slotNumber === '') {
     if (availableSlots.length === 0) {
@@ -489,10 +598,13 @@ function deleteFromTable({tableId, slotNumber}) {
   stmt = db.prepare(queryString);
   let deletedValues = stmt.get(refId);
 
-  queryString = "UPDATE tables_slots SET table_ref=null WHERE table_id=? AND slot_number=?";
-  stmt = db.prepare(queryString);
-  result = stmt.run(tableId, slotNumber);
-
+  if (specialCase(slotNumber, tableId) !== false) { // for CEREC slot numbers we remove the entire slot number
+    result = deleteSlotBySlotNumber(tableId, slotNumber);
+  } else {
+    queryString = "UPDATE tables_slots SET table_ref=null WHERE table_id=? AND slot_number=?";
+    stmt = db.prepare(queryString);
+    result = stmt.run(tableId, slotNumber);
+  }
 
   if (result.changes === 0) {
     throw Error('Slot ' + slotNumber + ' not found for tableId ' + tableId);
@@ -505,6 +617,13 @@ function deleteFromTable({tableId, slotNumber}) {
   return deletedValues;
 }
 
+/**
+ *
+ * @param tableId identifier of the table to update
+ * @param rowId identifier of the row in table identified by tableId
+ * @param values values to change in form of an object like {column: new-value, ...}
+ * @returns {{changes: *}}
+ */
 function updateRow({tableId, rowId, values}) {
   checkRequiredParameters(tableId, rowId, values);
   let tableName = getTableDefinition(tableId).name;
@@ -514,31 +633,59 @@ function updateRow({tableId, rowId, values}) {
 
   let changes = 0;
 
-  if(values['slot_number']) {
-    //check if values['slot_number'] is empty
-    queryString = "SELECT table_ref FROM tables_slots WHERE table_id=? AND slot_number=?";
-    stmt = db.prepare(queryString);
-    result = stmt.get(tableId, values['slot_number']);
-    if(result.table_ref !== null) {
-      throw Error('Selected slot already contains a row');
+  if(_.has(values, 'slot_number')) {
+    if (specialCase(values['slot_number'], tableId) === false && !_.isNil(values['slot_number'])) {
+      //check if values['slot_number'] is empty
+      queryString = "SELECT table_ref FROM tables_slots WHERE table_id=? AND slot_number=?";
+      stmt = db.prepare(queryString);
+      result = stmt.get(tableId, values['slot_number']);
+      if (result.table_ref !== null) {
+        throw Error('Selected slot already contains a row');
+      }
     }
-    console.log('1', result);
 
-    //frees current table slot
-    queryString = "UPDATE tables_slots SET table_ref=null WHERE table_id=? AND table_ref=?";
+    // get current table slot number
+    queryString = "SELECT slot_number FROM tables_slots WHERE table_id=? AND table_ref=?";
     stmt = db.prepare(queryString);
-    result = stmt.run(tableId, rowId);
+    let currentSlotNumber = stmt.get(tableId, rowId).slot_number;
+
+    if (specialCase(currentSlotNumber, tableId) === false) {
+      //frees current table slot
+      queryString = "UPDATE tables_slots SET table_ref=null WHERE table_id=? AND slot_number=?";
+      stmt = db.prepare(queryString);
+      result = stmt.run(tableId, currentSlotNumber);
+    } else {
+      // delete slot number
+      result = deleteSlotBySlotNumber(tableId, currentSlotNumber);
+    }
+
     if(result.changes === 0) {
       throw Error('No slot found in table ' + tableId + ' that contains row with id ' + rowId);
     }
-    console.log('2', result);
 
-    //setting new table_slot
-    queryString = "UPDATE tables_slots SET table_ref=? WHERE table_id=? AND slot_number=?";
-    stmt = db.prepare(queryString);
-    result = stmt.run(rowId, tableId, values['slot_number']);
+    if (specialCase(values['slot_number'], tableId) === false) {
+      // set new table_slot
+      let availableSlots = _.without(getAvailableSlots(tableId), currentSlotNumber);
+      if(_.isNil(values['slot_number']) || values['slot_number'] === '') {
+        if (availableSlots.length === 0) {
+          throw Error('All slots are full for table id ' + tableId);
+        }
+        values['slot_number'] = availableSlots[0]; //first empty slot number
+      } else {
+        if(!availableSlots.includes(values['slot_number'])) {
+          throw Error(`${values['slot_number']} is not available`);
+        }
+      }
+
+      queryString = "UPDATE tables_slots SET table_ref=? WHERE table_id=? AND slot_number=?";
+      stmt = db.prepare(queryString);
+      result = stmt.run(rowId, tableId, values['slot_number']);
+    } else {
+      // create new table slot and set row reference
+      result = createSpecialSlot(tableId, values['slot_number'], rowId);
+    }
+
     changes = result.changes;
-    console.log('3', result);
 
     if(result.changes === 0) {
       throw Error(`Row insertion in slot ${values['slot_number']} failed`);
@@ -559,11 +706,9 @@ function updateRow({tableId, rowId, values}) {
   }
 
   queryString = queryString.substr(0, queryString.length - 1) + ' WHERE id=?';
-  console.log('4', queryString);
 
   stmt = db.prepare(queryString);
   result = stmt.run(values, rowId);
-  console.log('5', result);
   return {changes: result.changes + changes};
 }
 
@@ -680,7 +825,7 @@ remote.getCurrentWindow().on('close', (event) => {
 ipc.on('shutdown', (event) => {
   logger.info('Requested database shutdown');
   db.close();
-    ipc.send('database-shutdown', true);
+  ipc.send('database-shutdown', true);
 });
 
 logger.info('Database initialization completed');

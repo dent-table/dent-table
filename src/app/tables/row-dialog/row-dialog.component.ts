@@ -5,7 +5,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import * as moment from 'moment';
 import {Utils} from '../../commons/Utils';
-import {Logger} from 'winston';
+import * as _ from 'lodash';
 import {LoggerService} from '../../providers/logger.service';
 
 export interface DialogData {
@@ -32,6 +32,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
   error;
 
   dialogType: string;
+  specialCases;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
@@ -62,12 +63,15 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     } else {
       this.createFormGroup();
     }
+
+    this.specialCases = _.keys(Utils.getSpecialCases(this.data.tableId));
+
   }
 
   ngAfterViewInit(): void {
     this.availableSlots = this.data.availableSlots ? this.data.availableSlots : [];
 
-    if (this.dialogType === 'update' && this.data.element['slot_number']) {
+    if (this.dialogType === 'update' && this.data.element['slot_number'] && !Utils.specialCase(this.data.element['slot_number'], this.data.tableId)) {
       this.availableSlots.push(this.data.element['slot_number']);
     }
 
@@ -80,7 +84,12 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
 
   createFormGroup() {
     const group = {};
-    const elementSlotNumber = this.data.element ? this.data.element['slot_number'] : '';
+    let elementSlotNumber = this.data.element ? this.data.element['slot_number'] : '';
+    // check if slot number is one of special cases
+    elementSlotNumber = Utils.specialCase(elementSlotNumber, this.data.tableId) === false
+      ? elementSlotNumber
+      : Utils.specialCase(elementSlotNumber, this.data.tableId);
+
     group['slot_number'] = new FormControl(elementSlotNumber);
 
     for (const column of this.tableDefinition.columnsDefinition) {
