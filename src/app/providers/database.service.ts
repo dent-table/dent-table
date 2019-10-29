@@ -119,10 +119,13 @@ export class DatabaseService {
     });
   }
 
-  getAll<R>(tableId: number, limit?: number, mapFun?: OperatorFunction<Array<any>, Array<R>>): Observable<Array<R>> {
+  getAll<R>(tableId: number, limit?: number, orderColumn?: string, mapFun?: OperatorFunction<Array<any>, Array<R>>): Observable<Array<R>> {
     const params = {tableId: tableId};
     if (limit) {
       params['limit'] = limit;
+    }
+    if (orderColumn) {
+      params['orderColumn'] = orderColumn;
     }
 
     let obs: Observable<R[]> = new Observable((subscriber) => {

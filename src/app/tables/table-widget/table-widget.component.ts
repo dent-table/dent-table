@@ -41,6 +41,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   @Input() rowSize = 24;
   @Input() buttonsSize = 16;
   @Input() showButtons = true;
+  @Input() orderColumn: string;
 
   @ViewChild(MatPaginator) matPaginator: MatPaginator;
   @ViewChild(MatSort) matSort: MatSort;
@@ -176,7 +177,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   reload() {
-    this.databaseService.getAll(this.tableId, this.limit).subscribe((data) => {
+    this.databaseService.getAll(this.tableId, this.limit, this.orderColumn).subscribe((data) => {
         // this.data = new MatTableDataSource(data);
       this.data.data = [...data];
         this.dataLength = data.length;

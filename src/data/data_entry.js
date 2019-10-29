@@ -457,15 +457,17 @@ function getAvailableSlots(tableId) {
  * Get all (or #limit) rows from the table specified by tableId ordered by date.<br>Each rows have the form defined by {@link getRowFromTable}.
  * @param tableId REQUIRED table's id
  * @param limit number of rows to return
+ * @param name of the column to order rows
  * @returns an array of rows
  */
-function getAllFromTable({tableId, limit}) {
+function getAllFromTable({tableId, limit, orderColumn}) {
   checkRequiredParameters(tableId);
   logger.info('Getting rows from table with id ' + tableId + ' (limit ' + limit + ')');
   let tableName = getTableDefinition(tableId).name;
+  let orderColumnName = _.isNil(orderColumn) ? "date" : orderColumn;
 
   let queryString = "SELECT * FROM tables_slots ts LEFT JOIN " + tableName + " t ON ts.table_ref = t.id WHERE ts.table_id = ?";
-  queryString = queryString + " ORDER BY t.date IS NULL, t.date ASC";
+  queryString = queryString + ` ORDER BY t.${orderColumnName} IS NULL, t.${orderColumnName} ASC` ;
   if(limit) {
     queryString = queryString + " LIMIT " + limit;
   }

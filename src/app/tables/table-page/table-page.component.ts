@@ -8,6 +8,7 @@ import {ConfirmDialogComponent} from '../../components/confirm-dialog/confirm-di
 import {LoggerService} from '../../providers/logger.service';
 import {Utils} from '../../commons/Utils';
 import {TranslateService} from '@ngx-translate/core';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-table-page',
@@ -18,6 +19,8 @@ export class TablePageComponent implements OnInit {
   logTag = TablePageComponent.name;
 
   tableId: number;
+  orderColumn: string;
+
   @ViewChild(TableWidgetComponent) tableWidget: TableWidgetComponent;
 
   constructor(
@@ -31,7 +34,8 @@ export class TablePageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.tableId = this.activatedRoute.snapshot.params['id'];
+    this.tableId = _.toNumber(this.activatedRoute.snapshot.params['id']);
+    this.orderColumn = this.tableId === 3 ? 'date_out' : 'date';
   }
 
   cellClicked(event: CellClickEvent) {
