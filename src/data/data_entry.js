@@ -38,6 +38,21 @@ let logger = winston.createLogger({
   format: logFormat
 });
 
+const material_colors = [
+  {name: 'red', value: '#e53935'},
+  {name: 'pink', value: '#d81b60'},
+  {name: 'purple', value: '#8e24aa'},
+  {name: 'deep_purple', value: '#5e35b1'},
+  {name: 'indigo', value: '#3949ab'},
+  {name: 'blue', value: '#1e88e5'},
+  {name: 'cyan', value: '#00acc1'},
+  {name: 'teal', value: '#00897b'},
+  {name: 'green', value: '#43a047'},
+  {name: 'yellow', value: '#fdd835'},
+  {name: 'orange', value: '#fb8c00'},
+  {name: 'deep_orange', value: '#f4511e'}
+];
+
 logger.info('Database initialization...');
 
 const algorithm = 'aes-192-cbc';
@@ -130,21 +145,6 @@ function createDatabase() {
   );
   createTransaction();
 
-  const material_colors = [
-    {name: 'red', value: '#e53935'},
-    {name: 'pink', value: '#d81b60'},
-    {name: 'purple', value: '#8e24aa'},
-    {name: 'deep_purple', value: '#5e35b1'},
-    {name: 'indigo', value: '#3949ab'},
-    {name: 'blue', value: '#1e88e5'},
-    {name: 'cyan', value: '#00acc1'},
-    {name: 'teal', value: '#00897b'},
-    {name: 'green', value: '#43a047'},
-    {name: 'yellow', value: '#fdd835'},
-    {name: 'orange', value: '#fb8c00'},
-    {name: 'deep_orange', value: '#f4511e'}
-  ];
-
   let tables_definition = [
     {}, //table index starts form 1
 
@@ -230,6 +230,83 @@ function createDatabase() {
   populateTransaction();
 }
 
+function updateDatabase() {
+  let v2 = db.transaction(() => {
+    logger.info("Adding new column 'verified' to table to_do...");
+
+    let queryString = "ALTER TABLE to_do ADD COLUMN verified INTEGER(1) DEFAULT 0";
+    let stmt = db.prepare(queryString);
+    let result = stmt.run();
+    // if (result.changes !== 1) { // CREATE and ALTER TABLE returns result.changes = 0
+    //   throw Error("Error on alter table");
+    // }
+    logger.info("Success");
+
+    logger.info("Updating table to_do definition...");
+    let definition = [ //to_do
+      {name: 'name', type: 'string', required: true, displayed: true},
+      {name: 'type', type: 'string', required: false, displayed: true},
+      {name: 'note', type: 'text', required: false, displayed: true},
+      {name: 'date', type: 'date', required: true, displayed: true},
+      {name: 'verified', type: 'boolean', required: false, displayed: true},
+      {name: 'text_color', type: {type: 'select', options: material_colors}, required: false, displayed: false}
+    ];
+    queryString = "UPDATE tables_definition SET columns_def=? WHERE id=1"; // to_do table id = 1
+    stmt = db.prepare(queryString);
+    result = stmt.run(JSON.stringify(definition));
+    if (result.changes !== 1) {
+      throw Error("Error on update table");
+    }
+    logger.info("Success");
+
+    logger.info("Creating dbversion...");
+    queryString = "CREATE TABLE dbversion (version INTEGER PRIMARY KEY)";
+    stmt = db.prepare(queryString);
+    result = stmt.run();
+    // if (result.changes !== 1) {
+    //   throw Error("Error on create table table");
+    // }
+    queryString = "INSERT INTO dbversion(version) VALUES(2)";
+    stmt = db.prepare(queryString);
+    result = stmt.run();
+    if (result.changes !== 1) {
+      throw Error("Error on insert into table");
+    }
+    logger.info("Success");
+  });
+
+  let queryString = "SELECT name FROM sqlite_master WHERE type='table'";
+  let statement = db.prepare(queryString);
+  let tables = statement.all();
+  let containsDbversion = _.find(tables, ['name', 'dbversion']);
+  if(_.isNil(containsDbversion)) {
+    logger.info("Database version 1. Needed update to v2...");
+    v2();
+  }
+
+  queryString = "SELECT version FROM dbversion";
+  let version = db.prepare(queryString)
+    .get()
+    .version;
+
+  while (version !== 2) {
+    if (version === 2) {
+      // logger.info("Update completed!");
+      // TODO: change this if when version will be greater than 2 (call v3 update transaction)
+    } else {
+      logger.warn(`Database version ${version} not recognized`);
+      break;
+    }
+
+    queryString = "SELECT version FROM dbversion";
+    version = db.prepare(queryString)
+      .get()
+      .version;
+  }
+
+  logger.info("Update completed!");
+}
+
 /**
  * Check if slotNumber is a special case for the table identified by tableId
  * @param slotNumber the slot number to check
@@ -250,7 +327,7 @@ function specialCase(slotNumber, tableId) {
   if (_.isString(slotNumber) && specialCasesKeys.includes(slotNumber)) {
     const applicableTables = specialCases[slotNumber].tables; // in this if we are sure that slotNumber is one of the keys of specialCases object
     if (applicableTables.includes(tableId))
-    return slotNumber;
+      return slotNumber;
   }
 
   return false;
@@ -744,6 +821,9 @@ if (!dbExists) {
   logger.info('Creating tables');
   createDatabase();
 }
+
+logger.info("Checking database updates");
+updateDatabase();
 
 let getAllFromTableTransaction = db.transaction((params) => {
   return getAllFromTable(params);
