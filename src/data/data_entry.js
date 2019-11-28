@@ -804,6 +804,12 @@ function moveRow({fromTableId, slotNumber, toTableId}) {
   checkRequiredParameters(fromTableId, slotNumber, toTableId);
 
   let deletedValues = deleteFromTable({tableId: fromTableId, slotNumber: slotNumber});
+  console.log(deletedValues);
+
+  if (fromTableId === 3) { // in table outgoing we the date to move is date_out field
+    deletedValues['date'] = deletedValues['date_out'];
+  }
+
   return insertIntoTable({tableId: toTableId, values: deletedValues})
 }
 

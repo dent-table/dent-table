@@ -42,6 +42,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   @Input() buttonsSize = 16;
   @Input() showButtons = true;
   @Input() orderColumn: string;
+  @Input() warnDateColumnName = 'date';
 
   @ViewChild(MatPaginator) matPaginator: MatPaginator;
   @ViewChild(MatSort) matSort: MatSort;
@@ -283,7 +284,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
 
   // Return true if row date is under 7 day until today
   checkDateRow(row: any) {
-    const rowDate = moment(row['date'], 'x');
+    const rowDate = moment(row[this.warnDateColumnName], 'x');
     const currentDate = moment();
 
     return currentDate.add(7, 'd').isAfter(rowDate);

@@ -20,6 +20,7 @@ export class TablePageComponent implements OnInit {
 
   tableId: number;
   orderColumn: string;
+  warnDateColumnName: string;
 
   @ViewChild(TableWidgetComponent) tableWidget: TableWidgetComponent;
 
@@ -36,6 +37,7 @@ export class TablePageComponent implements OnInit {
   ngOnInit() {
     this.tableId = _.toNumber(this.activatedRoute.snapshot.params['id']);
     this.orderColumn = this.tableId === 3 ? 'date_out' : 'date';
+    this.warnDateColumnName = this.orderColumn;
   }
 
   cellClicked(event: CellClickEvent) {

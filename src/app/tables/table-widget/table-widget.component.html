@@ -33,7 +33,8 @@
               <mat-checkbox *ngIf="row.table_ref" (change)="fireTableCellClicked(column.name, row)"  [checked]="row[column.name] === 1"></mat-checkbox>
             </ng-container>
             <span *ngSwitchCase="'date'" class="cell-text">
-              <span *ngIf="row.table_ref && column.name === 'date'; else defaultDate" [ngClass]="{'date-warn': checkDateRow(row)}">
+              <span *ngIf="row.table_ref && column.name === warnDateColumnName; else defaultDate"
+                    [ngClass]="{'date-warn': checkDateRow(row)}">
                 {{row[column.name] | date: 'dd/MM'}}
               </span>
               <ng-template #defaultDate ><span>{{row[column.name] | date: 'dd/MM' }}</span></ng-template>

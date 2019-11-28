@@ -1,7 +1,7 @@
 <mat-card>
   <mat-card-content>
     <app-table-widget (cellClick)="cellClicked($event)" [tableId]="tableId"
-                      [orderColumn]="orderColumn" rowSize="36" buttonsSize="24" showButtons="true"></app-table-widget>
+                      [orderColumn]="orderColumn" [warnDateColumnName]="warnDateColumnName" rowSize="36" buttonsSize="24" showButtons="true"></app-table-widget>
 <!--    <app-row-dialog></app-row-dialog>-->
   </mat-card-content>
   <button mat-fab>
