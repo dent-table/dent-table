@@ -10,7 +10,7 @@ import {TablesService} from '../../providers/tables.service';
 })
 export class ToolbarComponent implements OnInit {
 
-  @ViewChild('searchBar') searchBar;
+  @ViewChild('searchBar', { static: true }) searchBar;
 
   loadedPageUrl;
   searchQueryString = '';

@@ -12,8 +12,8 @@ import {PreferencesService} from '../../providers/preferences.service';
 })
 export class LoginComponent implements OnInit {
 
-  @ViewChild('username') usernameField: ElementRef;
-  @ViewChild('password') passwordField: ElementRef;
+  @ViewChild('username', { static: true }) usernameField: ElementRef;
+  @ViewChild('password', { static: true }) passwordField: ElementRef;
 
   formGroup: FormGroup;
   loginCatKey = PreferencesService.CATEGORIES.login;

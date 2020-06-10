@@ -22,7 +22,7 @@ export class TablePageComponent implements OnInit {
   orderColumn: string;
   warnDateColumnName: string;
 
-  @ViewChild(TableWidgetComponent) tableWidget: TableWidgetComponent;
+  @ViewChild(TableWidgetComponent, { static: true }) tableWidget: TableWidgetComponent;
 
   constructor(
     private activatedRoute: ActivatedRoute,
