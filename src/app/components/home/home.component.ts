@@ -16,11 +16,11 @@ import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component
 export class HomeComponent implements OnInit {
   logTag = HomeComponent.name;
 
-  @ViewChild('table1') table1;
-  @ViewChild('table2') table2;
-  @ViewChild('table3') table3;
-  @ViewChild('table4') table4;
-  @ViewChild('table5') table5;
+  @ViewChild('table1', { static: true }) table1;
+  @ViewChild('table2', { static: true }) table2;
+  @ViewChild('table3', { static: true }) table3;
+  @ViewChild('table4', { static: true }) table4;
+  @ViewChild('table5', { static: true }) table5;
 
   constructor(
     private databaseService: DatabaseService,
