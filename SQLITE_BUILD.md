@@ -1,6 +1,6 @@
 # Instructions to build sqlite3 with Electron
 
-##Windows
+## Windows
 - `npm install -g node-gyp`
 - `node-gyp --version` <br /> If it fails with 'node-gyp.js not found' go to `%ProgramFiles%\nodejs\node_modules\npm\node_modules\npm-lifecycle\node-gyp-bin\node-gyp.cmd` and remove ..\node_modules\ .. on line 2. 
 
