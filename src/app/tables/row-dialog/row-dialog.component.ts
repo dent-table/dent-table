@@ -2,7 +2,7 @@ import {AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit} from '@angu
 import {DatabaseService} from '../../providers/database.service';
 import { TableDefinition} from '../../model/model';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as moment from 'moment';
 import {Utils} from '../../commons/Utils';
 import * as _ from 'lodash';
