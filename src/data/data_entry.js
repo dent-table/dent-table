@@ -535,6 +535,60 @@ function createSpecialSlot(table_id, slot_number, table_ref_id = null) {
 }
 
 /**
+ * Add more slots to tables.
+ * <br> <b>Note: </b> you should use <i>moreSlotsTransaction</i> function that permits a more fine configuration on how
+ * many slots should be added in each table
+ * @param many How many slots should be added to the table(s) specified in <i>tableId_s</i>
+ * @param tableId_s One or more table id(s) where exactly <i>many</i> slots will be added. Must be a number (for a
+ * single table) or a list of table ids (for more tables). In the latter case in each tables will be added <i>many</i> slots
+ * @returns {*} Number of slots added, summarized on all tables
+ */
+function moreSlots(many, tableId_s) {
+  checkRequiredParameters(many, tableId_s);
+
+  logger.info(`Inserting ${many} slot(s) in table(s) ` + _.toString(tableId_s));
+
+  let tableIdsArray; // List of tables to which add
+  if (_.isNumber(tableId_s)) {
+    tableIdsArray = [tableId_s]; // if table_id_s is a number then transform in in an single-value array
+  } else if (_.isArray(tableId_s)) {
+    tableIdsArray = tableId_s; // else if table_id_s is yet an array reassign it to tableIdsArray
+  } else {
+    throw Error('table_id_s must be a number or an array');
+  }
+
+  let insertQueryString = "INSERT INTO tables_slots(slot_number, table_id) values ";
+  let insertQueryParameters = Array();
+
+  tableIdsArray.forEach((tableId) => {
+    // get last slot_number in table_slots
+    let getLastSlotNumberStatement = db.prepare("SELECT * FROM tables_slots WHERE table_id=? ORDER BY slot_number DESC LIMIT 1");
+    let lastSlotNumber = getLastSlotNumberStatement.get(tableId).slot_number;
+
+    for (let i = 0; i < many; i++) {
+      // Example: if table has 50 (lastSlotNumber) slots and we want add 10 slots then new_slot_number will be:
+      // (50 + 1 + 0) = 51, (50 + 1 + 1) = 52, ..., (50 + 1 + 9) = 60,
+      let new_slot_number = lastSlotNumber + 1 + i;
+
+      insertQueryString = insertQueryString + "(?,?), ";
+      insertQueryParameters.push(new_slot_number, tableId);
+    }
+  });
+
+  // Remove last ", " from string
+  insertQueryString = insertQueryString.substring(0, insertQueryString.length - 2);
+
+  logger.debug(`Insert query string: ${insertQueryString}`);
+  logger.debug(`Insert query parameters: ${_.toString(insertQueryParameters)}`);
+
+  // Inserting into database
+  let tablesSlotsInsertStatement = db.prepare(insertQueryString);
+  let result = tablesSlotsInsertStatement.run(insertQueryParameters);
+
+  return result.changes
+}
+
+/**
  * Delete a slot in <i>tables_slots</i> table given a table id and a slot number
  * @param tableId
  * @param slotNumber
@@ -853,6 +907,18 @@ let updateRowTransaction = db.transaction((params) => {
   return updateRow(params);
 });
 
+// slotConfigs is json array of objects {many: number, tableIds: array}
+// for each object will be added the same number (many) of slots in each tableIds tables
+let moreSlotsTransaction = db.transaction((slotConfigs) => {
+  let totalSlotsAdded = 0;
+
+  slotConfigs.forEach((slotConfig) => {
+    totalSlotsAdded += moreSlots(slotConfig.many, slotConfig.tableIds);
+  });
+
+  return totalSlotsAdded;
+});
+
 logger.info('Setting ipc events callback');
 
 /** see README.md **/
@@ -918,5 +984,42 @@ ipc.on('shutdown', (event) => {
 
 logger.info('Database initialization completed');
 
-// db.close();
-// console.log(crypto.getCiphers());
+
+// *** After inizialization operations ***
+
+function addSlotsFromFile() {
+  logger.info("Check for a 'add_slots.json' file");
+  let addSlotsFilePath = path.join(appPath, 'data', 'add_slots.json');
+  //let addSlotsFile = fs.openSync(addSlotsFilePath, "rw");
+  //let conf = [{many: 10, tableIds: [1, 2, 3, 4, 5]}, {many: 12, tableIds: 5}];
+  //fs.writeFileSync(addSlotsFilePath, JSON.stringify(conf));
+
+  if (fs.existsSync(addSlotsFilePath)) {
+    logger.info("add_slots file found");
+    let confString = fs.readFileSync(addSlotsFilePath).toString();
+    let slotConfigs = JSON.parse(confString);
+
+    try {
+      let result = moreSlotsTransaction(slotConfigs);
+      logger.info(`Successfully added ${result} slots`);
+
+      fs.unlink(addSlotsFilePath, (err => {
+        if (err) {
+          logger.warn(`An error occurred during deletion of 'add_slots.json' file (${addSlotsFilePath}). File will be renamed in 'delete_me.old`);
+          fs.rename(addSlotsFilePath, path.join(appPath, 'data', 'delete_me.old'), (err1 => {
+            logger.warn(`An error occurred during rename of 'add_slots.json' file (${addSlotsFilePath}).
+            YOU SHOULD MANUALLY REMOVE THE FILE IMMEDIATELY!`);
+          }));
+        }
+
+        logger.info("add_slots.json file removed");
+      }));
+    } catch (e) {
+      logger.error("Add_slots file will be renamed in 'add_slots_err.json'");
+      fs.renameSync(addSlotsFilePath, path.join(appPath, 'data', 'add_slots_err.json'));
+      throw (e);
+    }
+  }
+}
+
+addSlotsFromFile();
