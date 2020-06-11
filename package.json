@@ -1,6 +1,6 @@
 {
   "name": "dent-table",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "vincios.dev",
   "description": "MyOdPlan",
   "homepage": "https://github.com/vincios/dent-table",
@@ -83,6 +83,7 @@
     "better-sqlite3": "^7.1.0",
     "hammerjs": "^2.0.8",
     "lodash": "^4.17.11",
+    "material-icons": "^0.3.1",
     "mobile-drag-drop": "^2.3.0-rc.1",
     "moment": "^2.24.0",
     "ng-mat-search-bar": "^4.0.0",
