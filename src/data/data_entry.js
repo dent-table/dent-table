@@ -12,6 +12,7 @@ const logPath = appPath + path.sep + 'logs';
 const dbPath = appPath + path.sep + 'data' + path.sep + 'database.db';
 const dbExists = fs.existsSync(dbPath);
 
+// Note: all special cases should always start from 9000
 const specialCases = {
   'CEREC': {
     tables: [1],
@@ -562,7 +563,8 @@ function moreSlots(many, tableId_s) {
 
   tableIdsArray.forEach((tableId) => {
     // get last slot_number in table_slots
-    let getLastSlotNumberStatement = db.prepare("SELECT * FROM tables_slots WHERE table_id=? ORDER BY slot_number DESC LIMIT 1");
+    let getLastSlotNumberStatement = db.prepare("SELECT * FROM tables_slots WHERE table_id=? " +
+      "AND slot_number < 9000 ORDER BY slot_number DESC LIMIT 1"); // special slots starts form 9000
     let lastSlotNumber = getLastSlotNumberStatement.get(tableId).slot_number;
 
     for (let i = 0; i < many; i++) {
