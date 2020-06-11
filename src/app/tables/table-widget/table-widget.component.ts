@@ -7,15 +7,18 @@ import {
   ElementRef, EventEmitter, Inject,
   Input, LOCALE_ID, OnDestroy,
   OnInit, Output,
-  ViewChild
+  ViewChild, ViewRef
 } from '@angular/core';
 import {DatabaseService} from '../../providers/database.service';
 import {LoggerService} from '../../providers/logger.service';
-import {MatPaginator, MatSort, MatTableDataSource, MatTooltip} from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatTooltip } from '@angular/material/tooltip';
 import {DragDropData} from 'ng2-dnd';
 import {TablesService} from '../../providers/tables.service';
 import {Router} from '@angular/router';
-import {ViewRef_} from '@angular/core/src/view';
+
 import {ColumnDefinition, TableDefinition} from '../../model/model';
 import * as moment from 'moment';
 import {polyfill} from 'mobile-drag-drop';
@@ -273,7 +276,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     setTimeout(() => {
       if ( this.cdr !== null &&
         this.cdr !== undefined &&
-        ! (this.cdr as ViewRef_).destroyed ) {
+        ! (this.cdr as ViewRef).destroyed ) {
         this.cdr.detectChanges();
       }
 

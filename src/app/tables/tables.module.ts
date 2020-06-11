@@ -7,7 +7,10 @@ import {DndModule} from 'ng2-dnd';
 import { TablePageComponent } from './table-page/table-page.component';
 import { RowDialogComponent } from './row-dialog/row-dialog.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatBadgeModule, MatDialogModule, MatFormFieldModule, MatSelectModule} from '@angular/material';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import {ConfirmDialogComponent} from '../components/confirm-dialog/confirm-dialog.component';
 import {SharedModule} from '../shared/shared.module';
 

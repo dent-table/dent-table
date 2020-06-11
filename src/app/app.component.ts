@@ -3,7 +3,7 @@ import { ElectronService } from './providers/electron.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AppConfig } from '../environments/environment';
 import {PreferencesService} from './providers/preferences.service';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {ConfirmDialogComponent} from './components/confirm-dialog/confirm-dialog.component';
 import {LoggerService} from './providers/logger.service';
 

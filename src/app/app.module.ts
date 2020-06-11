@@ -25,7 +25,9 @@ import { LoginComponent } from './components/login/login.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import {NgMatSearchBarModule} from 'ng-mat-search-bar';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
-import {MatDialogModule, MatSelectModule, MatTabsModule} from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
 import { TitleBarComponent } from './components/title-bar/title-bar.component';
 import { PreferencesDialogComponent } from './components/preferences-dialog/preferences-dialog.component';
 
