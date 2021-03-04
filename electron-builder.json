@@ -25,11 +25,14 @@
   "win": {
     "icon": "dist",
     "target": [
-      "portable",
+      {
+        "target": "portable",
+        "arch": ["x64", "ia32"]
+      },
       {
         "target": "nsis",
         "arch": [
-          "x64"
+          "x64", "ia32"
         ]
       }
     ]
