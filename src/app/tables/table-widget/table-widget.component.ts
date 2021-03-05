@@ -139,6 +139,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
         try {
           this.cdr.detectChanges();
         } catch (e) {
+          alert(e);
           this.delayDetectChanges();
         }
       }
@@ -285,6 +286,11 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     this.cdr.detectChanges();
   }
 
+  drop(event: any) {
+    console.log(event);
+    alert(event);
+  }
+
   // Return true if row date is under 7 day until today
   checkDateRow(row: any) {
     const rowDate = moment(row[this.warnDateColumnName], 'x');
@@ -292,4 +298,12 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
 
     return currentDate.add(7, 'd').isAfter(rowDate);
   }
+
+  getOverlayClass(): string {
+    if (this.showDndOverlay) {
+      return '';
+    }
+    return 'showOverlay';
+  }
 }
+

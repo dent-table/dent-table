@@ -9,13 +9,17 @@
   height: 100%;
 }
 
+.dragged-el {
+  z-index: 100;
+}
+
 .overlay {
   width: 99.5%;
   height: 99.5%;
   position: absolute;
   left: 1px;
   top: 1px;
-  z-index: 10;
+  //z-index: -1;
   display: none;
   background: rgba(0, 0, 0, 0.07);
   flex-direction: row;
@@ -24,7 +28,7 @@
 }
 
 div .dnd-drag-over {
-  //border-color: $warn;
+  border-color: red;
 }
 
 .overlay.showOverlay {

@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import {ConfirmDialogComponent} from '../components/confirm-dialog/confirm-dialog.component';
 import {SharedModule} from '../shared/shared.module';
+import {DragAndDropModule} from 'angular-draggable-droppable';
 
 @NgModule({
   declarations: [TableWidgetComponent, TablePageComponent, RowDialogComponent],
@@ -21,7 +22,7 @@ import {SharedModule} from '../shared/shared.module';
   ],
   imports: [
     CommonModule, MaterialModule, TranslateModule, DndModule.forRoot(), ReactiveFormsModule,
-    FormsModule, MatFormFieldModule, MatDialogModule, MatSelectModule, MatBadgeModule, SharedModule
+    FormsModule, MatFormFieldModule, MatDialogModule, MatSelectModule, MatBadgeModule, SharedModule, DragAndDropModule
   ],
   entryComponents: [ RowDialogComponent, ConfirmDialogComponent ]
 })
