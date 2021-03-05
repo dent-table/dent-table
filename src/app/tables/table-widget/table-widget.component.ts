@@ -48,8 +48,8 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   @Input() warnDateColumnName = 'date';
 
   @ViewChild(MatPaginator, { static: true }) matPaginator: MatPaginator;
-  @ViewChild(MatSort, { static: false }) matSort: MatSort;
-  @ViewChild('tooltip', { static: false }) tooltip: MatTooltip;
+  @ViewChild(MatSort) matSort: MatSort;
+  @ViewChild('tooltip') tooltip: MatTooltip;
 
   @Output() cellClick: EventEmitter<CellClickEvent> = new EventEmitter();
 
