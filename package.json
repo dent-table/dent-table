@@ -87,7 +87,7 @@
     "mobile-drag-drop": "^2.3.0-rc.1",
     "moment": "^2.24.0",
     "ng-mat-search-bar": "^4.0.0",
-    "ng2-dnd": "^5.0.2",
+    "ng2-dnd": "^9.0.0-beta2",
     "winston": "^3.2.1"
   }
 }
