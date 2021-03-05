@@ -30,8 +30,7 @@ export class HomeComponent implements OnInit {
     private snackBar: MatSnackBar,
     private logger: LoggerService,
     private translateService: TranslateService
-  ) {
-  }
+  ) { }
 
   ngOnInit() {}
 
@@ -67,7 +66,7 @@ export class HomeComponent implements OnInit {
     this.zone.run(() => {
       dialogRef = this.dialog.open(RowDialogComponent, {
         data: { tableId: tableId, element: element },
-        width: '40%', height: '90%'
+        width: '40%', height: '90%', disableClose: true
       });
 
       dialogRef.afterClosed().subscribe((result) => {

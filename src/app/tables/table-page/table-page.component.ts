@@ -82,7 +82,7 @@ export class TablePageComponent implements OnInit {
     this.zone.run(() => {
       dialogRef = this.dialog.open(RowDialogComponent, {
         data: { tableId: this.tableId, element: el },
-        width: '40%', height: '90%'
+        width: '40%', height: '90%', disableClose: true
       });
 
       dialogRef.afterClosed().subscribe((result) => {

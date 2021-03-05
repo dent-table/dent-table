@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, HostListener, Inject, OnInit} from '@angular/core';
 import {DatabaseService} from '../../providers/database.service';
 import { TableDefinition} from '../../model/model';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -34,6 +34,13 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
   dialogType: string;
   specialCases;
 
+  changed = false;
+  userNumber: number;
+
+  @HostListener('window:keyup.esc') onKeyUp() {
+    this.saveAndClose();
+  }
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private dialogRef: MatDialogRef<RowDialogComponent>,
@@ -50,6 +57,11 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     } else {
       this.dialogType = 'insert';
     }
+
+    this.dialogRef.disableClose = true;
+    dialogRef.backdropClick().subscribe(() => {
+      this.saveAndClose();
+    });
   }
 
   ngOnInit() {
@@ -110,6 +122,10 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
       group[column.name] = new FormControl(currentValue || '', validators);
     }
     this.formGroup = new FormGroup(group);
+    this.formGroup.valueChanges.subscribe(value => {
+      if (!this.changed) { this.changed = true; }
+    });
+
     this.cdr.detectChanges();
   }
 
@@ -154,6 +170,15 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
       case 'insert': this.onInsert(); break;
       case 'update': this.onUpdate(); break;
     }
+  }
+
+  saveAndClose() {
+    if (!this.changed) {
+      this.dialogRef.close();
+      return;
+    }
+
+    this.onSubmit();
   }
 
  /* printFormGroupStatus() {

@@ -1,3 +1,7 @@
+<button mat-icon-button class="close-button" [mat-dialog-close]="true">
+  <mat-icon class="close-icon" color="warn">close</mat-icon>
+</button>
+
 <form *ngIf="formGroup" (ngSubmit)="onSubmit()" [formGroup]="formGroup">
   <div class="dialog-content" mat-dialog-content>
     <div class="input-row">
