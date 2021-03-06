@@ -1,5 +1,6 @@
 {
   "productName": "MyOdPlan",
+  "buildDependenciesFromSource": true,
   "directories": {
     "output": "release/"
   },
@@ -23,16 +24,16 @@
     "src/assets/preferences.json"
   ],
   "win": {
-    "icon": "dist",
+    "icon": "dist/assets/icons",
     "target": [
       {
         "target": "portable",
-        "arch": ["x64", "ia32"]
+        "arch": ["x64"]
       },
       {
         "target": "nsis",
         "arch": [
-          "x64", "ia32"
+          "x64"
         ]
       }
     ]
@@ -41,13 +42,13 @@
     "oneClick": false
   },
   "mac": {
-    "icon": "dist",
+    "icon": "dist/assets/icons",
     "target": [
       "dmg"
     ]
   },
   "linux": {
-    "icon": "dist",
+    "icon": "dist/assets/icons",
     "target": [
       "AppImage"
     ]

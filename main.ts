@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, ipcMain } from 'electron';
+import {app, BrowserWindow, screen, ipcMain, nativeImage} from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import { createLogger, transports, format } from 'winston';
@@ -40,7 +40,7 @@ function createMainWindow() {
       y: 0,
       width: size.width,
       height: size.height,
-      icon: 'src/favicon.png',
+      icon: nativeImage.createFromPath('./src/assets/icons/favicon.png'),
       webPreferences: {
         nodeIntegration: true,
       },
@@ -52,10 +52,11 @@ function createMainWindow() {
       y: 0,
       width: size.width,
       height: size.height,
-      icon: 'src/favicon.png',
+      icon: nativeImage.createFromPath('./src/assets/icons/favicon.png'),
       webPreferences: {
         nodeIntegration: true,
       },
+
       frame: false,
       // alwaysOnTop: true,
       titleBarStyle: 'hidden',
@@ -221,7 +222,7 @@ try {
   }
 
   let preferencePath;
-  
+
   if (serve) {
     preferencePath = __dirname + path.sep + 'src' + path.sep + 'assets' + path.sep + 'preferences.json';
   } else {
