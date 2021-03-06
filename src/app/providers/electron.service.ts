@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 
 // If you import a module but never use any of the imported values other than as TypeScript types,
 // the resulting javascript file will look as if you never imported the module at all.
-import { ipcRenderer, webFrame, remote } from 'electron';
+import {ipcRenderer, webFrame, remote, IpcRendererEvent} from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -36,7 +36,7 @@ export class ElectronService {
 
   isElectron = () => {
     return window && window.process && window.process.type;
-  };
+  }
 
   getAppPath(append: string): string {
     if (append) {
@@ -60,19 +60,19 @@ export class ElectronService {
     this.ipcRenderer.send(channel, data);
   }
 
-  ipcOnce(channel: string, listener: Function) {
+  ipcOnce(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void) {
 
     this.ipcRenderer.once(channel, listener);
   }
 
-  ipcOn(channel: string, listener: Function) {
-    // if (channel.startsWith('table-get-all-')) {
+  ipcOn(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void) {
+    // if (channel.startsWitx h('table-get-all-')) {
     //   console.log('ipc on: Registering channel ', channel);
     // }
     this.ipcRenderer.on(channel, listener);
   }
 
-  ipcRemoveListener(channel: string, listener: Function) {
+  ipcRemoveListener(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void) {
     this.ipcRenderer.removeListener(channel, listener);
   }
 
