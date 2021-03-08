@@ -15,6 +15,7 @@ src/**/*.js
 # dependencies
 /node_modules
 /node_modules-old
+/node_modules-old-old
 
 # IDEs and editors
 /.idea
@@ -52,3 +53,4 @@ package-lock.json
 Thumbs.db
 /angular-old.json
 /package-old.json
+/package-lock.json-old

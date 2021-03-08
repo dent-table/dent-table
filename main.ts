@@ -1,7 +1,7 @@
-import {app, BrowserWindow, screen, ipcMain, nativeImage} from 'electron';
+import {app, BrowserWindow, ipcMain, nativeImage, screen} from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { createLogger, transports, format } from 'winston';
+import {createLogger, format, transports} from 'winston';
 import * as fs from 'fs';
 
 let mainWindow, databaseWin, serve = null, canQuit = false;
@@ -43,6 +43,10 @@ function createMainWindow() {
       icon: nativeImage.createFromPath('./src/assets/icons/favicon.png'),
       webPreferences: {
         nodeIntegration: true,
+        // TODO: remove this after upgrade to remote module
+        allowRunningInsecureContent: (serve) ? true : false,
+        contextIsolation: false,  // false if you want to run 2e2 test with Spectron
+        enableRemoteModule : true // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
       },
       frame: false
     };
@@ -55,6 +59,11 @@ function createMainWindow() {
       icon: nativeImage.createFromPath('./src/assets/icons/favicon.png'),
       webPreferences: {
         nodeIntegration: true,
+        // TODO: remove this after upgrade to remote module
+        allowRunningInsecureContent: (serve) ? true : false,
+        contextIsolation: false,  // false if you want to run 2e2 test with Spectron
+        enableRemoteModule : true // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
+
       },
 
       frame: false,
@@ -107,7 +116,7 @@ function createMainWindow() {
     if (databaseWin) {
       databaseWin.webContents.send('shutdown');
       ipcMain.once('database-shutdown', (result) => {
-          databaseWin.close();
+        databaseWin.close();
       });
     }
   });
@@ -125,8 +134,7 @@ function createMainWindow() {
 
 function createDatabaseWindow() {
   logger.info('Create database windows');
-  const electronScreen = screen;
-  const size = electronScreen.getPrimaryDisplay().workAreaSize;
+  const size = screen.getPrimaryDisplay().workAreaSize;
   let windowConf;
 
   if (serve) {
@@ -137,6 +145,7 @@ function createDatabaseWindow() {
       height: size.height,
       webPreferences: {
         nodeIntegration: true,
+        enableRemoteModule: true, // TODO: remove this after upgrade to remote module
       }
     };
   } else {
@@ -147,6 +156,7 @@ function createDatabaseWindow() {
       height: size.height,
       webPreferences: {
         nodeIntegration: true,
+        enableRemoteModule: true, // TODO: remove this after upgrade to remote module
       },
       show: false
     };
@@ -202,20 +212,20 @@ function createWindows() {
 }
 
 try {
-/*  const shouldQuit = !app.requestSingleInstanceLock();
+  /*  const shouldQuit = !app.requestSingleInstanceLock();
 
-  app.on('second-instance', function (argv, cwd) {
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) { mainWindow.restore(); }
-      if (!mainWindow.isVisible()) { mainWindow.show(); }
-      mainWindow.focus();
-    }
-  });
+    app.on('second-instance', function (argv, cwd) {
+      if (mainWindow) {
+        if (mainWindow.isMinimized()) { mainWindow.restore(); }
+        if (!mainWindow.isVisible()) { mainWindow.show(); }
+        mainWindow.focus();
+      }
+    });
 
-  if (shouldQuit) {
-    app.quit();
-    // return;
-  }*/
+    if (shouldQuit) {
+      app.quit();
+      // return;
+    }*/
 
   if (!fs.existsSync(dataPath)) {
     fs.mkdirSync(dataPath);
@@ -239,7 +249,8 @@ try {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  app.on('ready', createWindows);
+  // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
+  app.on('ready', () => setTimeout(createWindows, 400));
 
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {
