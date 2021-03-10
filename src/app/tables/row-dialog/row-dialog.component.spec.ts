@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RowDialogComponent } from './row-dialog.component';
 
@@ -6,7 +6,7 @@ describe('RowDialogComponent', () => {
   let component: RowDialogComponent;
   let fixture: ComponentFixture<RowDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ RowDialogComponent ]
     })
