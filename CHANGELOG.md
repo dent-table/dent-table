@@ -1,4 +1,4 @@
-## <small>0.3.2 (2021-03-08)</small>
+## 0.4.0 (2021-03-10)
 
 * @angular/cli migration - schematic-options-9 ([33f9ed0](https://github.com/vincios/dent-table/commit/33f9ed0))
 * @angular/cli migration - workspace-version-9 ([0744ead](https://github.com/vincios/dent-table/commit/0744ead))
@@ -13,6 +13,7 @@
 * added preferences-dialog component ([23439a4](https://github.com/vincios/dent-table/commit/23439a4))
 * Angular 10 migration ([163c84d](https://github.com/vincios/dent-table/commit/163c84d))
 * Angular 10 migration ([a5af3e5](https://github.com/vincios/dent-table/commit/a5af3e5))
+* Angular 10 migration post adjustments ([a31e4c7](https://github.com/vincios/dent-table/commit/a31e4c7))
 * Angular 8 transition completed ([03370db](https://github.com/vincios/dent-table/commit/03370db))
 * Angular 9 migration complete ([7531a46](https://github.com/vincios/dent-table/commit/7531a46))
 * Angular 9 preparation ([761e8cc](https://github.com/vincios/dent-table/commit/761e8cc))
