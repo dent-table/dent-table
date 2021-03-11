@@ -178,7 +178,9 @@ text-align: center;
 .mat-column-verified {
   width: 3%;
   max-width: 3%;
-  padding: 20px;
+  padding-bottom: 0;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .mat-column-buttons {
