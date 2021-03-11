@@ -23,7 +23,7 @@ import {ColumnDefinition, TableDefinition} from '../../model/model';
 import * as moment from 'moment';
 import {polyfill} from 'mobile-drag-drop';
 import {formatDate} from '@angular/common';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 export interface CellClickEvent {
   columnName;
@@ -119,7 +119,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
       this.rowSize = _.toInteger(this.rowSize);
     }
     if (!_.isBoolean(this.showButtons)) {
-      this.showButtons = this.showButtons === 'true';
+      this.showButtons = this.showButtons === true;
     }
 
     this.data.filterPredicate = this.filterPredicate;

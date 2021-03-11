@@ -5,7 +5,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as moment from 'moment';
 import {Utils} from '../../commons/Utils';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import {LoggerService} from '../../providers/logger.service';
 
 export interface DialogData {

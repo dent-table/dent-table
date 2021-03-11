@@ -5,7 +5,7 @@ import {map} from 'rxjs/operators';
 import {TableDefinition, ToDeliver, ToDo} from '../model/model';
 import * as moment from 'moment';
 import * as crypto from 'crypto';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 @Injectable({
   providedIn: 'root'

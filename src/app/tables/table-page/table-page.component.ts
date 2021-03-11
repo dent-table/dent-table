@@ -9,7 +9,7 @@ import {ConfirmDialogComponent} from '../../components/confirm-dialog/confirm-di
 import {LoggerService} from '../../providers/logger.service';
 import {Utils} from '../../commons/Utils';
 import {TranslateService} from '@ngx-translate/core';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 
 @Component({
   selector: 'app-table-page',
