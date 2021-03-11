@@ -6,7 +6,6 @@ import {ipcRenderer, webFrame, remote, IpcRendererEvent} from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import {Observable} from 'rxjs';
 
 @Injectable()
 export class ElectronService {
@@ -25,7 +24,7 @@ export class ElectronService {
     if (this.isElectron()) {
       this.ipcRenderer = window.require('electron').ipcRenderer;
       this.webFrame = window.require('electron').webFrame;
-      this.remote = window.require('electron').remote;
+      this.remote = window.require('@electron/remote');
 
       this.childProcess = window.require('child_process');
       this.fs = window.require('fs');
@@ -61,7 +60,6 @@ export class ElectronService {
   }
 
   ipcOnce(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void) {
-
     this.ipcRenderer.once(channel, listener);
   }
 

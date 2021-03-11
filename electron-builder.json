@@ -18,7 +18,8 @@
     "!_config.yml",
     "!karma.conf.js",
     "!tsconfig.json",
-    "!tslint.json"
+    "!tslint.json",
+    "!older/"
   ],
   "extraFiles": [
     "src/assets/preferences.json"
@@ -30,12 +31,12 @@
         "target": "portable",
         "arch": ["x64"]
       },
-      {
-        "target": "nsis",
-        "arch": [
-          "x64"
-        ]
-      }
+//      {
+//        "target": "nsis",
+//        "arch": [
+//          "x64"
+//        ]
+//      }
     ]
   },
   "nsis": {

@@ -1,5 +1,5 @@
 let winston = require('winston');
-let remote = require('electron').remote;
+let remote = require('@electron/remote');
 let ipc = require('electron').ipcRenderer;
 let path = require('path');
 let fs = require('fs');

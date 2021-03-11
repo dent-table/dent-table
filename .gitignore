@@ -16,6 +16,7 @@ src/**/*.js
 /node_modules
 /node_modules-old
 /node_modules-old-old
+/older
 
 # IDEs and editors
 /.idea
