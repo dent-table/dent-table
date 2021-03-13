@@ -1,6 +1,12 @@
+.container {
+  height: calc(95% - 4px);
+  overflow: auto;
+}
+
 .mat-card {
   background: transparent;
 }
+
 button {
   position: fixed;
   right: 20px;

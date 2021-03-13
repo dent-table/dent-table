@@ -1,10 +1,12 @@
-<mat-card>
-  <mat-card-content>
-    <app-table-widget (cellClick)="cellClicked($event)" [tableId]="tableId"
-                      [orderColumn]="orderColumn" [warnDateColumnName]="warnDateColumnName"
-                      rowSize="36" buttonsSize="24" showButtons="true" draggable="false"></app-table-widget>
-  </mat-card-content>
-  <button mat-fab>
-    <mat-icon aria-label="Add Row" (click)="openRowDialog()">add</mat-icon>
-  </button>
-</mat-card>
+<div class="container">
+  <mat-card>
+    <mat-card-content class="table-responsive">
+      <app-table-widget (cellClick)="cellClicked($event)" [tableId]="tableId"
+                        [orderColumn]="orderColumn" [warnDateColumnName]="warnDateColumnName"
+                        rowSize="36" buttonsSize="24" showButtons="true" draggable="false"></app-table-widget>
+    </mat-card-content>
+    <button mat-fab>
+      <mat-icon aria-label="Add Row" (click)="openRowDialog()">add</mat-icon>
+    </button>
+  </mat-card>
+</div>
