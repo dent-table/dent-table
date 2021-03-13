@@ -52,6 +52,4 @@ package-lock.json
 # System Files
 .DS_Store
 Thumbs.db
-/older/angular-old.json
-/package-old.json
-/package-lock.json-old
+
