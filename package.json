@@ -82,7 +82,6 @@
     "mocha": "8.2.1",
     "moment": "^2.29.1",
     "ng-mat-search-bar": "^10.0.0-beta.3",
-    "ng2-dnd": "^5.0.2",
     "node-gyp": "^7.1.2",
     "npm-run-all": "4.1.5",
     "rxjs": "6.6.3",
@@ -96,9 +95,10 @@
   },
   "dependencies": {
     "@electron/remote": "^1.0.4",
+    "angular-draggable-droppable": "^4.6.0",
     "better-sqlite3": "^7.1.0",
-    "winston": "^3.3.3",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "winston": "^3.3.3"
   },
   "engines": {
     "node": ">=10.13.0"

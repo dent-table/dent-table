@@ -19,20 +19,21 @@
   position: absolute;
   left: 1px;
   top: 1px;
-  z-index: 10;
-  display: none;
+  z-index: -1;
+  display: flex;
   background: rgba(0, 0, 0, 0.07);
   flex-direction: row;
   justify-content: center;
   border-radius: 7px 7px 7px 7px;
 }
 
-div .dnd-drag-over {
-  //border-color: $warn;
+.dnd-dragged-el {
+  z-index: 100;
+  border: 1px dashed;
 }
 
 .overlay.showOverlay {
-  display: flex;
+  z-index: 10;
 }
 
 .overlay .overlay-content {

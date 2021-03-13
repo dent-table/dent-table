@@ -23,7 +23,6 @@
             ],
             "styles": [
               "src/_variables.scss",
-              "./node_modules/ng2-dnd/bundles/style.css",
               "src/styles.scss"
             ],
             "scripts": [],
@@ -112,7 +111,6 @@
             "scripts": [],
             "styles": [
               "src/_variables.scss",
-              "./node_modules/ng2-dnd/bundles/style.css",
               "src/styles.scss"
             ],
             "assets": [

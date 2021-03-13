@@ -8,7 +8,7 @@
   $foreground: map-get($theme, foreground);
 
   div .dnd-drag-over {
-    border-color: mat-color($warn);
+    border: 2px dashed mat-color($warn);
   }
 
   .overlay-content mat-icon {

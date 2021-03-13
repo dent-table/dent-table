@@ -15,15 +15,14 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
-import {DragDropData} from 'ng2-dnd';
 import {TablesService} from '../../providers/tables.service';
 import {Router} from '@angular/router';
 
-import {ColumnDefinition, TableDefinition} from '../../model/model';
+import {TableDefinition} from '../../model/model';
 import * as moment from 'moment';
-import {polyfill} from 'mobile-drag-drop';
 import {formatDate} from '@angular/common';
 import * as _ from 'lodash-es';
+import {DropEvent} from 'angular-draggable-droppable';
 
 export interface CellClickEvent {
   columnName;
@@ -108,7 +107,6 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     @Inject(LOCALE_ID) private locale: string
   ) {
     // this.logger = loggerService.getLogger('table-widget.component.ts');
-    polyfill({});
   }
 
   ngOnInit() {
@@ -218,7 +216,6 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   calcRowNumber() {
-    console.log('calcRowNumber');
     const headersSize = 73;
     // const newRowNumber = Math.floor((this.el.nativeElement.offsetHeight - 69) / this.rowSize);
     const newRowNumber = Math.floor((this.el.nativeElement.offsetHeight - headersSize) / this.rowSize);
@@ -232,22 +229,19 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     this.router.navigate(['./table', this.tableId]);
   }
 
-  onDropData($event: DragDropData) {
-    const dragData = $event.dragData;
-    this.databaseService.moveRow(dragData.table_id, dragData.slot_number, this.tableId).subscribe(
+  onDropData($event: DropEvent) {
+    const droppedRow = $event.dropData;
+    this.databaseService.moveRow(droppedRow.table_id, droppedRow.slot_number, this.tableId).subscribe(
       (next) => {
         // nothing to do
       }, error1 => this.logger.error(this.logTag, error1)
     );
   }
 
-  isDropAllowed() {
+  isDragAllowed(row: any) {
     return (dragData: any) => {
-      if (dragData !== undefined && dragData.table_id) {
-        return dragData.table_id !== this.tableId;
-      }
-      return false;
-    };
+      return row.date !== null;
+    }
   }
 
   onDragEvent(event: string) {

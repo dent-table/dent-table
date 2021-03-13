@@ -1,4 +1,4 @@
-<div (window:resize)="calcRowNumber()" [ngClass]="{'max-height': !isLoaded}">
+<div (window:resize)="calcRowNumber()" [ngClass]="{'max-height': !isLoaded}" draggable="false">
   <div class="table-title-header mat-elevation-z3">
     <button mat-button class="table-title-text" (click)="navigateToTablePage()">
       <span *ngIf="table_def">{{'TABLES.NAMES.' + table_def.name | translate}}</span>
@@ -65,16 +65,16 @@
           </button>
         </mat-cell>
       </ng-container>
-
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [ngStyle]="{height: rowSize + 'px', 'min-height': rowSize + 'px' }"
-               dnd-draggable [draggable]="draggable" (onDragEnd)="onDragEvent('end')" (onDragStart)="onDragEvent('start')" [dragData]="row"
-               [dragEnabled]="row.date !== null" matRipple></mat-row>
+               mwlDraggable [dropData]="row" (dragStart)="onDragEvent('start')" (dragEnd)="onDragEvent('end')"
+               dragActiveClass="dnd-dragged-el" [showOriginalElementWhileDragging]="true"
+               [validateDrag]="isDragAllowed(row)" matRipple>
+      </mat-row>
     </mat-table>
-    <div class="overlay" [ngClass]="{showOverlay: showDndOverlay || !isLoaded}" dnd-droppable [allowDrop]="isDropAllowed()"
-         (onDropSuccess)="onDropData($event)" (onDragEnter)="preventDefault($event)" (onDragOver)="preventDefault($event)"
-         (onDragLeave)="preventDefault($event)">
-      <div class="overlay-content">
+    <div class="overlay" [ngClass]="{showOverlay: showDndOverlay || !isLoaded}" mwlDroppable (drop)="onDropData($event)"
+         dragOverClass="dnd-drag-over">
+      <div class="overlay-content" >
         <mat-icon *ngIf="showDndOverlay" color="accent" inline="">cloud_download</mat-icon>
         <mat-spinner *ngIf="!isLoaded"></mat-spinner>
       </div>

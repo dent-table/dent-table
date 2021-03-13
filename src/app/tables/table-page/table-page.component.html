@@ -1,8 +1,8 @@
 <mat-card>
   <mat-card-content>
     <app-table-widget (cellClick)="cellClicked($event)" [tableId]="tableId"
-                      [orderColumn]="orderColumn" [warnDateColumnName]="warnDateColumnName" rowSize="36" buttonsSize="24" showButtons="true"></app-table-widget>
-<!--    <app-row-dialog></app-row-dialog>-->
+                      [orderColumn]="orderColumn" [warnDateColumnName]="warnDateColumnName"
+                      rowSize="36" buttonsSize="24" showButtons="true" draggable="false"></app-table-widget>
   </mat-card-content>
   <button mat-fab>
     <mat-icon aria-label="Add Row" (click)="openRowDialog()">add</mat-icon>
