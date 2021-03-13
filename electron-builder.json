@@ -29,7 +29,7 @@
     "target": [
       {
         "target": "portable",
-        "arch": ["x64"]
+        "arch": ["ia32","x64"]
       },
 //      {
 //        "target": "nsis",

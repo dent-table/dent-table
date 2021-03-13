@@ -31,8 +31,7 @@ const logger = createLogger({
 
 function createMainWindow() {
 
-  const electronScreen = screen;
-  const size = electronScreen.getPrimaryDisplay().workAreaSize;
+  const size = screen.getPrimaryDisplay().workAreaSize;
   let windowConf;
 
   windowConf = {
@@ -51,9 +50,9 @@ function createMainWindow() {
   };
 
   if (!serve) {
-    // windowConf["alwaysOnTop"] = true;
-    windowConf["titleBarStyle"] = 'hidden';
-    windowConf["fullscreen"] = true;
+    // windowConf.alwaysOnTop = true;
+    windowConf.titleBarStyle = 'hidden';
+    windowConf.fullscreen = true;
   }
 
   // Create the browser window.
@@ -120,29 +119,19 @@ function createDatabaseWindow() {
   const size = screen.getPrimaryDisplay().workAreaSize;
   let windowConf;
 
-  if (serve) {
-    windowConf = {
-      x: 0,
-      y: 0,
-      width: size.width,
-      height: size.height,
-      webPreferences: {
-        nodeIntegration: true,
-        enableRemoteModule: true,
-      }
-    };
-  } else {
-    windowConf = {
-      x: 0,
-      y: 0,
-      width: size.width,
-      height: size.height,
-      webPreferences: {
-        nodeIntegration: true,
-        enableRemoteModule: true,
-      },
-      show: true
-    };
+  windowConf = {
+    x: 0,
+    y: 0,
+    width: size.width,
+    height: size.height,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true,
+    }
+  };
+
+  if (!serve) {
+    windowConf.show = false
   }
 
   // Create the browser window.
