@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import * as _ from 'lodash';
 import {Utils} from '../../commons/Utils';
 
 @Pipe({

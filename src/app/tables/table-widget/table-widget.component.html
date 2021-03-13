@@ -30,7 +30,8 @@
         <mat-cell (click)="fireTableCellClicked(column.name, row)" *matCellDef="let row">
           <div class="cell" [ngSwitch]="column.type" [ngStyle]="{color: row['text_color']}">
             <ng-container *ngSwitchCase="'boolean'">
-              <mat-checkbox *ngIf="row.table_ref" (change)="fireTableCellClicked(column.name, row)"  [checked]="row[column.name] === 1"></mat-checkbox>
+              <mat-checkbox *ngIf="row.table_ref" (change)="fireTableCellClicked(column.name, row)"
+                            [checked]="row[column.name] === 1"></mat-checkbox>
             </ng-container>
             <span *ngSwitchCase="'date'" class="cell-text">
               <span *ngIf="row.table_ref && column.name === warnDateColumnName; else defaultDate"

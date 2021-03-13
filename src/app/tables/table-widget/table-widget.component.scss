@@ -9,6 +9,10 @@
   height: 100%;
 }
 
+.mat-checkbox {
+  padding-bottom: 0;
+}
+
 .overlay {
   width: 99.5%;
   height: 99.5%;
@@ -178,6 +182,9 @@ text-align: center;
 .mat-column-verified {
   width: 3%;
   max-width: 3%;
+  padding-bottom: 0!important;
+  padding-left: 5px!important;
+  padding-right: 5px!important;
 }
 
 .mat-column-buttons {
