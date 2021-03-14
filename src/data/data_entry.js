@@ -342,15 +342,22 @@ function specialCase(slotNumber, tableId) {
  *
  */
 function firstEmptySlotNumberBetween(tableId, low, high) {
-  let queryString = "SELECT * FROM tables_slots WHERE table_id=$tableId AND slot_number BETWEEN $low AND $high ORDER BY slot_number DESC LIMIT 1";
+  let queryString = "SELECT slot_number FROM tables_slots WHERE table_id=$tableId AND slot_number BETWEEN $low AND $high ORDER BY slot_number ASC";
   let stmt = db.prepare(queryString);
-  let res = stmt.get({tableId: tableId, low:low, high:high});
+  let res = stmt.all({tableId: tableId, low:low, high:high}); // res contains a row for each slot number returned by the query
+  let used_ids = _.map(res, 'slot_number') // aggregate all row in result in an array
 
-  if (res && res.slot_number >= high) {
-    throw Error("All slots are full");
+  for (let i=low; i <= high; i++){
+    if (! _.includes(used_ids, i)) {
+      return i;
+    }
   }
 
-  return (_.isUndefined(res) ? low : res.slot_number) + 1
+  // if (res && res.slot_number >= high) {
+  throw Error("All slots are full");
+  // }
+
+  // return (_.isUndefined(res) ? low : res.slot_number) + 1
 }
 
 function checkRequiredParameters(...params) {
