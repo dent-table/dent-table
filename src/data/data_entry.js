@@ -347,7 +347,8 @@ function firstEmptySlotNumberBetween(tableId, low, high) {
   let res = stmt.all({tableId: tableId, low:low, high:high}); // res contains a row for each slot number returned by the query
   let used_ids = _.map(res, 'slot_number') // aggregate all row in result in an array
 
-  for (let i=low; i <= high; i++){
+  // search first not used number between special slot bounds
+  for (let i = low; i <= high; i++){
     if (! _.includes(used_ids, i)) {
       return i;
     }
