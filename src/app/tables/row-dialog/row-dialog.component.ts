@@ -97,12 +97,10 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
       let currentValue = this.data.element ? this.data.element[column.name] : '';
 
       if (currentValue && column.type === 'date' && currentValue !== '') {
-        console.log(currentValue);
         currentValue = moment(currentValue);
       } else if (column.type === 'date' && column.required) {
         currentValue = moment();
       }
-      console.log(column.required);
       if (column.required) {
         validators.push(Validators.required);
       }

@@ -188,6 +188,8 @@ function createDatabase() {
     ]
   ];
 
+
+  logger.info('Populating tables_definition table...');
   let tableIdsInsertStatement = db.prepare("INSERT INTO tables_definition" +
     " VALUES (1, 'to_do', '" + JSON.stringify(tables_definition[1]) + "'), " +
     " (2, 'to_deliver', '" + JSON.stringify(tables_definition[2]) + "'), " +
@@ -196,21 +198,26 @@ function createDatabase() {
     " (5, 'plan_orto', '" + JSON.stringify(tables_definition[5]) + "')"
   );
 
-  let tablesSlotsPopulateStatement = db.prepare("INSERT INTO tables_slots(slot_number, table_id) values(?, ?)");
 
-  let defaultUserInsertStatement = db.prepare("INSERT INTO users(username, password) VALUES (?,?)");
   let populateTransaction = db.transaction(() => {
-    logger.info('Populating tables_definition table...');
     tableIdsInsertStatement.run();
 
     logger.info('Populating tables_slots table...');
+    let tablesSlotsPopulateStatement = db.prepare("INSERT INTO tables_slots(slot_number, table_id) values(?, ?)");
     for (let i = 1; i <= 5; i++) { // table ids
-      for (let j = 1; j <= 50; j++) { //slot numbers
+      for (let j = 1; j <= 100; j++) { //slot numbers
         tablesSlotsPopulateStatement.run(j, i);
       }
     }
 
+    logger.info('Populating validation_users table...');
+    let validationUserPopulateStatement = db.prepare("INSERT INTO validation_users(id, name) values(?, ?)");
+    for (let user of validation_users) {
+      validationUserPopulateStatement.run(user.id, user.name);
+    }
+
     logger.info('Creating user...');
+    let defaultUserInsertStatement = db.prepare("INSERT INTO users(username, password) VALUES (?,?)");
     defaultUserInsertStatement.run('carbone', '9f409e3a8ffdadf787dc034b83bddda3');
 
     //TODO: remove this

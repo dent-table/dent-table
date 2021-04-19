@@ -5,7 +5,6 @@
         <mat-label>{{'TABLES.COLUMNS.slot_number' | translate}}</mat-label>
         <mat-select tabIndex="-1" [formControlName]="'slot_number'" [id]="'slot_number'">
           <mat-option value="">Auto</mat-option>
-<!--          <mat-option *ngIf="data.tableId == 1" value="CEREC">CEREC</mat-option>  &lt;!&ndash;     only for to_do     &ndash;&gt;-->
           <ng-container *ngFor="let sCase of specialCases">
             <mat-option [value]="sCase">{{sCase}}</mat-option>
           </ng-container>
@@ -15,7 +14,7 @@
       </mat-form-field>
     </div>
     <div class="input-row" *ngFor="let column of tableDefinition.columnsDefinition; let index">
-      <div [ngSwitch]="typeOf(column.type)">
+      <div [ngSwitch]="typeOf(column.type)"> <!-- column definition can be stored as string or as object-->
         <div *ngSwitchCase="'string'" [ngSwitch]="column.type">
           <mat-form-field *ngSwitchCase="'date'" appearance="outline">
             <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
@@ -47,7 +46,7 @@
     </div>
   </div>
   <mat-dialog-actions align="end">
-<!--    <div style="display: inline">{{printFormGroupStatus() | json}}</div>-->
+    <!--    <div style="display: inline">{{printFormGroupStatus() | json}}</div>-->
     <div class="mat-error" *ngIf="error">{{'PAGES.ROW_DIALOG.SUBMIT_ERROR' | translate}}</div>
     <div style="display: inline">
       <button mat-button mat-dialog-close="canceled">{{'COMMONS.CANCEL' | translate}}</button>
