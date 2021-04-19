@@ -96,9 +96,9 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
       const validators = [];
       let currentValue = this.data.element ? this.data.element[column.name] : '';
 
-      if (currentValue && column.type === 'date' && currentValue !== '') {
+      if (currentValue && column.type.name === 'date' && currentValue !== '') {
         currentValue = moment(currentValue);
-      } else if (column.type === 'date' && column.required) {
+      } else if (column.type.name === 'date' && column.required) {
         currentValue = moment();
       }
       if (column.required) {

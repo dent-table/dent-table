@@ -150,41 +150,46 @@ function createDatabase() {
     {}, //table index starts form 1
 
     [ //to_do
-      {name: 'name', type: 'string', required: true, displayed: true},
-      {name: 'type', type: 'string', required: false, displayed: true},
-      {name: 'note', type: 'text', required: false, displayed: true},
-      {name: 'date', type: 'date', required: true, displayed: true},
-      {name: 'text_color', type: {type: 'select', options: material_colors}, required: false, displayed: false}
+      {name: 'validated_by', type: {name: 'number', special: true}, required: true, displayed: true},
+      {name: 'name', type: {name: 'string', special: false}, required: true, displayed: true},
+      {name: 'type', type: {name: 'string', special: false}, required: false, displayed: true},
+      {name: 'note', type: {name: 'text', special: false}, required: false, displayed: true},
+      {name: 'date', type: {name: 'date', special: false}, required: true, displayed: true},
+      {name: 'text_color', type: {name: 'select', options: material_colors}, required: false, displayed: false}
     ],
     [ //to_deliver
-      {name: 'name', type: 'string', required: true, displayed: true},
-      {name: 'type', type: 'string', required: false, displayed: true},
-      {name: 'note', type: 'text', required: false, displayed: true},
-      {name: 'date', type: 'date', required: true, displayed: true},
-      {name: 'verified', type: 'boolean', required: false, displayed: true},
-      {name: 'text_color', type: {type: 'select', options: material_colors}, required: false, displayed: false}
+      {name: 'validated_by', type: {name: 'number', special: true}, required: true, displayed: true},
+      {name: 'name', type: {name: 'string', special: false}, required: true, displayed: true},
+      {name: 'type', type: {name: 'string', special: false}, required: false, displayed: true},
+      {name: 'note', type: {name: 'text', special: false}, required: false, displayed: true},
+      {name: 'date', type: {name: 'date', special: false}, required: true, displayed: true},
+      {name: 'verified', type: {name: 'boolean', special: false}, required: false, displayed: true},
+      {name: 'text_color', type: {name: 'select', special: false, options: material_colors}, required: false, displayed: false}
     ],
     [ //outgoing
-      {name: 'name', type: 'string', required: true, displayed: true},
-      {name: 'note', type: 'text', required: false, displayed: true},
-      {name: 'lab', type: 'string', required: false, displayed: true},
-      {name: 'date', type: 'date', required: true, displayed: true},
-      {name: 'date_out', type: 'date', required: false, displayed: true},
-      {name: 'text_color', type: {type: 'select', options: material_colors}, required: false, displayed: false}
+      {name: 'validated_by', type: {name: 'number', special: true}, required: true, displayed: true},
+      {name: 'name', type: {name: 'string', special: false}, required: true, displayed: true},
+      {name: 'note', type: {name: 'text', special: false}, required: false, displayed: true},
+      {name: 'lab', type: {name: 'string', special: false}, required: false, displayed: true},
+      {name: 'date', type: {name: 'date', special: false}, required: true, displayed: true},
+      {name: 'date_out', type: {name: 'date', special: false}, required: false, displayed: true},
+      {name: 'text_color', type: {name: 'select', special: false, options: material_colors}, required: false, displayed: false}
     ], //plan_chir
     [
-      {name: 'name', type: 'string', required: true, displayed: true},
-      {name: 'type', type: 'string', required: false, displayed: true},
-      {name: 'note', type: 'text', required: false, displayed: true},
-      {name: 'date', type: 'date', required: true, displayed: true},
-      {name: 'text_color', type: {type: 'select', options: material_colors}, required: false, displayed: false}
+      {name: 'validated_by', type: {name: 'number', special: true}, required: true, displayed: true},
+      {name: 'name', type: {name: 'string', special: false}, required: true, displayed: true},
+      {name: 'type', type: {name: 'string', special: false}, required: false, displayed: true},
+      {name: 'note', type: {name: 'text', special: false}, required: false, displayed: true},
+      {name: 'date', type: {name: 'date', special: false}, required: true, displayed: true},
+      {name: 'text_color', type: {name: 'select', special: false, options: material_colors}, required: false, displayed: false}
     ],
     [ //plan_orto
-      {name: 'name', type: 'string', required: true, displayed: true},
-      {name: 'type', type: 'string', required: false, displayed: true},
-      {name: 'note', type: 'text', required: false, displayed: true},
-      {name: 'date', type: 'date', required: true, displayed: true},
-      {name: 'text_color', type: {type: 'select', options: material_colors}, required: false, displayed: false}
+      {name: 'validated_by', type: {name: 'number', special: true}, required: true, displayed: true},
+      {name: 'name', type: {name: 'string', special: false}, required: true, displayed: true},
+      {name: 'type', type: {name: 'string', special: false}, required: false, displayed: true},
+      {name: 'note', type: {name: 'text', special: false}, required: false, displayed: true},
+      {name: 'date', type: {name: 'date', special: false}, required: true, displayed: true},
+      {name: 'text_color', type: {name: 'select', special: false, options: material_colors}, required: false, displayed: false}
     ]
   ];
 
@@ -252,12 +257,13 @@ function updateDatabase() {
 
     logger.info("Updating table to_do definition...");
     let definition = [ //to_do
-      {name: 'name', type: 'string', required: true, displayed: true},
-      {name: 'type', type: 'string', required: false, displayed: true},
-      {name: 'note', type: 'text', required: false, displayed: true},
-      {name: 'date', type: 'date', required: true, displayed: true},
-      {name: 'verified', type: 'boolean', required: false, displayed: true},
-      {name: 'text_color', type: {type: 'select', options: material_colors}, required: false, displayed: false}
+      {name: 'validated_by', type: {name: 'number', special: true}, required: true, displayed: true},
+      {name: 'name', type: {name: 'string', special: false}, required: true, displayed: true},
+      {name: 'type', type: {name: 'string', special: false}, required: false, displayed: true},
+      {name: 'note', type: {name: 'text', special: false}, required: false, displayed: true},
+      {name: 'date', type: {name: 'date', special: false}, required: true, displayed: true},
+      {name: 'verified', type: {name: 'boolean', special: false}, required: false, displayed: true},
+      {name: 'text_color', type: {name: 'select', special: false, options: material_colors}, required: false, displayed: false}
     ];
     queryString = "UPDATE tables_definition SET columns_def=? WHERE id=1"; // to_do table id = 1
     stmt = db.prepare(queryString);

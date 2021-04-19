@@ -20,10 +20,16 @@ export class ToDeliver {
   ) { }
 }
 
+export interface ColumnTypeDefinition {
+  name: string;
+  special: boolean;
+  options?: any; // options for option type
+}
+
 export class ColumnDefinition {
   constructor(
     public name: string,
-    public type: any,
+    public type: ColumnTypeDefinition, // TODO: remove this after converted all columns to ColumnTypeDefinition
     public required,
     public displayed
   ) { }
@@ -34,15 +40,15 @@ export class TableDefinition {
               public name: string,
               public columnsDefinition: ColumnDefinition[]
   ) { }
-              
+
   static create(object): TableDefinition {
     const columnsDef: Array<any> = JSON.parse(object.columns_def);
     const columnsDefinitions: Array<ColumnDefinition> = [];
-    
+
     for (const column of columnsDef) {
       columnsDefinitions.push(new ColumnDefinition(column.name, column.type, column.required, column.displayed));
     }
-    
+
     return new TableDefinition(object.id, object.name, columnsDefinitions);
   }
 }

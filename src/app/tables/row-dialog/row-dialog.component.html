@@ -14,6 +14,8 @@
       </mat-form-field>
     </div>
     <div class="input-row" *ngFor="let column of tableDefinition.columnsDefinition; let index">
+
+      <!--**** LEGACY PART START ****-->
       <div [ngSwitch]="typeOf(column.type)"> <!-- column definition can be stored as string or as object-->
         <div *ngSwitchCase="'string'" [ngSwitch]="column.type">
           <mat-form-field *ngSwitchCase="'date'" appearance="outline">
@@ -33,15 +35,39 @@
           </ng-container>
         </div>
         <div *ngSwitchCase="'object'">
-          <mat-form-field [ngSwitch]="column.type.type" appearance="outline">
-            <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
-            <mat-select *ngSwitchCase="'select'" [formControlName]="column.name" [id]="column.name">
-              <mat-option value="">Default</mat-option>
-              <mat-option *ngFor="let opt of column.type.options" [value]="opt.value" [ngStyle]="{backgroundColor: opt.value, color: 'whitesmoke'}">{{'PAGES.ROW_DIALOG.COLORS.' + opt.name | translate}}</mat-option>
-            </mat-select>
-            <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
-          </mat-form-field>
-        </div>
+          <!--**** LEGACY PART END ****-->
+
+          <div [ngSwitch]="column.type.name" *ngIf="column.type.special !== undefined && !column.type.special">
+            <mat-form-field *ngSwitchCase="'date'" appearance="outline">
+              <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
+              <input matInput [matDatepicker]="datePicker" [formControlName]="column.name" [id]="column.name">
+              <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+              <mat-datepicker #datePicker></mat-datepicker>
+            </mat-form-field>
+            <mat-checkbox *ngSwitchCase="'boolean'" [formControlName]="column.name" [id]="column.name">{{'TABLES.COLUMNS.' + column.name | translate}}</mat-checkbox>
+            <mat-form-field *ngSwitchCase="'number'" appearance="outline">
+              <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
+              <input [tabindex]="index" type="number" matInput [formControlName]="column.name" [id]="column.name">
+              <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
+            </mat-form-field>
+            <mat-form-field *ngSwitchCase="'select'" appearance="outline">
+              <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
+              <mat-select [formControlName]="column.name" [id]="column.name">
+                <mat-option value="">Default</mat-option>
+                <mat-option *ngFor="let opt of column.type.options" [value]="opt.value" [ngStyle]="{backgroundColor: opt.value, color: 'whitesmoke'}">{{'PAGES.ROW_DIALOG.COLORS.' + opt.name | translate}}</mat-option>
+              </mat-select>
+              <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
+            </mat-form-field>
+            <ng-container *ngSwitchDefault>
+              <mat-form-field [ngSwitch]="column.type.name" appearance="outline">
+                <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
+                <input [tabindex]="index" *ngSwitchCase="'string'" type="text" matInput [formControlName]="column.name" [id]="column.name">
+                <textarea rows="5" *ngSwitchCase="'text'" matInput [formControlName]="column.name" [id]="column.name"  placeholder="Placeholder"></textarea>
+                <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
+              </mat-form-field>
+            </ng-container>
+          </div>
+        </div> <!-- TODO: REMOVE THIS LINE WHEN LEGACY PART WILL BE DELETED -->
       </div>
     </div>
   </div>
