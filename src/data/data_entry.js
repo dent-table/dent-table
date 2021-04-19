@@ -289,6 +289,44 @@ function updateDatabase() {
     logger.info("Success");
   });
 
+  let v3 = db.transaction(() => {
+    logger.info("Updating table 'tables_definition' to use object (instead of string) for type field...");
+    let queryString = "SELECT * FROM tables_definition";
+    let stmt = db.prepare(queryString);
+    let tables = stmt.all();
+    let result;
+
+    let updates = [];
+
+    for (let table of tables) {
+      let columns = table.columns_def;
+      columns = JSON.parse(columns);
+
+      console.log(`Updating table ${table.id} definition...`);
+      for (let column of columns) {
+        if (typeof column.type === 'string') {
+          column.type = {name: column.type, special: false};
+        } else if (typeof column.type === 'object' && !_.isNil(column.type.type)) {
+          column.type['name'] = column.type.type;
+          column.type['special'] = false;
+          delete column.type.type;
+        }
+      }
+
+      updates.push({id: table.id, definition: columns});
+    }
+
+    console.log("Running queries...");
+    for (let update of updates) {
+      stmt = db.prepare("UPDATE tables_definition SET columns_def=? WHERE id=?");
+      result = stmt.run(JSON.stringify(update.definition), update.id);
+    }
+
+    console.log("Updating dbversion...");
+    stmt = db.prepare("UPDATE dbversion SET version=3 WHERE version=2");
+    result = stmt.run();
+  });
+
   let queryString = "SELECT name FROM sqlite_master WHERE type='table'";
   let statement = db.prepare(queryString);
   let tables = statement.all();
@@ -303,10 +341,12 @@ function updateDatabase() {
     .get()
     .version;
 
-  while (version !== 2) {
+  while (version !== 3) {
     if (version === 2) {
+      v3();
+    } else if (version === 3) {
       // logger.info("Update completed!");
-      // TODO: change this if when version will be greater than 2 (call v3 update transaction)
+      // TODO: change this if when version will be greater than 3 (call v4 update transaction)
     } else {
       logger.warn(`Database version ${version} not recognized`);
       break;

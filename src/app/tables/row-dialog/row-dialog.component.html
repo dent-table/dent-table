@@ -37,7 +37,7 @@
         <div *ngSwitchCase="'object'">
           <!--**** LEGACY PART END ****-->
 
-          <div [ngSwitch]="column.type.name" *ngIf="column.type.special !== undefined && !column.type.special">
+          <div [ngSwitch]="column.type.name" *ngIf="!column.type.special">
             <mat-form-field *ngSwitchCase="'date'" appearance="outline">
               <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
               <input matInput [matDatepicker]="datePicker" [formControlName]="column.name" [id]="column.name">
