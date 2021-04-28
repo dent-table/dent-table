@@ -519,7 +519,6 @@ function getAllFromTable({tableId, limit, orderColumn}) {
   //   `ORDER BY t.${orderColumnName} IS NULL, t.${orderColumnName} ASC`   // order result by selected table column
   let queryString = "SELECT * FROM tables_slots ts " + // select starts from table_slots table
     `LEFT JOIN ${tableName} t ON ts.table_ref = t.id ` +   // join table_slots ref with corresponding data table rows' id
-    "LEFT JOIN validation_users vu ON t.validated_by = vu.validation_userid " + // join special column validated_by values with corresponding foreign validation_users ids TODO: remove this on dent-table
     "WHERE ts.table_id = ? " +   // filter only table_slots of selected tableId
     `ORDER BY t.${orderColumnName} IS NULL, t.${orderColumnName} ASC`   // order result by selected table column
 
@@ -554,7 +553,6 @@ function getRowFromTable({tableId, slotNumber, refId}) {
   let tableName = getTableDefinition(tableId).name;
   let queryString = "SELECT * FORM tables_slots ts " +
     `LEFT JOIN ${tableName} t ON ts.ref_id=t.id ` +
-    "LEFT JOIN validation_users vu ON t.validated_by = vu.validation_userid " + //TODO: remove this on dent-table
     "WHERE table_id=?";
   if(slotNumber !== undefined) {
     queryString = queryString + " AND slot_number=" + slotNumber;
