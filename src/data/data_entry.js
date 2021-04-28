@@ -134,6 +134,9 @@ function createDatabase() {
       "username TEXT NOT NULL UNIQUE," +
       "password TEXT NOT NULL" +
       ")"),
+    db.prepare("CREATE TABLE dbversion (" +
+      "version INTEGER PRIMARY KEY" +
+      ")"),
   ];
 
   let createTransaction = db.transaction(() => {
@@ -225,6 +228,10 @@ function createDatabase() {
     let defaultUserInsertStatement = db.prepare("INSERT INTO users(username, password) VALUES (?,?)");
     defaultUserInsertStatement.run('carbone', '9f409e3a8ffdadf787dc034b83bddda3');
 
+    logger.info("Populating dbversion...");
+    let dbVersionStatement = db.prepare("INSERT INTO dbversion(version) VALUES(1)");
+    dbVersionStatement.run();
+
     //TODO: remove this
     let queries = [db.prepare("insert into to_do(name, type, date) values ('Nome1', 'Tipo1', 123456), ('Nome2', 'Tipo2', 123456), ('Nome3', 'Tipo3', 123456), ('Nome4', 'Tipo4', 123456), ('Nome5', 'Tipo5', 123456)"),
       db.prepare("update tables_slots set table_ref = 1 where table_id = 1 and slot_number = 1"),
@@ -273,19 +280,11 @@ function updateDatabase() {
     }
     logger.info("Success");
 
-    logger.info("Creating dbversion...");
-    queryString = "CREATE TABLE dbversion (version INTEGER PRIMARY KEY)";
+    logger.info("Updating db version");
+    queryString = "UPDATE dbversion SET version=2 WHERE version=1";
     stmt = db.prepare(queryString);
     result = stmt.run();
-    // if (result.changes !== 1) {
-    //   throw Error("Error on create table table");
-    // }
-    queryString = "INSERT INTO dbversion(version) VALUES(2)";
-    stmt = db.prepare(queryString);
-    result = stmt.run();
-    if (result.changes !== 1) {
-      throw Error("Error on insert into table");
-    }
+
     logger.info("Success");
   });
 
