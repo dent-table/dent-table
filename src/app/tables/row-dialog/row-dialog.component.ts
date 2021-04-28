@@ -98,7 +98,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
       ? elementSlotNumber
       : Utils.specialCase(elementSlotNumber, this.data.tableId);
 
-    group['slot_number'] = new FormControl(elementSlotNumber);
+    group['slot_number'] = this.fb.control(elementSlotNumber);
 
     for (const column of this.tableDefinition.columnsDefinition) {
       const validators = [];
@@ -115,7 +115,13 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
         validators.push(Validators.required);
       }
 
-      group[column.name] = new FormControl(currentValue || '', validators);
+      // special columns needs something else
+      if (column.type.special) {
+
+      }
+
+      group[column.name] = this.fb.control(currentValue || '',
+        {validators: validators, asyncValidators: asyncValidators, updateOn: "change"});
     }
     this.formGroup = new FormGroup(group);
     this.cdr.detectChanges();
