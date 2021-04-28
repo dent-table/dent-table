@@ -4,10 +4,10 @@ import * as _ from 'lodash-es';
 export class Utils {
 
   static specialCases: object = {
-    'CEREC': {
-      tables: [1],
-      bounds: [9000, 9099]
-    }
+    /*    'CEREC': {
+          tables: [1],
+          bounds: [9000, 9099]
+        }*/
   };
 
   static specialCasesKeys = _.keys(Utils.specialCases);

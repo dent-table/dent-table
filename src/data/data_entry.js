@@ -14,10 +14,10 @@ const dbExists = fs.existsSync(dbPath);
 
 // Note: all special cases should always start from 9000
 const specialCases = {
-  'CEREC': {
-    tables: [1],
-    bounds: [9000, 9099]
-  }
+  // 'CEREC': {
+  //   tables: [1],
+  //   bounds: [9000, 9099]
+  // }
 };
 
 const specialCasesKeys = _.keys(specialCases);
