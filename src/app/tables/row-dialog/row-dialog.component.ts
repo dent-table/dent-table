@@ -1,8 +1,15 @@
 import {AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
 import {DatabaseService} from '../../providers/database.service';
-import { TableDefinition} from '../../model/model';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {TableDefinition} from '../../model/model';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import * as moment from 'moment';
 import {Utils} from '../../commons/Utils';
 import * as _ from 'lodash-es';
@@ -23,8 +30,6 @@ export interface DialogData {
 export class RowDialogComponent implements OnInit, AfterViewInit {
   logTag = RowDialogComponent.name;
 
-  typeOf = Utils.typeof;
-
   tableDefinition: TableDefinition;
   availableSlots: number[];
   formGroup: FormGroup;
@@ -39,6 +44,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     private dialogRef: MatDialogRef<RowDialogComponent>,
     private databaseService: DatabaseService,
     private cdr: ChangeDetectorRef,
+    private fb: FormBuilder,
     private logger: LoggerService
   ) {
     if ('string' === typeof data.tableId) {
@@ -82,6 +88,8 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     }
   }
 
+  typeOf = Utils.typeof;
+
   createFormGroup() {
     const group = {};
     let elementSlotNumber = this.data.element ? this.data.element['slot_number'] : '';
@@ -94,6 +102,8 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
 
     for (const column of this.tableDefinition.columnsDefinition) {
       const validators = [];
+      const asyncValidators = [];
+
       let currentValue = this.data.element ? this.data.element[column.name] : '';
 
       if (currentValue && column.type.name === 'date' && currentValue !== '') {
@@ -128,11 +138,12 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     const toUpdate = {};
     let someDirty = false;
     if (this.formGroup.valid && this.formGroup.dirty) {
-      const controlKeys = Object.keys(this.formGroup.controls);
-      for (const controlKey of controlKeys) {
-        if (this.formGroup.controls[controlKey].dirty && this.formGroup.controls[controlKey].valid) {
+      const controlPaths = Utils.controlsPaths(this.formGroup);
+      for (let controlPath of controlPaths) {
+        if (this.formGroup.get(controlPath).dirty && this.formGroup.get(controlPath).valid) {
           someDirty = true;
-          toUpdate[controlKey] = this.formGroup.controls[controlKey].value;
+          // control name is the last element of the path
+          toUpdate[controlPath[controlPath.length - 1]] = this.formGroup.get(controlPath).value;
         }
       }
 
@@ -154,16 +165,18 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     }
   }
 
- /* printFormGroupStatus() {
-    const controlsStatus = {};
-    const keys = Object.keys(this.formGroup.controls);
-    for (const k of keys) {
-      const control: AbstractControl = this.formGroup.controls[k];
-      controlsStatus[k] = {valid: control.valid, pristine: control.pristine, dirty: control.dirty,
-      touched: control.touched, untouched: control.untouched, status: control.status};
-    }
 
-    return controlsStatus;
-  }*/
+
+  /* printFormGroupStatus() {
+     const controlsStatus = {};
+     const keys = Object.keys(this.formGroup.controls);
+     for (const k of keys) {
+       const control: AbstractControl = this.formGroup.controls[k];
+       controlsStatus[k] = {valid: control.valid, pristine: control.pristine, dirty: control.dirty,
+       touched: control.touched, untouched: control.untouched, status: control.status};
+     }
+
+     return controlsStatus;
+   }*/
 
 }

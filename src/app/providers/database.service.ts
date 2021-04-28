@@ -221,6 +221,12 @@ export class DatabaseService {
     const params = {fromTableId: fromTableId, slotNumber: slotNumber, toTableId: toTableId};
 
     return new Observable((subscriber) => {
+      // if starting table and target table are same we there's nothing to do
+      if (fromTableId === toTableId) {
+        subscriber.complete();
+        return;
+      }
+
       this.sendToDatabase('move-row', params);
       this.electronService.ipcOnce('move-row', (event, data) => {
         if (data.result === 'error') {

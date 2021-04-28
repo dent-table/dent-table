@@ -18,6 +18,11 @@
       <!--**** LEGACY PART START ****-->
       <div [ngSwitch]="typeOf(column.type)"> <!-- column definition can be stored as string or as object-->
         <div *ngSwitchCase="'string'" [ngSwitch]="column.type">
+          <mat-form-field *ngSwitchCase="'number'" appearance="outline">
+            <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
+            <input [tabindex]="index" type="number" matInput [formControlName]="column.name" [id]="column.name">
+            <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
+          </mat-form-field>
           <mat-form-field *ngSwitchCase="'date'" appearance="outline">
             <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
             <input matInput [matDatepicker]="datePicker" [formControlName]="column.name" [id]="column.name">
@@ -70,6 +75,7 @@
         </div> <!-- TODO: REMOVE THIS LINE WHEN LEGACY PART WILL BE DELETED -->
       </div>
     </div>
+    <span class="mat-body">{{data.element | json}}</span> <!-- DEBUG ONLY -->
   </div>
   <mat-dialog-actions align="end">
     <!--    <div style="display: inline">{{printFormGroupStatus() | json}}</div>-->
