@@ -48,15 +48,8 @@
       </ng-container>
       <ng-container matColumnDef="slotNumber">
         <mat-header-cell *matHeaderCellDef><span class="mat-column-slotNumber-span cell-text">#</span></mat-header-cell>
-        <mat-cell [ngStyle]="{color: row['text_color']}" *matCellDef="let row" (click)="fireTableCellClicked('validated_by', row)">
-          <span class="cell-text mat-column-slotNumber-span">{{row.slot_number | slotNumberTransform: tableId}}</span>
-        </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="validated_by">
-        <mat-header-cell *matHeaderCellDef><span class="cell-text">{{ 'TABLES.COLUMNS.validated_by'| translate }}</span></mat-header-cell>
         <mat-cell [ngStyle]="{color: row['text_color']}" *matCellDef="let row" (click)="fireTableCellClicked('slot_number', row)">
-          <span class="cell-text">{{row.validated_by | slotNumberTransform: tableId}}</span>
+          <span class="cell-text mat-column-slotNumber-span">{{row.slot_number | slotNumberTransform: tableId}}</span>
         </mat-cell>
       </ng-container>
 
