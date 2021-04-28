@@ -10,6 +10,19 @@ form{
   width: 100%;
 }
 
+.sticky {
+  position: sticky;
+}
+
+.small-field {
+  width: 50%;
+}
+
+.inline-field {
+  display: inline-block;
+  padding-left: 18px;
+}
+
 .input-row {
   padding-bottom: 15px;
 }
