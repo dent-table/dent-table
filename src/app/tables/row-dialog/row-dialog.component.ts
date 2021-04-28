@@ -23,8 +23,6 @@ export interface DialogData {
 export class RowDialogComponent implements OnInit, AfterViewInit {
   logTag = RowDialogComponent.name;
 
-  typeOf = Utils.typeof;
-
   tableDefinition: TableDefinition;
   availableSlots: number[];
   formGroup: FormGroup;
@@ -82,6 +80,8 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     }
   }
 
+  typeOf = Utils.typeof;
+
   createFormGroup() {
     const group = {};
     let elementSlotNumber = this.data.element ? this.data.element['slot_number'] : '';
@@ -94,6 +94,8 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
 
     for (const column of this.tableDefinition.columnsDefinition) {
       const validators = [];
+      const asyncValidators = [];
+
       let currentValue = this.data.element ? this.data.element[column.name] : '';
 
       if (currentValue && column.type.name === 'date' && currentValue !== '') {
@@ -154,16 +156,18 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     }
   }
 
- /* printFormGroupStatus() {
-    const controlsStatus = {};
-    const keys = Object.keys(this.formGroup.controls);
-    for (const k of keys) {
-      const control: AbstractControl = this.formGroup.controls[k];
-      controlsStatus[k] = {valid: control.valid, pristine: control.pristine, dirty: control.dirty,
-      touched: control.touched, untouched: control.untouched, status: control.status};
-    }
 
-    return controlsStatus;
-  }*/
+
+  /* printFormGroupStatus() {
+     const controlsStatus = {};
+     const keys = Object.keys(this.formGroup.controls);
+     for (const k of keys) {
+       const control: AbstractControl = this.formGroup.controls[k];
+       controlsStatus[k] = {valid: control.valid, pristine: control.pristine, dirty: control.dirty,
+       touched: control.touched, untouched: control.untouched, status: control.status};
+     }
+
+     return controlsStatus;
+   }*/
 
 }

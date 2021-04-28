@@ -9,7 +9,7 @@ let _ = require('lodash');
 
 const appPath = remote.app.getPath('userData');
 const logPath = appPath + path.sep + 'logs';
-const dbPath = appPath + path.sep + 'data' + path.sep + 'database.db';
+const dbPath = appPath + path.sep + 'data' + path.sep + 'database-gis.db';
 const dbExists = fs.existsSync(dbPath);
 
 // Note: all special cases should always start from 9000
@@ -484,10 +484,19 @@ function getAllFromTable({tableId, limit, orderColumn}) {
   let tableName = getTableDefinition(tableId).name;
   let orderColumnName = _.isNil(orderColumn) ? "date" : orderColumn;
 
-  let queryString = "SELECT * FROM tables_slots ts LEFT JOIN " + tableName + " t ON ts.table_ref = t.id WHERE ts.table_id = ?";
-  queryString = queryString + ` ORDER BY t.${orderColumnName} IS NULL, t.${orderColumnName} ASC` ;
+  // let queryString = "SELECT * FROM tables_slots ts " + // select starts from table_slots table
+  //   "LEFT JOIN " + tableName + " t ON ts.table_ref = t.id " +   // join table_slots ref with corresponding data table rows' id
+  //   "LEFT JOIN validation_users vu ON t.validated_by = vu.validation_userid " + // join special column validated_by values with corresponding foreign validation_users ids
+  //   "WHERE ts.table_id = ? " +   // filter only table_slots of selected tableId
+  //   `ORDER BY t.${orderColumnName} IS NULL, t.${orderColumnName} ASC`   // order result by selected table column
+  let queryString = "SELECT * FROM tables_slots ts " + // select starts from table_slots table
+    `LEFT JOIN ${tableName} t ON ts.table_ref = t.id ` +   // join table_slots ref with corresponding data table rows' id
+    "LEFT JOIN validation_users vu ON t.validated_by = vu.validation_userid " + // join special column validated_by values with corresponding foreign validation_users ids TODO: remove this on dent-table
+    "WHERE ts.table_id = ? " +   // filter only table_slots of selected tableId
+    `ORDER BY t.${orderColumnName} IS NULL, t.${orderColumnName} ASC`   // order result by selected table column
+
   if(limit) {
-    queryString = queryString + " LIMIT " + limit;
+    queryString = queryString + " LIMIT " + limit; // set desired rows limit
   }
 
   let stmt = db.prepare(queryString);
@@ -507,7 +516,7 @@ function getAllFromTable({tableId, limit, orderColumn}) {
  *     </pre>
  * @param tableId REQUIRED. The id of the reference table
  * @param slotNumber OPTIONAL the slot number to retrieve
- * @param refId OPTIONAL the id (in the reference table) of the row to retrieve
+ * @param refId OPTIONAL the id (in the reference data table) of the row to retrieve
  * @returns {*} array with all the rows found into the table
  */
 function getRowFromTable({tableId, slotNumber, refId}) {
@@ -515,7 +524,10 @@ function getRowFromTable({tableId, slotNumber, refId}) {
   checkMutualParameters(slotNumber, refId);
 
   let tableName = getTableDefinition(tableId).name;
-  let queryString = "SELECT * FORM tables_slots ts LEFT JOIN " + tableName + " t ON ts.ref_id=t.id WHERE table_id=?";
+  let queryString = "SELECT * FORM tables_slots ts " +
+    `LEFT JOIN ${tableName} t ON ts.ref_id=t.id ` +
+    "LEFT JOIN validation_users vu ON t.validated_by = vu.validation_userid " + //TODO: remove this on dent-table
+    "WHERE table_id=?";
   if(slotNumber !== undefined) {
     queryString = queryString + " AND slot_number=" + slotNumber;
   }
@@ -1004,7 +1016,7 @@ ipc.on('shutdown', (event) => {
 logger.info('Database initialization completed');
 
 
-// *** After inizialization operations ***
+// *** After initialization operations ***
 
 function addSlotsFromFile() {
   logger.info("Check for a 'add_slots.json' file");
