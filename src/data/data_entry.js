@@ -9,15 +9,15 @@ let _ = require('lodash');
 
 const appPath = remote.app.getPath('userData');
 const logPath = appPath + path.sep + 'logs';
-const dbPath = appPath + path.sep + 'data' + path.sep + 'database.db';
+const dbPath = appPath + path.sep + 'data' + path.sep + 'database-gis.db';
 const dbExists = fs.existsSync(dbPath);
 
 // Note: all special cases should always start from 9000
 const specialCases = {
-  'CEREC': {
-    tables: [1],
-    bounds: [9000, 9099]
-  }
+  // 'CEREC': {
+  //   tables: [1],
+  //   bounds: [9000, 9099]
+  // }
 };
 
 const specialCasesKeys = _.keys(specialCases);
@@ -134,6 +134,9 @@ function createDatabase() {
       "username TEXT NOT NULL UNIQUE," +
       "password TEXT NOT NULL" +
       ")"),
+    db.prepare("CREATE TABLE dbversion (" +
+      "version INTEGER PRIMARY KEY" +
+      ")"),
   ];
 
   let createTransaction = db.transaction(() => {
@@ -225,6 +228,10 @@ function createDatabase() {
     let defaultUserInsertStatement = db.prepare("INSERT INTO users(username, password) VALUES (?,?)");
     defaultUserInsertStatement.run('carbone', '9f409e3a8ffdadf787dc034b83bddda3');
 
+    logger.info("Populating dbversion...");
+    let dbVersionStatement = db.prepare("INSERT INTO dbversion(version) VALUES(1)");
+    dbVersionStatement.run();
+
     //TODO: remove this
     let queries = [db.prepare("insert into to_do(name, type, date) values ('Nome1', 'Tipo1', 123456), ('Nome2', 'Tipo2', 123456), ('Nome3', 'Tipo3', 123456), ('Nome4', 'Tipo4', 123456), ('Nome5', 'Tipo5', 123456)"),
       db.prepare("update tables_slots set table_ref = 1 where table_id = 1 and slot_number = 1"),
@@ -273,90 +280,38 @@ function updateDatabase() {
     }
     logger.info("Success");
 
-    logger.info("Creating dbversion...");
-    queryString = "CREATE TABLE dbversion (version INTEGER PRIMARY KEY)";
+    logger.info("Updating db version");
+    queryString = "UPDATE dbversion SET version=2 WHERE version=1";
     stmt = db.prepare(queryString);
     result = stmt.run();
-    // if (result.changes !== 1) {
-    //   throw Error("Error on create table table");
-    // }
-    queryString = "INSERT INTO dbversion(version) VALUES(2)";
-    stmt = db.prepare(queryString);
-    result = stmt.run();
-    if (result.changes !== 1) {
-      throw Error("Error on insert into table");
-    }
+
     logger.info("Success");
   });
 
-  let v3 = db.transaction(() => {
-    logger.info("Updating table 'tables_definition' to use object (instead of string) for type field...");
-    let queryString = "SELECT * FROM tables_definition";
-    let stmt = db.prepare(queryString);
-    let tables = stmt.all();
-    let result;
+  let version;
+  do {
+    let queryString = "SELECT version FROM dbversion";
+    version = db.prepare(queryString)
+      .get()
+      .version;
 
-    let updates = [];
-
-    for (let table of tables) {
-      let columns = table.columns_def;
-      columns = JSON.parse(columns);
-
-      console.log(`Updating table ${table.id} definition...`);
-      for (let column of columns) {
-        if (typeof column.type === 'string') {
-          column.type = {name: column.type, special: false};
-        } else if (typeof column.type === 'object' && !_.isNil(column.type.type)) {
-          column.type['name'] = column.type.type;
-          column.type['special'] = false;
-          delete column.type.type;
-        }
-      }
-
-      updates.push({id: table.id, definition: columns});
-    }
-
-    console.log("Running queries...");
-    for (let update of updates) {
-      stmt = db.prepare("UPDATE tables_definition SET columns_def=? WHERE id=?");
-      result = stmt.run(JSON.stringify(update.definition), update.id);
-    }
-
-    console.log("Updating dbversion...");
-    stmt = db.prepare("UPDATE dbversion SET version=3 WHERE version=2");
-    result = stmt.run();
-  });
-
-  let queryString = "SELECT name FROM sqlite_master WHERE type='table'";
-  let statement = db.prepare(queryString);
-  let tables = statement.all();
-  let containsDbversion = _.find(tables, ['name', 'dbversion']);
-  if(_.isNil(containsDbversion)) {
-    logger.info("Database version 1. Needed update to v2...");
-    v2();
-  }
-
-  queryString = "SELECT version FROM dbversion";
-  let version = db.prepare(queryString)
-    .get()
-    .version;
-
-  while (version !== 3) {
-    if (version === 2) {
-      v3();
-    } else if (version === 3) {
+    if (version === 1) {
+      logger.info("Updating database to v2...");
+      v2();
+    } else if (version === 2) {
       // logger.info("Update completed!");
-      // TODO: change this if when version will be greater than 3 (call v4 update transaction)
+      // TODO: change this else-if case when version will be greater than 2 (call v3 update transaction)
     } else {
       logger.warn(`Database version ${version} not recognized`);
       break;
     }
-
-    queryString = "SELECT version FROM dbversion";
-    version = db.prepare(queryString)
-      .get()
-      .version;
-  }
+  } while (version !== 2);
+  //
+  //   queryString = "SELECT version FROM dbversion";
+  //   version = db.prepare(queryString)
+  //     .get()
+  //     .version;
+  // }
 
   logger.info("Update completed!");
 }
@@ -528,10 +483,19 @@ function getAllFromTable({tableId, limit, orderColumn}) {
   let tableName = getTableDefinition(tableId).name;
   let orderColumnName = _.isNil(orderColumn) ? "date" : orderColumn;
 
-  let queryString = "SELECT * FROM tables_slots ts LEFT JOIN " + tableName + " t ON ts.table_ref = t.id WHERE ts.table_id = ?";
-  queryString = queryString + ` ORDER BY t.${orderColumnName} IS NULL, t.${orderColumnName} ASC` ;
+  // let queryString = "SELECT * FROM tables_slots ts " + // select starts from table_slots table
+  //   "LEFT JOIN " + tableName + " t ON ts.table_ref = t.id " +   // join table_slots ref with corresponding data table rows' id
+  //   "LEFT JOIN validation_users vu ON t.validated_by = vu.validation_userid " + // join special column validated_by values with corresponding foreign validation_users ids
+  //   "WHERE ts.table_id = ? " +   // filter only table_slots of selected tableId
+  //   `ORDER BY t.${orderColumnName} IS NULL, t.${orderColumnName} ASC`   // order result by selected table column
+  let queryString = "SELECT * FROM tables_slots ts " + // select starts from table_slots table
+    `LEFT JOIN ${tableName} t ON ts.table_ref = t.id ` +   // join table_slots ref with corresponding data table rows' id
+    "LEFT JOIN validation_users vu ON t.validated_by = vu.validation_userid " + // join special column validated_by values with corresponding foreign validation_users ids TODO: remove this on dent-table
+    "WHERE ts.table_id = ? " +   // filter only table_slots of selected tableId
+    `ORDER BY t.${orderColumnName} IS NULL, t.${orderColumnName} ASC`   // order result by selected table column
+
   if(limit) {
-    queryString = queryString + " LIMIT " + limit;
+    queryString = queryString + " LIMIT " + limit; // set desired rows limit
   }
 
   let stmt = db.prepare(queryString);
@@ -551,7 +515,7 @@ function getAllFromTable({tableId, limit, orderColumn}) {
  *     </pre>
  * @param tableId REQUIRED. The id of the reference table
  * @param slotNumber OPTIONAL the slot number to retrieve
- * @param refId OPTIONAL the id (in the reference table) of the row to retrieve
+ * @param refId OPTIONAL the id (in the reference data table) of the row to retrieve
  * @returns {*} array with all the rows found into the table
  */
 function getRowFromTable({tableId, slotNumber, refId}) {
@@ -559,7 +523,10 @@ function getRowFromTable({tableId, slotNumber, refId}) {
   checkMutualParameters(slotNumber, refId);
 
   let tableName = getTableDefinition(tableId).name;
-  let queryString = "SELECT * FORM tables_slots ts LEFT JOIN " + tableName + " t ON ts.ref_id=t.id WHERE table_id=?";
+  let queryString = "SELECT * FORM tables_slots ts " +
+    `LEFT JOIN ${tableName} t ON ts.ref_id=t.id ` +
+    "LEFT JOIN validation_users vu ON t.validated_by = vu.validation_userid " + //TODO: remove this on dent-table
+    "WHERE table_id=?";
   if(slotNumber !== undefined) {
     queryString = queryString + " AND slot_number=" + slotNumber;
   }
@@ -1048,7 +1015,7 @@ ipc.on('shutdown', (event) => {
 logger.info('Database initialization completed');
 
 
-// *** After inizialization operations ***
+// *** After initialization operations ***
 
 function addSlotsFromFile() {
   logger.info("Check for a 'add_slots.json' file");

@@ -181,7 +181,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   reload() {
     this.databaseService.getAll(this.tableId, this.limit, this.orderColumn).subscribe((data) => {
         // this.data = new MatTableDataSource(data);
-      this.data.data = [...data];
+        this.data.data = [...data];
         this.dataLength = data.length;
         this.data.paginator = this.matPaginator;
         this.data.sort = this.matSort;
