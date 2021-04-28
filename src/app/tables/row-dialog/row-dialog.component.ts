@@ -1,8 +1,15 @@
 import {AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
 import {DatabaseService} from '../../providers/database.service';
-import { TableDefinition} from '../../model/model';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {TableDefinition} from '../../model/model';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import * as moment from 'moment';
 import {Utils} from '../../commons/Utils';
 import * as _ from 'lodash-es';
@@ -37,6 +44,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     private dialogRef: MatDialogRef<RowDialogComponent>,
     private databaseService: DatabaseService,
     private cdr: ChangeDetectorRef,
+    private fb: FormBuilder,
     private logger: LoggerService
   ) {
     if ('string' === typeof data.tableId) {
@@ -130,11 +138,12 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     const toUpdate = {};
     let someDirty = false;
     if (this.formGroup.valid && this.formGroup.dirty) {
-      const controlKeys = Object.keys(this.formGroup.controls);
-      for (const controlKey of controlKeys) {
-        if (this.formGroup.controls[controlKey].dirty && this.formGroup.controls[controlKey].valid) {
+      const controlPaths = Utils.controlsPaths(this.formGroup);
+      for (let controlPath of controlPaths) {
+        if (this.formGroup.get(controlPath).dirty && this.formGroup.get(controlPath).valid) {
           someDirty = true;
-          toUpdate[controlKey] = this.formGroup.controls[controlKey].value;
+          // control name is the last element of the path
+          toUpdate[controlPath[controlPath.length - 1]] = this.formGroup.get(controlPath).value;
         }
       }
 
