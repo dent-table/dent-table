@@ -58,7 +58,6 @@ export class LoginComponent implements OnInit {
       username = this.formGroup.value['username'];
 
     let saveUser, usernameValue;
-    console.log(saveUsernameChoice, username);
 
     if (saveUsernameChoice === true) {
       this.preferencesService.put(this.loginCatKey, this.rememberPrefKey, true);

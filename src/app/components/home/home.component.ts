@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
     if (event.columnName === 'verified') {
       const value = el[colName] === 0 ? 1 : 0;
       this.databaseService.updateRow(el.table_id, el.table_ref, {verified: value}).subscribe((result) => {
-        console.log(result);
+        this.logger.debug(this.logTag, result);
         this.reloadTable(tableId);
       });
     } else if (colName === 'delete_row') {
@@ -71,7 +71,7 @@ export class HomeComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe((result) => {
-        console.log('Dialog closed', result);
+        this.logger.debug(this.logTag, 'Dialog closed', result);
         if (result && result !== 'canceled' && result.changes > 0) {
           this.reloadTable(tableId);
         }
@@ -84,8 +84,8 @@ export class HomeComponent implements OnInit {
     let snackbarText, snackbarDuration, snackbarActionText, snackbarActionCallback, snackbarRef;
 
     this.databaseService.deleteRow(el.table_id, el.slot_number).subscribe((result) => {
-      console.log(result);
-      console.log(result.date, typeof result.date);
+      this.logger.debug(this.logTag, result);
+      this.logger.debug(this.logTag, result.date, typeof result.date);
         this.logger.debug(this.logTag, 'Delete result', result);
         snackbarText = this.translateService.instant('SUCCESSES.DELETE');
         snackbarDuration = 5000;
@@ -93,7 +93,7 @@ export class HomeComponent implements OnInit {
         snackbarActionCallback = () => {
           this.logger.info(this.logTag, 'Delete undo requested');
           result['slot_number'] = el.slot_number;
-          console.log(result);
+          this.logger.debug(result);
           this.databaseService.insertRow(tableId, result).subscribe((result2) => {
             this.logger.info(this.logTag, 'Delete undo success');
             this.reloadTable(tableId);
@@ -102,13 +102,11 @@ export class HomeComponent implements OnInit {
           });
 
           snackbarRef.dismiss();
-
         };
 
         this.zone.run(() => {
           snackbarRef = Utils.openSnackbar(
             this.snackBar, snackbarText, snackbarDuration, snackbarActionText, snackbarActionCallback);
-
         });
         this.reloadTable(tableId);
       },

@@ -6,6 +6,9 @@ let fs = require('fs');
 let Database = require('better-sqlite3');
 let crypto = require('crypto');
 let _ = require('lodash');
+let moment = require('moment');
+
+const env = process.env.NODE_ENV || 'development';
 
 const appPath = remote.app.getPath('userData');
 const logPath = appPath + path.sep + 'logs';
@@ -24,20 +27,54 @@ const specialCasesKeys = _.keys(specialCases);
 
 let tableNames;
 
+// **NOTE**: this code has a mirror in LoggerService, keep both synced!
 const logFormat = winston.format.combine(
   winston.format.timestamp({
-    format: 'DD-MM-YYYY HH:mm:ss'
+    format: 'HH:mm:ss'
   }),
-  winston.format.simple()
+  winston.format.printf((info => {
+      const message = info.label ? `${info.label} | ${info.message}` : info.message;
+      // TODO: pad level string to a specific length?
+      return `[${info.level}] ${info.timestamp}: ${message}`;
+    }))
 );
 
+// **NOTE**: this code has a mirror in LoggerService, keep both synced!
 let logger = winston.createLogger({
   transports: [
-    new winston.transports.Console({level: 'debug'}),
-    new winston.transports.File({dirname: logPath, filename: 'data_entry.js.log'})
+    new winston.transports.Console({
+      level: 'debug',
+      format: winston.format.combine(
+        winston.format.colorize(),
+        logFormat)
+    }),
+    new winston.transports.File({
+      dirname: logPath,
+      filename: `data_${moment().format('YYYY-MM-DD')}.log`,
+      format: logFormat
+    })
   ],
-  format: logFormat
 });
+
+/** Create the log object required by winston loggers <br>
+ * **NOTE**: this function has a mirror in LoggerService, keep both synced!
+ * @param label (will be prefixed to the message)
+ * @param messages messages to log, all data (except strings) will be parsed and stringified
+ * @returns {object} the object to pass to winston logger methods
+ */
+function logObject(label, ...messages) {
+  const stringified = messages.map((message) => {
+    if (typeof message === 'string') {
+      return message;
+    } else {
+      return JSON.stringify(message);
+    }
+  });
+
+  return {label: label, message: stringified.join(' ')};
+}
+
+logger.debug(logObject('main', env));
 
 const material_colors = [
   {name: 'red', value: '#e53935'},
@@ -54,7 +91,7 @@ const material_colors = [
   {name: 'deep_orange', value: '#f4511e'}
 ];
 
-logger.info('Database initialization...');
+logger.info(logObject('main', 'Database initialization...'));
 
 const algorithm = 'aes-192-cbc';
 const password = '3b41iTniwy';
@@ -140,8 +177,8 @@ function createDatabase() {
   ];
 
   let createTransaction = db.transaction(() => {
-      logger.info('Executing create transaction...');
-      logger.info('Creating tables...');
+      logger.info(logObject('createDatabase/createTransaction', 'Executing create transaction...'));
+      logger.info(logObject('createDatabase/createTransaction', 'Creating tables...'));
       for (const createStatement of createStatements) {
         createStatement.run();
       }
@@ -192,7 +229,7 @@ function createDatabase() {
   ];
 
 
-  logger.info('Populating tables_definition table...');
+  logger.info(logObject('createDatabase', 'Populating tables_definition table...'));
   let tableIdsInsertStatement = db.prepare("INSERT INTO tables_definition" +
     " VALUES (1, 'to_do', '" + JSON.stringify(tables_definition[1]) + "'), " +
     " (2, 'to_deliver', '" + JSON.stringify(tables_definition[2]) + "'), " +
@@ -205,7 +242,7 @@ function createDatabase() {
   let populateTransaction = db.transaction(() => {
     tableIdsInsertStatement.run();
 
-    logger.info('Populating tables_slots table...');
+    logger.info(logObject('createDatabase', 'Populating tables_slots table...'));
     let tablesSlotsPopulateStatement = db.prepare("INSERT INTO tables_slots(slot_number, table_id) values(?, ?)");
     for (let i = 1; i <= 5; i++) { // table ids
       for (let j = 1; j <= 100; j++) { //slot numbers
@@ -213,11 +250,11 @@ function createDatabase() {
       }
     }
 
-    logger.info('Creating user...');
+    logger.info(logObject('createDatabase', 'Creating user...'));
     let defaultUserInsertStatement = db.prepare("INSERT INTO users(username, password) VALUES (?,?)");
     defaultUserInsertStatement.run('carbone', '9f409e3a8ffdadf787dc034b83bddda3');
 
-    logger.info("Populating dbversion...");
+    logger.info(logObject('createDatabase', "Populating dbversion..."));
     let dbVersionStatement = db.prepare("INSERT INTO dbversion(version) VALUES(1)");
     dbVersionStatement.run();
 
@@ -241,7 +278,7 @@ function createDatabase() {
 
 function updateDatabase() {
   let v2 = db.transaction(() => {
-    logger.info("Adding new column 'verified' to table to_do...");
+    logger.info(logObject('updateDatabase/v2', "Adding new column 'verified' to table to_do..."));
 
     let queryString = "ALTER TABLE to_do ADD COLUMN verified INTEGER(1) DEFAULT 0";
     let stmt = db.prepare(queryString);
@@ -249,9 +286,9 @@ function updateDatabase() {
     // if (result.changes !== 1) { // CREATE and ALTER TABLE returns result.changes = 0
     //   throw Error("Error on alter table");
     // }
-    logger.info("Success");
+    logger.info(logObject('updateDatabase/v2', "Success!"));
 
-    logger.info("Updating table to_do definition...");
+    logger.info(logObject('updateDatabase/v2',"Updating table to_do definition..."));
     let definition = [ //to_do
       {name: 'name', type: {name: 'string', special: false}, required: true, displayed: true},
       {name: 'type', type: {name: 'string', special: false}, required: false, displayed: true},
@@ -266,18 +303,18 @@ function updateDatabase() {
     if (result.changes !== 1) {
       throw Error("Error on update table");
     }
-    logger.info("Success");
+    logger.info(logObject('updateDatabase/v2', "Success!"));
 
-    logger.info("Updating db version");
+    logger.info(logObject('updateDatabase/v2', "Updating dbversion..."));
     queryString = "UPDATE dbversion SET version=2 WHERE version=1";
     stmt = db.prepare(queryString);
     result = stmt.run();
 
-    logger.info("Success");
+    logger.info(logObject('updateDatabase/v2', "Success!"));
   });
 
   let v3 = db.transaction(() => {
-    logger.info("Updating table 'tables_definition' to use object (instead of string) for type field...");
+    logger.info(logObject('updateDatabase/v3', "Updating table 'tables_definition' to use object (instead of string) for type field..."));
     let queryString = "SELECT * FROM tables_definition";
     let stmt = db.prepare(queryString);
     let tables = stmt.all();
@@ -289,7 +326,7 @@ function updateDatabase() {
       let columns = table.columns_def;
       columns = JSON.parse(columns);
 
-      console.log(`Updating table ${table.id} definition...`);
+      logger.info(logObject('updateDatabase/v3', `Updating table ${table.id} definition...`));
       for (let column of columns) {
         if (typeof column.type === 'string') {
           column.type = {name: column.type, special: false};
@@ -303,18 +340,19 @@ function updateDatabase() {
       updates.push({id: table.id, definition: columns});
     }
 
-    console.log("Running queries...");
+    logger.info(logObject('updateDatabase/v3', "Running queries..."));
     for (let update of updates) {
       stmt = db.prepare("UPDATE tables_definition SET columns_def=? WHERE id=?");
       result = stmt.run(JSON.stringify(update.definition), update.id);
     }
 
-    console.log("Updating dbversion...");
+    logger.info(logObject('updateDatabase/v3', "Updating dbversion..."));
     stmt = db.prepare("UPDATE dbversion SET version=3 WHERE version=2");
     result = stmt.run();
   });
 
   let version;
+  let updates = 0;
   do {
     let queryString = "SELECT version FROM dbversion";
     version = db.prepare(queryString)
@@ -322,16 +360,18 @@ function updateDatabase() {
       .version;
 
     if (version === 1) {
-      logger.info("Updating database to v2...");
+      logger.info(logObject('updateDatabase', "Updating database to v2..."));
       v2();
+      updates++;
     } else if (version === 2) {
-      logger.info("Updating database to v3...");
+      logger.info(logObject('updateDatabase', "Updating database to v3..."));
       v3();
+      updates++;
     } else if (version === 3) {
-      // logger.info("Update completed!");
+      // logger.info(logObject('updateDatabase', "Update completed!"));
       // TODO: change this else-if case when version will be greater than 3 (call v4 update transaction in this row)
     } else {
-      logger.warn(`Database version ${version} not recognized`);
+      logger.warn(logObject('updateDatabase', `Database version ${version} not recognized`));
       break;
     }
   } while (version !== 3); // TODO: change also this row when version will be greater than 3 (increase 3 to 4)
@@ -342,7 +382,11 @@ function updateDatabase() {
   //     .version;
   // }
 
-  logger.info("Update completed!");
+  if (updates > 0) {
+    logger.info(logObject('updateDatabase', "Update completed!"));
+  } else {
+    logger.info(logObject('updateDatabase', "No update necessary, ignoring..."));
+  }
 }
 
 /**
@@ -468,9 +512,9 @@ function login(user, cryptoPass) {
  * tables.
  */
 function getTableDefinition(tableId) {
-  logger.debug('Requested definition of table ' + tableId);
+  logger.debug(logObject('getTableDefinition', 'Requested definition of table ' + tableId));
   if(tableNames === undefined) {
-    logger.info('tableNames property is undefined. Getting table names from database');
+    logger.info(logObject('getTableDefinition', 'tableNames property is undefined. Getting table names from database'));
     tableNames = {};
     let stmt = db.prepare("SELECT * FROM tables_definition");
     for (const table of stmt.iterate()) {
@@ -508,7 +552,7 @@ function getAvailableSlots(tableId) {
  */
 function getAllFromTable({tableId, limit, orderColumn}) {
   checkRequiredParameters(tableId);
-  logger.info('Getting rows from table with id ' + tableId + ' (limit ' + limit + ')');
+  logger.info(logObject('getAllFromTable', 'Getting rows from table with id ' + tableId + ' (limit ' + limit + ')'));
   let tableName = getTableDefinition(tableId).name;
   let orderColumnName = _.isNil(orderColumn) ? "date" : orderColumn;
 
@@ -602,7 +646,7 @@ function createSpecialSlot(table_id, slot_number, table_ref_id = null) {
 function moreSlots(many, tableId_s) {
   checkRequiredParameters(many, tableId_s);
 
-  logger.info(`Inserting ${many} slot(s) in table(s) ` + _.toString(tableId_s));
+  logger.info(logObject('moreSlots', `Inserting ${many} slot(s) in table(s) ` + _.toString(tableId_s)));
 
   let tableIdsArray; // List of tables to which add
   if (_.isNumber(tableId_s)) {
@@ -635,8 +679,8 @@ function moreSlots(many, tableId_s) {
   // Remove last ", " from string
   insertQueryString = insertQueryString.substring(0, insertQueryString.length - 2);
 
-  logger.debug(`Insert query string: ${insertQueryString}`);
-  logger.debug(`Insert query parameters: ${_.toString(insertQueryParameters)}`);
+  logger.debug(logObject('moreSlots', `Insert query string: ${insertQueryString}`));
+  logger.debug(logObject('moreSlots', `Insert query parameters: ${_.toString(insertQueryParameters)}`));
 
   // Inserting into database
   let tablesSlotsInsertStatement = db.prepare(insertQueryString);
@@ -707,7 +751,8 @@ function insertIntoTable({tableId, values, slot_number}) {
   // let valueKeys = Object.keys(values);
 
   //Insert row into table
-  console.log(Object.keys(values), columnNames);
+  logger.debug(logObject('insertIntoTable', Object.keys(values)));
+  logger.debug(logObject('insertIntoTable', JSON.stringify(columnNames)));
   let queryString = "INSERT INTO " + tableName + "(" + columnNames.toString() + ') VALUES (';
 
   for(const name of columnNames) {
@@ -718,7 +763,7 @@ function insertIntoTable({tableId, values, slot_number}) {
     queryString = queryString + '$' + name + ', ';
   }
 
-  console.log(queryString, values);
+  logger.debug(logObject('insertIntoTable', queryString, values));
 
 
   queryString = queryString.substr(0, queryString.length - 2) + ')';
@@ -778,7 +823,7 @@ function deleteFromTable({tableId, slotNumber}) {
   let refId = result.table_ref;
 
   if(refId === null) {
-    logger.log('debug', 'Slot ' + slotNumber + ' is already empty');
+    logger.info(logObject('deleteFromTable', 'Slot ' + slotNumber + ' is already empty'));
     return; //slot is already empty
   } else if(refId === undefined) {
     throw Error('Slot ' + slotNumber + ' not found for tableId ' + tableId);
@@ -915,7 +960,7 @@ function moveRow({fromTableId, slotNumber, toTableId}) {
   checkRequiredParameters(fromTableId, slotNumber, toTableId);
 
   let deletedValues = deleteFromTable({tableId: fromTableId, slotNumber: slotNumber});
-  console.log(deletedValues);
+  logger.debug(logObject('moveRow', 'Values to move: ',  deletedValues));
 
   if (fromTableId === 3) { // in table outgoing we the date to move is date_out field
     deletedValues['date'] = deletedValues['date_out'];
@@ -925,23 +970,23 @@ function moveRow({fromTableId, slotNumber, toTableId}) {
 }
 
 if (!dbExists) {
-  logger.info('Database creation');
-  logger.info('Creating database.db');
+  logger.info(logObject('main', 'Database creation'));
+  logger.info(logObject('main', 'Creating', dbPath));
   fs.openSync(dbPath, "w");
 }
 
-logger.info('Starting database');
+logger.info(logObject('main', 'Starting database...'));
 
-let db = new Database(dbPath, {verbose: logger.info});
+let db = new Database(dbPath, {verbose: logger.verbose});
 
-logger.info('Database started successfully');
+logger.info(logObject('main', 'Database started successfully'));
 
 if (!dbExists) {
-  logger.info('Creating tables');
+  logger.info(logObject('main', 'Creating tables'));
   createDatabase();
 }
 
-logger.info("Checking database updates");
+logger.info(logObject('main', "Checking database updates..."));
 updateDatabase();
 
 let getAllFromTableTransaction = db.transaction((params) => {
@@ -976,11 +1021,10 @@ let moreSlotsTransaction = db.transaction((slotConfigs) => {
   return totalSlotsAdded;
 });
 
-logger.info('Setting ipc events callback');
+logger.info(logObject('main', 'Setting ipc events callback...'));
 
 /** see README.md **/
 ipc.on('database-op', (event, values) => {
-  console.log(values);
   let senderId = event.senderId;
   if(values.operation === undefined) {
     event.sender.sendTo(senderId, 'database-op-res', {result: 'error', message:'no operation defined'});
@@ -991,7 +1035,7 @@ ipc.on('database-op', (event, values) => {
     returnChannel = returnChannel + '-' + parameters.tableId;
   }
 
-  console.log(senderId, values);
+  logger.verbose(logObject("database-op", "Received op from ", senderId, " with values: ",  values));
   let result;
   try {
     switch (values.operation) {
@@ -1018,7 +1062,7 @@ ipc.on('database-op', (event, values) => {
       }
     }
 
-    console.log(result);
+    logger.silly(logObject('database-op', "Result: ", result));
 
     //Result sent on two channel, the second permits to filter on table id
     // event.sender.sendTo(senderId, values.operation, {result: 'success', response: result});
@@ -1029,54 +1073,59 @@ ipc.on('database-op', (event, values) => {
 });
 
 remote.getCurrentWindow().on('close', (event) => {
-  logger.info('Closing database...');
+  logger.info(logObject('closeEvent', 'Closing database...'));
   db.close();
 });
 
 ipc.on('shutdown', (event) => {
-  logger.info('Requested database shutdown');
+  logger.info(logObject('shutdownEvent', 'Requested database shutdown'));
   db.close();
   ipc.send('database-shutdown', true);
 });
 
-logger.info('Database initialization completed');
+logger.info(logObject('main', 'Database initialization completed'));
 
 
 // *** After initialization operations ***
 
 function addSlotsFromFile() {
-  logger.info("Check for a 'add_slots.json' file");
+  logger.info(logObject('addSlotsFromFile', "Checking for a 'add_slots.json' file..."));
   let addSlotsFilePath = path.join(appPath, 'data', 'add_slots.json');
   //let addSlotsFile = fs.openSync(addSlotsFilePath, "rw");
   //let conf = [{many: 10, tableIds: [1, 2, 3, 4, 5]}, {many: 12, tableIds: 5}];
   //fs.writeFileSync(addSlotsFilePath, JSON.stringify(conf));
 
   if (fs.existsSync(addSlotsFilePath)) {
-    logger.info("add_slots file found");
+    logger.info(logObject('addSlotsFromFile', "add_slots file found"));
     let confString = fs.readFileSync(addSlotsFilePath).toString();
     let slotConfigs = JSON.parse(confString);
 
     try {
       let result = moreSlotsTransaction(slotConfigs);
-      logger.info(`Successfully added ${result} slots`);
+      logger.info(logObject('addSlotsFromFile', `Successfully added ${result} slots`));
 
       fs.unlink(addSlotsFilePath, (err => {
         if (err) {
-          logger.warn(`An error occurred during deletion of 'add_slots.json' file (${addSlotsFilePath}). File will be renamed in 'delete_me.old`);
+          logger.warn(logObject('addSlotsFromFile', `An error occurred during deletion of 'add_slots.json'
+          file (${addSlotsFilePath}). File will be renamed in 'delete_me.old`));
           fs.rename(addSlotsFilePath, path.join(appPath, 'data', 'delete_me.old'), (err1 => {
-            logger.warn(`An error occurred during rename of 'add_slots.json' file (${addSlotsFilePath}).
-            YOU SHOULD MANUALLY REMOVE THE FILE IMMEDIATELY!`);
+            logger.warn(logObject('addSlotsFromFile', `An error occurred during rename of 'add_slots.json' file (${addSlotsFilePath}).
+            YOU SHOULD MANUALLY REMOVE THE FILE IMMEDIATELY!`));
           }));
         }
 
-        logger.info("add_slots.json file removed");
+        logger.info(logObject('addSlotsFromFile', "add_slots.json file removed"));
       }));
     } catch (e) {
-      logger.error("Add_slots file will be renamed in 'add_slots_err.json'");
+      logger.error(logObject('addSlotsFromFile', "Add_slots file will be renamed in 'add_slots_err.json'"));
       fs.renameSync(addSlotsFilePath, path.join(appPath, 'data', 'add_slots_err.json'));
       throw (e);
     }
+  } else {
+    logger.info(logObject('addSlotsFromFile', "add_slots file not found, ignored"));
   }
 }
 
 addSlotsFromFile();
+
+logger.info(logObject('main', 'Database started successfully'));

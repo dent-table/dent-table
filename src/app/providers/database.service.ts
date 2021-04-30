@@ -6,13 +6,18 @@ import {TableDefinition, ToDeliver, ToDo} from '../model/model';
 import * as moment from 'moment';
 import * as crypto from 'crypto';
 import * as _ from 'lodash-es';
+import {LoggerService} from './logger.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DatabaseService {
+  logTag: string = DatabaseService.name;
 
-  constructor(private electronService: ElectronService) {
+  constructor(
+    private electronService: ElectronService,
+    private loggerService: LoggerService
+  ) {
     this.databaseWebContentId = electronService.databaseWebContentId;
   }
 
@@ -81,7 +86,7 @@ export class DatabaseService {
       // string date conversion to timestamp milliseconds
       value = moment(value, ['DD/MM/YYYY', 'MM/DD/YYYY', 'x', 'X']).valueOf();
     }
-    console.log(value, typeof value);
+    this.loggerService.debug(this.logTag, value, typeof value);
     return value;
   }
 
@@ -99,7 +104,7 @@ export class DatabaseService {
       values = this.valueSanitize(values);
     }
 
-    console.log(values);
+    // console.log(values);
     return values;
   }
 

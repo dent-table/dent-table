@@ -131,7 +131,7 @@ function createDatabaseWindow() {
   };
 
   if (!serve) {
-    windowConf.show = false
+    windowConf.show = true
   }
 
   // Create the browser window.
