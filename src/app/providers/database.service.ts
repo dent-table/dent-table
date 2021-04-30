@@ -63,12 +63,12 @@ export class DatabaseService {
   }
 
   private encrypt(msg: string) {
-// Use the async `crypto.scrypt()` instead.
+    // Use the async `crypto.scrypt()` instead.
     const key = crypto.scryptSync(this.password, 'salt', 24);
 
     const iv = Buffer.alloc(16, 18);
 
-// shown here.
+    // shown here.
     const cipher = crypto.createCipheriv(this.algorithm, key, iv);
 
     let encrypted = cipher.update(msg, 'utf8', 'hex');

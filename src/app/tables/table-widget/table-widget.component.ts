@@ -234,7 +234,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     this.databaseService.moveRow(droppedRow.table_id, droppedRow.slot_number, this.tableId).subscribe(
       (next) => {
         // nothing to do
-      }, error1 => this.logger.error(this.logTag, error1)
+      }, error => this.logger.error(this.logTag, error)
     );
   }
 
