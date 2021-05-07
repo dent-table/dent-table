@@ -76,6 +76,7 @@
     "DELETE": "Eliminazione effettuata con successo"
   },
   "ERRORS": {
-    "GENERIC": "Si è verificato un errore"
+    "GENERIC": "Si è verificato un errore",
+    "NOT_NULL_COLUMN": "Il campo \"{{column}}\" non può essere vuoto"
   }
 }

@@ -995,7 +995,22 @@ function moveRow({fromTableId, slotNumber, toTableId}) {
     }
   }
 
-  return insertIntoTable({tableId: toTableId, values: deletedValues})
+  try {
+    return insertIntoTable({tableId: toTableId, values: deletedValues});
+  } catch (e) {
+    if (e.message.startsWith('NOT NULL constraint failed:')) {
+      // we have to extract column name form message: "NOT NULL constraint failed: table.column"
+      const errorColumn = e.message.split(':')[1] // get the message's right part splitting on :
+        .split('.')[1] // get the right part of (table.column) splitting on .
+        .trim(); // remove spaces
+
+      // Now we have the column name of the target table that violate the null constraint, we can obtain the source column
+      // name mapped through the targetMapping object
+      throw new Error(`${targetMapping[errorColumn]} must be not null`);
+    } else {
+      throw e;
+    }
+  }
 }
 
 if (!dbExists) {

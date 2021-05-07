@@ -5,7 +5,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef, EventEmitter, Inject,
-  Input, LOCALE_ID, OnDestroy,
+  Input, LOCALE_ID, NgZone, OnDestroy,
   OnInit, Output,
   ViewChild, ViewRef
 } from '@angular/core';
@@ -23,6 +23,11 @@ import * as moment from 'moment';
 import {formatDate} from '@angular/common';
 import * as _ from 'lodash-es';
 import {DropEvent} from 'angular-draggable-droppable';
+import {Utils} from '../../commons/Utils';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {TranslateService} from '@ngx-translate/core';
+import {switchMap} from 'rxjs/operators';
+import {zip} from 'rxjs';
 
 export interface CellClickEvent {
   columnName;
@@ -104,6 +109,9 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     private el: ElementRef,
     private cdr: ChangeDetectorRef,
     private router: Router,
+    private snackBar: MatSnackBar,
+    private ngZone: NgZone,
+    private translateService: TranslateService,
     @Inject(LOCALE_ID) private locale: string
   ) {
     // this.logger = loggerService.getLogger('table-widget.component.ts');
@@ -234,7 +242,14 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     this.databaseService.moveRow(droppedRow.table_id, droppedRow.slot_number, this.tableId).subscribe(
       (next) => {
         // nothing to do
-      }, error => this.logger.error(this.logTag, error)
+      }, (error: string) => {
+        if (error.includes("must be not null")) {
+          const column = error.split(" ")[0].trim();
+          this.showEmptyFieldMessage(column);
+        } else {
+          this.logger.error(this.logTag, error);
+        }
+      }
     );
   }
 
@@ -285,5 +300,27 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     const currentDate = moment();
 
     return currentDate.add(7, 'd').isAfter(rowDate);
+  }
+
+  private showEmptyFieldMessage(column: string): void {
+    // This observable first get the translation of column id, then pipe the result to get the entire message translation
+    // (the message require the column name as parameter)
+    const message$ = this.translateService.get(`TABLES.COLUMNS.${column}`).pipe(
+      switchMap((result) => this.translateService.get("ERRORS.NOT_NULL_COLUMN", {column: result}))
+    );
+
+    // This observable get the translation of close button
+    const closeText$ = this.translateService.get("COMMONS.CLOSE");
+
+    // This operator merge the result of two above observables into one array
+    zip(message$, closeText$).subscribe(
+      (res) => {
+        // https://stackoverflow.com/questions/55146484/matdialog-dialog-from-angular-material-is-not-closing
+        this.ngZone.run(() => {
+          // res[0] = translated error message, res[1] translated close text
+          Utils.openSnackbar(this.snackBar, res[0], 5000, res[1]);
+        });
+      }
+    );
   }
 }
