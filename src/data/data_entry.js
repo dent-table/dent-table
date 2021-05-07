@@ -33,10 +33,10 @@ const logFormat = winston.format.combine(
     format: 'HH:mm:ss'
   }),
   winston.format.printf((info => {
-      const message = info.label ? `${info.label} | ${info.message}` : info.message;
-      // TODO: pad level string to a specific length?
-      return `[${info.level}] ${info.timestamp}: ${message}`;
-    }))
+    const message = info.label ? `${info.label} | ${info.message}` : info.message;
+    // TODO: pad level string to a specific length?
+    return `[${info.level}] ${info.timestamp}: ${message}`;
+  }))
 );
 
 // **NOTE**: this code has a mirror in LoggerService, keep both synced!
@@ -523,7 +523,8 @@ function getTableDefinition(tableId) {
     logger.info(logObject('getTableDefinition', 'tableNames property is undefined. Getting table names from database'));
     tableNames = {};
     let stmt = db.prepare("SELECT * FROM tables_definition");
-    for (const table of stmt.iterate()) {
+    for (let table of stmt.iterate()) {
+      table['columns_def'] = JSON.parse(table['columns_def']);
       tableNames[table.id] = table;
     }
   }
@@ -736,7 +737,7 @@ function insertIntoTable({tableId, values, slot_number}) {
   checkRequiredParameters(tableId, values);
 
   let tableName = getTableDefinition(tableId).name;
-  let tableColumns = db.pragma('table_info(' + tableName + ')');
+  let tableColumns = db.pragma(`table_info(${tableName})`);
   let columnNames = [];
   let slotNumber;
 
@@ -981,8 +982,10 @@ function moveRow({fromTableId, slotNumber, toTableId}) {
     // into the target column
     if (sourceColumn.map && (sourceColumn.map[toTableId] || sourceColumn.map['all'])) {
       // the mapping infos are stored with key 'all' if mapping applies to any table,
-      // otherwise, the mapping infos are stored with the key of the target table if applies only to a specific target table
-      const targetColumn = sourceColumn.map['all'] ? sourceColumn.map['all'].to : sourceColumn.map[toTableId].to;
+      // otherwise, the mapping infos are stored with the key of the target table if applies only to a specific target table.
+      // In case the mapping object contains both mappings to 'all' and to the specific target table (contains toTableId as key)
+      // then the specific tableId mapping have highest priority
+      const targetColumn = sourceColumn.map[toTableId] ? sourceColumn.map[toTableId].to : sourceColumn.map['all'].to;
       deletedValues[targetColumn] = deletedValues[sourceColumn.name];
       targetMapping[targetColumn] = sourceColumn.name;
     } else {

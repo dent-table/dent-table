@@ -42,7 +42,7 @@ export class TableDefinition {
   ) { }
 
   static create(object): TableDefinition {
-    const columnsDef: Array<any> = JSON.parse(object.columns_def);
+    const columnsDef: Array<any> = object.columns_def;
     const columnsDefinitions: Array<ColumnDefinition> = [];
 
     for (const column of columnsDef) {
