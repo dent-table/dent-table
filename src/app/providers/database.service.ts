@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {ElectronService} from './electron.service';
 import {Observable, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
@@ -7,21 +7,12 @@ import * as moment from 'moment';
 import * as crypto from 'crypto';
 import * as _ from 'lodash-es';
 import {LoggerService} from './logger.service';
+import {enterZone} from '../commons/RxjsZone';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DatabaseService {
-  logTag: string = DatabaseService.name;
-
-  constructor(
-    private electronService: ElectronService,
-    private loggerService: LoggerService
-  ) {
-    this.databaseWebContentId = electronService.databaseWebContentId;
-  }
-
-
   static toDoMapFunction: OperatorFunction<Array<any>, Array<ToDo>> = map((values: Array<any>) => {
     const res: Array<ToDo> = [];
     values.forEach(value => res.push(new ToDo(
@@ -52,6 +43,17 @@ export class DatabaseService {
 
   algorithm = 'aes-192-cbc';
   password = '3b41iTniwy';
+
+  logTag: string = DatabaseService.name;
+
+
+  constructor(
+    private electronService: ElectronService,
+    private loggerService: LoggerService,
+    private zone: NgZone,
+  ) {
+    this.databaseWebContentId = electronService.databaseWebContentId;
+  }
 
   private sendToDatabase(operation: string, data: any) {
     const params = {
