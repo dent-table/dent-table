@@ -171,6 +171,32 @@ function createDatabase() {
       "username TEXT NOT NULL UNIQUE," +
       "password TEXT NOT NULL" +
       ")"),
+    db.prepare("CREATE TABLE questionnaire (" +
+      "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+      "name TEXT NOT NULL," +
+      "sections TEXT NOT NULL," +
+      "validations TEXT NOT NULL" +
+      ")"),
+    db.prepare("CREATE TABLE table_questionnaires (" +
+      "table_id INTEGER NOT NULL," +
+      "questionnaire_ref INTEGER NOT NULL," +
+      "PRIMARY KEY (table_id, questionnaire_ref)," +
+      "FOREIGN KEY (table_id) REFERENCES tables_definition (id)," +
+      "FOREIGN KEY (questionnaire_ref) REFERENCES questionnaire (id)" +
+      ")"),
+    db.prepare("CREATE TABLE questionnaire_answers (" +
+      "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+      "table_id INTEGER NOT NULL," +
+      "questionnaire_ref INTEGER NOT NULL," +
+      "slot_number INTEGER NOT NULL," +
+      "name TEXT," +
+      "date TEXT NOT NULL," +
+      "answers TEXT," +
+      "note TEXT," +
+      "validations TEXT," +
+      "FOREIGN KEY (table_id) REFERENCES tables_definition (id)," +
+      "FOREIGN KEY (questionnaire_ref) REFERENCES questionnaire (id)" +
+      ")"),
     db.prepare("CREATE TABLE dbversion (" +
       "version INTEGER PRIMARY KEY" +
       ")"),
@@ -1014,6 +1040,217 @@ function moveRow({fromTableId, slotNumber, toTableId}) {
   }
 }
 
+/**
+ * Get all the questionnaires into the database, given a table id OR a questionnaire id. If an empty object is passed as
+ * parameter, will be returned all questionnaires from database.
+ *
+ * @param tableId OPTIONAL questionnaire table id
+ * @param questionnaireId OPTIONAL questionnaire id
+ */
+function getQuestionnairesBy({tableId, questionnaireId}) {
+  let param;
+  let query = "SELECT q.id AS id, q.name AS name, q.sections AS sections, q.validations AS validations, tq.table_id " +
+    "FROM questionnaire q JOIN table_questionnaires tq ON q.id = tq.questionnaire_ref";
+
+  if (tableId) {
+    param = tableId;
+    query += " WHERE tq.table_id=?";
+  } else if (questionnaireId) {
+    param = questionnaireId;
+    query += " WHERE q.id=?";
+  }
+
+  const stmt = db.prepare(query);
+
+  let results;
+  if (param) {
+    results = stmt.all(param);
+  } else {
+    results = stmt.all();
+  }
+
+  results = results.map((result) => {
+    let sections = JSON.parse(result.sections);
+    // In each section we have to reorder questions by its position field
+    sections = _.chain(sections)
+      .cloneDeep()
+      .mapValues((section) => {
+        section['questions'] = _.orderBy(section['questions'], ['position']);
+        return section;
+      })
+      .value();
+
+    return {
+      id: result.id,
+      name: result.name,
+      table_id: result.table_id,
+      validations: JSON.parse(result.validations),
+      sections: sections,
+    }
+  });
+
+  console.log(results);
+
+  // if a questionnaire applies to multiple tables results above will have the same questionnaire multiple times,
+  // different only on table_id field.
+  // So, the operations below returns the distinct questionnaires, with grouped table ids
+  results = _.chain(results)
+    .groupBy('id')
+    .map((value) => {
+      let res = _.first(value);
+      res.table_ids = _.map(value, 'table_id');
+      delete res.table_id;
+      return res;
+    })
+    .value();
+
+  return results;
+}
+
+/**
+ * Creates a new questionnaire for the given table id o list of table ids.
+ * <i>Section</i> is an object of sections. Each section is an object with an id (key) and has the following form:
+ * <pre>
+ * { section_name, validated_by, questions }
+ * </pre>
+ * <br>
+ * <i>questions</i> is an object of questions. Each question has an id (key) and has the following form:
+ * <pre>
+ * {text, type, required, position, ...}
+ * </pre>
+ * Can also contain other question type-specific parameter (e.g. the list of possible answers). <br>
+ * For a detailed example, see README.md
+ * @param table_ids {number || number[]} id or list of ids of tables the questionnaire refers to
+ * @param name {string} questionnaire name
+ * @param sections {object} questionnaire sections object.
+ * @param validations {object}, object that contains who have to sign the questionnaire
+ */
+function createQuestionnaire({table_ids, name, sections, validations}) {
+  const sectionsString = JSON.stringify(sections);
+  const validationsString = JSON.stringify(validations);
+
+  if (!_.isArray(table_ids)) {
+    table_ids = [table_ids];
+  }
+
+  let query = `INSERT INTO questionnaire (name, sections, validations) VALUES (?,?,?)`;
+  let stmt = db.prepare(query);
+  let result = stmt.run(name, sectionsString, validationsString);
+
+  if (!result.changes || result.changes === 0) {
+    throw new Error(`Questionnaire ${name} not inserted for some reasons`)
+  }
+
+  console.log(result);
+  const questionnaireId = result['lastInsertRowid'];
+
+  console.log(questionnaireId);
+  query = "INSERT INTO table_questionnaires(table_id, questionnaire_ref) values (?,?)"
+  stmt = db.prepare(query);
+
+  for (const table_id of table_ids) {
+    result = stmt.run(table_id, questionnaireId);
+  }
+
+  console.log(result);
+}
+
+/**
+ * Save into database questionnaire's answers
+ * @param answers {{table_id, slot_number, questionnaire_ref name, date, note, sections?, answers?, validations}} questionnaire's answer object. See README.md
+ */
+function saveQuestionnaireAnswers(answers) {
+  console.log(JSON.stringify(answers));
+  const answersObj = answers.answers || answers.sections;
+
+  const queryParams = {
+    table_id: answers.table_id,
+    questionnaire_ref: answers.questionnaire_ref,
+    slot_number: answers.slot_number,
+    name: answers.name,
+    date: answers.date,
+    note: answers.note,
+    answers: JSON.stringify(answersObj),
+    validations: JSON.stringify(answers.validations)
+  }
+
+  let query = 'INSERT ' +
+    'INTO questionnaire_answers(table_id, questionnaire_ref, slot_number, name, date, answers, note, validations)' +
+    'VALUES($table_id,$questionnaire_ref,$slot_number,$name,$date,$answers,$note,$validations)';
+
+  let stmt = db.prepare(query);
+  let result = stmt.run(queryParams);
+
+  if (result.changes === 0) {
+    throw new Error('No answers saved into database');
+  }
+
+  const newId = result['lastInsertRowid'];
+
+  return getQuestionnaireAnswersById(newId);
+}
+
+/**
+ * Get all answers of questionnaires given a table_id and slot_number, if <i>questionnaire_ref</i> parameter is not defined,
+ * will be returned the answers for all questionnaires given table_id and slot_number, grouped by questionnaire id
+ * @param params {{table_id, slot_number, questionnaire_ref?}}
+ */
+function getQuestionnaireAnswersBy(params) {
+  checkRequiredParameters(params.table_id, params.slot_number);
+
+  let query = "SELECT * FROM questionnaire_answers WHERE table_id=$table_id AND slot_number=$slot_number";
+
+  if (params.questionnaire_ref) {
+    query += " AND questionnaire_ref=$questionnaire_ref"
+  }
+
+  let stmt = db.prepare(query);
+  let results = stmt.all(params);
+
+  results = results.map( (result) => {
+      return {
+        id: result.id,
+        table_id: result.table_id,
+        questionnaire_ref: result.questionnaire_ref,
+        slot_number: result.slot_number,
+        name: result.name,
+        date: result.date,
+        note: result.note,
+        answers: JSON.parse(result.answers),
+        validations: JSON.parse(result.validations)
+      }
+    }
+  );
+
+  return _.groupBy(results, 'questionnaire_ref');
+}
+
+/**
+ * Get all answers of questionnaires given a table_id and slot_number, if <i>questionnaire_ref</i> parameter is not defined,
+ * will be returned the answers for all questionnaires given table_id and slot_number, grouped by questionnaire id
+ * @param questionnaire_answers_id}
+ */
+function getQuestionnaireAnswersById(questionnaire_answers_id) {
+  checkRequiredParameters(questionnaire_answers_id);
+
+  let query = "SELECT * FROM questionnaire_answers WHERE id=?";
+
+  let stmt = db.prepare(query);
+  let result = stmt.get(questionnaire_answers_id);
+
+  return {
+    id: result.id,
+    table_id: result.table_id,
+    questionnaire_ref: result.questionnaire_ref,
+    slot_number: result.slot_number,
+    name: result.name,
+    date: result.date,
+    note: result.note,
+    answers: JSON.parse(result.answers),
+    validations: JSON.parse(result.validations)
+  };
+}
+
 if (!dbExists) {
   logger.info(logObject('main', 'Database creation'));
   logger.info(logObject('main', 'Creating', dbPath));
@@ -1066,6 +1303,28 @@ let moreSlotsTransaction = db.transaction((slotConfigs) => {
   return totalSlotsAdded;
 });
 
+// questionnaires is a json array of questionnaires to add to the database
+// See README.md for more info
+let addQuestionnairesTransaction = db.transaction((questionnaires) => {
+  let total = 0;
+
+  questionnaires.forEach((questionnaire) => {
+    // if the questionnaire object has an id field and it refers to an existing questionnaire we have to replace it
+    if (questionnaire['id'] && getQuestionnairesBy({questionnaire_id: questionnaire['id']})) {
+      // TODO: add update questionnaire function
+    } else {
+      createQuestionnaire(questionnaire);
+      total++;
+    }
+  });
+
+  return total;
+})
+
+let saveQuestionnaireAnswersTransaction = db.transaction((answersObject) => {
+  return saveQuestionnaireAnswers(answersObject);
+})
+
 logger.info(logObject('main', 'Setting ipc events callback...'));
 
 /** see README.md **/
@@ -1105,6 +1364,14 @@ ipc.on('database-op', (event, values) => {
         }
         break;
       }
+      case 'questionnaire-get-all':
+        result = getQuestionnairesBy({}); break;
+      case 'questionnaire-get-by':
+        result = getQuestionnairesBy(parameters); break;
+      case 'questionnaire-get-answers':
+        result = getQuestionnaireAnswersBy(parameters); break;
+      case 'questionnaire-save-answers':
+        result = saveQuestionnaireAnswersTransaction(parameters); break;
     }
 
     logger.silly(logObject('database-op', "Result: ", result));
@@ -1171,6 +1438,52 @@ function addSlotsFromFile() {
   }
 }
 
+function addQuestionnairesFromFile() {
+  logger.info(logObject('addQuestionnairesFromFile', "Checking for a 'addQuestionnaires.json' file..."));
+  let filepath = path.join(appPath, 'data', 'addQuestionnaires.json');
+
+  if (fs.existsSync(filepath)) {
+    logger.info(logObject('addQuestionnairesFromFile', "addQuestionnaires.json file found"));
+    let questionnairesString = fs.readFileSync(filepath).toString();
+    let questionnaires = JSON.parse(questionnairesString);
+
+    try {
+      let result = addQuestionnairesTransaction(questionnaires);
+      logger.info(logObject('addQuestionnairesFromFile', `Successfully added ${result} questionnaire(s)`));
+
+      fs.unlink(filepath, (err => {
+        if (err) {
+          logger.warn(logObject('addQuestionnairesFromFile', `An error occurred during deletion of 'addQuestionnaires.json'
+          file (${questionnairesFilePath}). File will be renamed in 'delete_me.old`));
+          fs.rename(questionnairesFilePath, path.join(appPath, 'data', 'delete_me.old'), (err1 => {
+            logger.alert(logObject('addQuestionnairesFromFile', `An error occurred during rename of 'addQuestionnaires.json' file (${questionnairesFilePath}).
+            YOU SHOULD MANUALLY REMOVE THE FILE IMMEDIATELY!`));
+          }));
+        }
+
+        logger.info(logObject('addQuestionnairesFromFile', "addQuestionnaires.json file removed"));
+      }));
+
+    } catch (e) {
+      logger.error(logObject('addQuestionnairesFromFile', e.message));
+
+      logger.error(logObject('addQuestionnairesFromFile', "Add_slots file will be renamed in 'addQuestionnaires.json.err'"));
+      fs.renameSync(filepath, path.join(appPath, 'data', 'addQuestionnaires.json.err'));
+      throw (e);
+    }
+
+    logger.info(logObject("addQuestionnairesFromFile", "Creating questionnaires.json..."))
+    const questionnairesFromDB = getQuestionnairesBy({});
+    let questionnairesFilePath = path.join(appPath, 'data', 'questionnaires.json');
+    fs.writeFile(questionnairesFilePath, JSON.stringify(questionnairesFromDB, undefined, 2),
+      null, () => {});
+  } else {
+    logger.info(logObject('addQuestionnairesFromFile', "addQuestionnaires.json file not found, ignored"));
+  }
+}
+
+
 addSlotsFromFile();
+addQuestionnairesFromFile();
 
 logger.info(logObject('main', 'Database started successfully'));

@@ -30,6 +30,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { TitleBarComponent } from './components/title-bar/title-bar.component';
 import { PreferencesDialogComponent } from './components/preferences-dialog/preferences-dialog.component';
+import { QuestionnaireComponent } from './components/questionnaire/questionnaire.component';
+import {SharedModule} from './shared/shared.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -45,6 +47,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ConfirmDialogComponent,
     TitleBarComponent,
     PreferencesDialogComponent,
+    QuestionnaireComponent,
   ],
   imports: [
     BrowserModule,
@@ -61,6 +64,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MaterialModule,
     TablesModule,
     FormsModule,
+    SharedModule,
     ReactiveFormsModule,
     NgMatSearchBarModule,
     MatDialogModule,

@@ -2,7 +2,7 @@ import {Injectable, NgZone} from '@angular/core';
 import {ElectronService} from './electron.service';
 import {Observable, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {TableDefinition, ToDeliver, ToDo} from '../model/model';
+import {Questionnaire, QuestionnaireAnswers, TableDefinition, ToDeliver, ToDo} from '../model/model';
 import * as moment from 'moment';
 import * as crypto from 'crypto';
 import * as _ from 'lodash-es';
@@ -261,5 +261,59 @@ export class DatabaseService {
         });
       }
     );
+  }
+
+  getQuestionnairesBy(tableId: number): Observable<Questionnaire[]> {
+    const params = {table_id: tableId};
+
+    let obs: Observable<Questionnaire[]> = new Observable((subscriber) => {
+      this.sendToDatabase('questionnaire-get-all', params);
+      this.electronService.ipcOnce('questionnaire-get-all', ((event, data) => {
+        if (data.result === 'error') {
+          subscriber.error(data.message);
+        } else {
+
+          subscriber.next(data.response);
+          subscriber.complete();
+        }
+      }))
+    });
+
+    return obs.pipe(enterZone(this.zone));
+  }
+
+  saveQuestionnaireAnswers(answersObject: QuestionnaireAnswers): Observable<QuestionnaireAnswers> {
+    return new Observable((subscriber => {
+      this.sendToDatabase('questionnaire-save-answers', answersObject);
+      this.electronService.ipcOnce('questionnaire-save-answers', (event, data) => {
+        if (data.result === 'error') {
+          subscriber.error(data.message);
+        } else {
+          subscriber.next(data.response);
+          subscriber.complete();
+        }
+      });
+    }));
+  }
+
+  getQuestionnaireAnswersBy(tableId, slotNumber, questionnaireRef?): Observable<{[id: string]: QuestionnaireAnswers[]}> {
+    const params = {slot_number: slotNumber, table_id: tableId};
+    if (questionnaireRef) {
+      params['questionnaire_ref'] = questionnaireRef;
+    }
+
+    let obs: Observable<{[id: string]: QuestionnaireAnswers[]}> = new Observable((subscriber) => {
+      this.sendToDatabase('questionnaire-get-answers', params);
+      this.electronService.ipcOnce('questionnaire-get-answers', ((event, data) => {
+        if (data.result === 'error') {
+          subscriber.error(data.message);
+        } else {
+          subscriber.next(data.response);
+          subscriber.complete();
+        }
+      }))
+    });
+
+    return obs.pipe(enterZone(this.zone));
   }
 }

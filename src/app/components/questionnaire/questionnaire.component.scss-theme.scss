@@ -1,0 +1,54 @@
+@import '~@angular/material/theming';
+
+// https://stackoverflow.com/questions/53836382/theming-in-angular-6-and-7-for-mat-button-toggle
+@mixin questionnaires-theme($theme-red, $theme-green) {
+  //$green: map-get($theme-green, primary);
+  //$red: map-get($theme-red, primary);
+
+  $green-palette: mat-palette($mat-teal);
+  $red-palette: mat-palette($mat-red);
+  $green: mat-color($green-palette, A400);
+  $red: mat-color($red-palette, A400);
+
+  // normal
+  .mat-button-toggle.green {
+    .mat-button-toggle-label-content{
+      color: $green;
+      line-height: 36px !important;
+    }
+  }
+
+  .mat-button-toggle.red {
+    .mat-button-toggle-label-content{
+      color: $red;
+      line-height: 36px !important;
+    }
+  }
+
+  // checked
+  .mat-button-toggle-checked.green {
+    background-color: $green;
+
+    .mat-button-toggle-label-content{
+      color: mat-contrast($green-palette, 900);
+      line-height: 36px !important;
+    }
+  }
+
+  .mat-button-toggle-checked.red {
+    background-color: $red;
+
+    .mat-button-toggle-label-content{
+      color: mat-contrast($red-palette, A400);
+      line-height: 36px !important;
+    }
+  }
+
+  .mat-button-toggle-group-appearance-standard {
+    //border-image: linear-gradient(to right, $green 50%,  $red 50%) 5;
+    background-image: linear-gradient(white, white),
+    linear-gradient(to right, $green 50%, $red 50%);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+  }
+}

@@ -10,6 +10,7 @@ import {LoggerService} from '../../providers/logger.service';
 import {Utils} from '../../commons/Utils';
 import {TranslateService} from '@ngx-translate/core';
 import * as _ from 'lodash-es';
+import {QuestionnaireComponent} from '../../components/questionnaire/questionnaire.component';
 
 @Component({
   selector: 'app-table-page',
@@ -69,10 +70,21 @@ export class TablePageComponent implements OnInit {
           }
         });
       });
+    } else if (event.columnName === 'open_questionnaires') {
+      this.openQuestionnaireDialog(this.tableId, event.element);
     } else {
       this.logger.info(TablePageComponent.name, 'Opening RowDialog...');
       this.openRowDialog(event.element);
     }
+  }
+
+  openQuestionnaireDialog(tableId: number, element) {
+    this.zone.run(() => {
+      this.dialog.open(QuestionnaireComponent, {
+        data: {tableId: tableId, element: element},
+        width: '60%', height: '90%'
+      });
+    });
   }
 
   openRowDialog(el?: any) {

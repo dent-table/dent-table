@@ -34,6 +34,10 @@
       "SURE": "Sei sicuro?",
       "CANNOT_UNDONE": "Questa operazione non è annullabile"
     },
+    "QUESTIONNAIRES": {
+      "DIALOG_FORM_INVALID_TITLE": "Form incompleto",
+      "DIALOG_FORM_INVALID_CONTENT": "Non tutti i campi sono stati compilati correttamente, procedere ugualmente?"
+    },
     "PREFERENCES_DIALOG": {
      "GENERALS": {
        "TITLE": "Generali",

@@ -154,4 +154,10 @@ export class Utils {
     }
     return paths;
   }
+
+  static hasArrayObjectWithValue(array, property, value) {
+    return _.some(array, function (el) {
+      return el[property] === value;
+    });
+  }
 }

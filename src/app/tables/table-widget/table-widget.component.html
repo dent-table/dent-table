@@ -60,6 +60,10 @@
                   *ngIf="row.table_ref" mat-icon-button>
             <mat-icon [ngStyle]="{'font-size': buttonsSize + 'px'}" class="table-widget-row-icon">cancel</mat-icon>
           </button>
+          <button (click)="fireTableCellClicked('open_questionnaires', row)" class="table-widget-row-button"
+                  *ngIf="row.table_ref" mat-icon-button>
+            <mat-icon [ngStyle]="{'font-size': buttonsSize + 'px'}" class="table-widget-row-icon">check_circle_outline</mat-icon>
+          </button>
           <button (click)="fireTableCellClicked('insert_row', row)" class="table-widget-row-button"
                   *ngIf="!row.table_ref" mat-icon-button>
             <mat-icon [ngStyle]="{'font-size': buttonsSize + 'px'}" class="table-widget-row-icon">add_circle</mat-icon>

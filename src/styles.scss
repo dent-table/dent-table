@@ -10,6 +10,7 @@
 @import 'styles.scss-theme.scss';
 @import "app/tables/table-widget/table-widget.component.scss-theme.scss";
 @import "app/components/login/login.component.scss-theme";
+@import "app/components/questionnaire/questionnaire.component.scss-theme";
 //@import "app/tables/row-dialog/row-dialog.component.scss-theme";
 @import "element-color";
 @import "app/app.component.scss";
@@ -22,6 +23,7 @@
   @include container-theme($app-light-theme);
   @include login-page-theme($app-light-theme);
   @include global-elements-theme($app-light-theme);
+  @include questionnaires-theme($red-theme-light, $green-theme-light);
 
   .table-widget-red {
     @include table-widget-theme($red-theme-light);
@@ -71,7 +73,8 @@
   @include table-widget-theme($app-dark-theme);
   @include container-theme($app-dark-theme);
   @include login-page-theme($app-dark-theme);
-  @include global-elements-theme($app-light-theme);
+  @include global-elements-theme($app-dark-theme);
+  @include questionnaires-theme($red-theme-dark, $green-theme-dark);
 
   .table-widget-red {
     @include table-widget-theme($red-theme-dark);

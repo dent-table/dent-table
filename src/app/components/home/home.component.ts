@@ -8,6 +8,7 @@ import {Utils} from '../../commons/Utils';
 import {LoggerService} from '../../providers/logger.service';
 import {TranslateService} from '@ngx-translate/core';
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
+import {QuestionnaireComponent} from '../questionnaire/questionnaire.component';
 
 @Component({
   selector: 'app-home',
@@ -55,9 +56,21 @@ export class HomeComponent implements OnInit {
           }
         });
       });
-    } else {
+    } else if (event.columnName ==='open_questionnaires') {
+      this.openQuestionnaireDialog(tableId, event.element);
+    }
+    else {
       this.openRowDialog(tableId, event.element);
     }
+  }
+
+  openQuestionnaireDialog(tableId: number, element) {
+    this.zone.run(() => {
+      this.dialog.open(QuestionnaireComponent, {
+        data: {tableId: tableId, element: element},
+        width: '40%', height: '90%'
+      });
+    });
   }
 
   openRowDialog(tableId: number, element?: any) {

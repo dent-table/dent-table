@@ -52,3 +52,38 @@ export class TableDefinition {
     return new TableDefinition(object.id, object.name, columnsDefinitions);
   }
 }
+
+export interface QuestionnaireQuestion {
+  key: string;
+  text: string;
+  type: string;
+  required: boolean;
+  position: number;
+}
+
+export interface QuestionnaireSection {
+  section_name: string;
+  validated_by: number;
+  questions: QuestionnaireQuestion[];
+}
+
+export interface Questionnaire {
+  id: number;
+  name: string;
+  table_ids: number[];
+  sections: {
+    [key: string]: QuestionnaireSection
+  } | object;
+  validations: object;
+}
+
+export interface QuestionnaireAnswers {
+  id?: number | string;
+  questionnaire_ref: number;
+  table_id: number;
+  slot_number: number;
+  date: string;
+  answers: { [key: string]: any } | object;
+  note: string;
+  validations: object;
+}

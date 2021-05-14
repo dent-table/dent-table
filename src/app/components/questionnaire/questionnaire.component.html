@@ -1,0 +1,68 @@
+<div class="content" mat-dialog-content>
+  <mat-progress-spinner *ngIf="!questionnaires" mode="indeterminate"></mat-progress-spinner>
+  <mat-tab-group>
+    <mat-tab *ngFor="let questionnaire of questionnaires" [label]="questionnaire.name">
+      <ng-template matTabContent>
+        <div class="tab-content">
+          <mat-accordion>
+            <ng-container *ngFor="let answer of answers[questionnaire.id]">
+              <mat-expansion-panel *ngIf="showNewPanel[questionnaire.id] || answer.id !== 'new'">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{forms[questionnaire.id][answer.id].value.name || ('COMMONS.ADD' | translate)}}
+                  </mat-panel-title>
+                  <mat-panel-description fxLayoutAlign="end">
+                    {{forms[questionnaire.id][answer.id].value.date ?
+                    (forms[questionnaire.id][answer.id].value.date | stringToDate | date: 'dd/MM/YYYY') : ('COMMONS.ADD' | translate)}}
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div>
+                  <form [formGroup]="forms[questionnaire.id][answer.id]" (ngSubmit)="saveNewQuestionnaire(questionnaire.id)">
+                    <mat-form-field appearance="outline" class="form-row">
+                      <mat-label>Nome</mat-label>
+                      <input type="text" matInput [formControlName]="'name'" [id]="'name'">
+                      <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
+                    </mat-form-field>
+
+                    <div formGroupName="sections">
+                      <mat-list>
+                        <div *ngFor="let section of questionnaire.sections | keyvalue" [formGroupName]="section.key" >
+                          <mat-divider></mat-divider>
+                          <div mat-subheader>{{section.value.section_name}}</div>
+                          <mat-list-item *ngFor="let question of section.value.questions" class="form-list-item">
+                            <!--                        <mat-icon mat-list-icon>folder</mat-icon>-->
+                            <div mat-line>{{question.text}}</div>
+
+                            <ng-container [ngSwitch]="question.type">
+                              <mat-button-toggle-group [formControlName]="question.key" *ngSwitchCase="'boolean'">
+                                <mat-button-toggle [value]="true" class="green"><mat-icon>done</mat-icon></mat-button-toggle>
+                                <mat-button-toggle [value]="false" class="red"><mat-icon>close</mat-icon></mat-button-toggle>
+                              </mat-button-toggle-group>
+                              <!--TODO: add here other switch cases for other question type-->
+                            </ng-container>
+                          </mat-list-item>
+                        </div>
+                      </mat-list>
+                    </div>
+                    <mat-divider [ngStyle]="{margin: '10px'}"></mat-divider>
+                    <mat-form-field appearance="fill" class="form-row">
+                      <mat-label>Note</mat-label>
+                      <textarea type="text" matInput [formControlName]="'note'" [id]="'note'"></textarea>
+                      <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
+                    </mat-form-field>
+                    <mat-action-row *ngIf="answer.id === 'new'">
+                      <!--                    <button mat-button color="primary" type="reset">Reset</button>-->
+                      <button mat-button color="primary" type="submit">{{'COMMONS.SAVE' | translate}}</button>
+                    </mat-action-row>
+                  </form>
+                </div>
+              </mat-expansion-panel>
+            </ng-container>
+          </mat-accordion>
+          <button mat-button (click)="showNewPanel[questionnaire.id] = !showNewPanel[questionnaire.id]"
+                  [ngStyle]="{display: showNewPanel[questionnaire.id] ? 'none': 'block'}">Nuovo</button>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</div>
