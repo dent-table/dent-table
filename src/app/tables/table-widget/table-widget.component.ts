@@ -314,11 +314,11 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
 
     // This operator merge the result of two above observables into one array
     zip(message$, closeText$).subscribe(
-      (res) => {
+      ([message, close]) => {
         // https://stackoverflow.com/questions/55146484/matdialog-dialog-from-angular-material-is-not-closing
         this.ngZone.run(() => {
           // res[0] = translated error message, res[1] translated close text
-          Utils.openSnackbar(this.snackBar, res[0], 5000, res[1]);
+          Utils.openSnackbar(this.snackBar, message, 5000, close);
         });
       }
     );
