@@ -283,7 +283,7 @@ export class DatabaseService {
   }
 
   saveQuestionnaireAnswers(answersObject: QuestionnaireAnswers): Observable<QuestionnaireAnswers> {
-    return new Observable((subscriber => {
+    const obs: Observable<QuestionnaireAnswers> = new Observable((subscriber => {
       this.sendToDatabase('questionnaire-save-answers', answersObject);
       this.electronService.ipcOnce('questionnaire-save-answers', (event, data) => {
         if (data.result === 'error') {
@@ -294,6 +294,8 @@ export class DatabaseService {
         }
       });
     }));
+
+    return obs.pipe(enterZone(this.zone));
   }
 
   getQuestionnaireAnswersBy(tableId, slotNumber, questionnaireRef?): Observable<{[id: string]: QuestionnaireAnswers[]}> {

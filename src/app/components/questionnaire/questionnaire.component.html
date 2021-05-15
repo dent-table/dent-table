@@ -5,8 +5,8 @@
       <ng-template matTabContent>
         <div class="tab-content">
           <mat-accordion>
-            <ng-container *ngFor="let answer of answers[questionnaire.id]">
-              <mat-expansion-panel *ngIf="showNewPanel[questionnaire.id] || answer.id !== 'new'">
+            <ng-container *ngFor="let answer of answersWithNew[questionnaire.id]; last as isLast">
+              <mat-expansion-panel *ngIf="showNewPanel[questionnaire.id] || answer.id !== 'new'" [expanded]="isLast">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     {{forms[questionnaire.id][answer.id].value.name || ('COMMONS.ADD' | translate)}}

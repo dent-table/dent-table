@@ -28,6 +28,8 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateService} from '@ngx-translate/core';
 import {switchMap} from 'rxjs/operators';
 import {zip} from 'rxjs';
+import {QuestionnaireComponent} from '../../components/questionnaire/questionnaire.component';
+import {MatDialog} from '@angular/material/dialog';
 
 export interface CellClickEvent {
   columnName;
@@ -112,6 +114,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     private snackBar: MatSnackBar,
     private ngZone: NgZone,
     private translateService: TranslateService,
+    private dialog: MatDialog,
     @Inject(LOCALE_ID) private locale: string
   ) {
     // this.logger = loggerService.getLogger('table-widget.component.ts');
@@ -274,9 +277,16 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   fireTableCellClicked(columnName: string, element?: any) {
-    // this.zone.run(() => {
-    this.cellClick.emit({columnName: columnName, element: element});
-    // });
+    if (columnName === 'open_questionnaires') {
+      this.ngZone.run(() => {
+        this.dialog.open(QuestionnaireComponent, {
+          data: {tableId: this.tableId, slotNumber: element.slot_number, itemName: element.name},
+          width: '60%', height: '90%'
+        });
+      });
+    } else {
+      this.cellClick.emit({columnName: columnName, element: element});
+    }
   }
 
   // https://github.com/akserg/ng2-dnd/issues/177

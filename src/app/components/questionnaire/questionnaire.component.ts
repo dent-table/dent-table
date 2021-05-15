@@ -10,6 +10,12 @@ import {zip} from 'rxjs';
 import {Utils} from '../../commons/Utils';
 import {DialogData} from '../../tables/row-dialog/row-dialog.component';
 
+export interface QuestionnaireDialogData {
+  tableId: number;
+  slotNumber: number;
+  itemName?: string;
+}
+
 @Component({
   selector: 'app-questionnaire',
   templateUrl: './questionnaire.component.html',
@@ -18,11 +24,9 @@ import {DialogData} from '../../tables/row-dialog/row-dialog.component';
 export class QuestionnaireComponent implements OnInit, AfterViewInit {
   logTag = QuestionnaireComponent.name;
 
-  tableId: number = 3;
-  slotNumber: number = 1;
-
   questionnaires: Questionnaire[];
   answers: {[id:string]: QuestionnaireAnswers[]};
+  answersWithNew: {[id:string]: QuestionnaireAnswers[]}
 
   forms: object = { };
 
@@ -30,7 +34,7 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
   panelOpenState: boolean;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    @Inject(MAT_DIALOG_DATA) public data: QuestionnaireDialogData,
     private dialogRef: MatDialogRef<QuestionnaireComponent>,
     private databaseService: DatabaseService,
     private loggerService: LoggerService,
@@ -43,67 +47,55 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
   ngOnInit(): void { }
 
   ngAfterViewInit(): void {
-    const questionnaires$ = this.databaseService.getQuestionnairesBy(this.tableId);
-    const answers$ = this.databaseService.getQuestionnaireAnswersBy(this.tableId, this.slotNumber);
+    const questionnaires$ = this.databaseService.getQuestionnairesBy(this.data.tableId);
+    const answers$ = this.databaseService.getQuestionnaireAnswersBy(this.data.tableId, this.data.slotNumber);
 
     zip(questionnaires$, answers$).subscribe(
       ([questionnaires, answers]) => {
         this.questionnaires = [...questionnaires];
         this.answers = answers;
 
-        this.createFormGroups();
+        this.generateFormObjects();
       },
       (error) => this.loggerService.error(this.logTag + '/ngAfterViewInit', error));
   }
 
+  // forms needs an array of answers with an empty fake QuestionnaireAnswers object for the new form and a set of FormGroup objects
+  // one of each questionnaire answers object. This method creates both.
+  generateFormObjects() {
+    this.answersWithNew = this.generateAnswersFullObject(this.answers);
+    this.createFormGroups();
+  }
 
   createFormGroups(): void {
     console.log(this.answers);
     for (let questionnaire of this.questionnaires) {
-      // FormGroup for new answers
-      // create questionnaire answers array for questionnaires that doesn't have answers (TODO: move this to data.js file?)
+      // generate an empty questionnaire answers list for a questionnaire if not exists (TODO: move this to data.js?)
       this.answers[questionnaire.id] = this.answers[questionnaire.id] || [ ];
-      if (!Utils.hasArrayObjectWithValue(this.answers[questionnaire.id], 'id', 'new')) {
-        this.answers[questionnaire.id].push(
-          {
-            id: 'new',
-            date: null,
-            answers: null,
-            note: null,
-            questionnaire_ref: questionnaire.id,
-            slot_number: this.slotNumber,
-            table_id: this.tableId,
-            validations: null
-          }
-        );
-      }
 
       this.forms[questionnaire.id] = this.forms[questionnaire.id] || {}; // create field forms[questionnaire.id] if not exists
-      this.forms[questionnaire.id]['new'] = this.createEmptyQuestionnaireFormGroup(questionnaire);
-      this.showNewPanel[questionnaire.id] = this.answers[questionnaire.id]?.length === 0;
 
-      console.log(this.showNewPanel);
-
-      for (let answer of this.answers[questionnaire.id]) {
-        answer['sections'] = answer.answers;
+      for (let answer of this.answersWithNew[questionnaire.id]) {
+        answer['sections'] = answer.answers; // form group needs that answers must be in a field called 'sections'
         this.forms[questionnaire.id][answer.id] = this.createEmptyQuestionnaireFormGroup(questionnaire);
-        this.forms[questionnaire.id][answer.id].patchValue(answer);
         if (answer.id !== 'new') {
+          this.forms[questionnaire.id][answer.id].patchValue(answer);
           this.forms[questionnaire.id][answer.id].disable();
         }
+
+        this.showNewPanel[questionnaire.id] = false;
       }
+
+      console.log(this.forms);
     }
-
-    console.log(this.forms);
   }
-
 
   private createEmptyQuestionnaireFormGroup(questionnaire: Questionnaire): FormGroup {
     let controlsGroup = {
-      'name': ['', Validators.required],
+      'name': [this.data.itemName || '', Validators.required],
       'questionnaire_ref': [questionnaire.id, Validators.required],
-      'table_id': [this.tableId, Validators.required],
-      'slot_number': [this.slotNumber, Validators.required],
+      'table_id': [this.data.tableId, Validators.required],
+      'slot_number': [this.data.slotNumber, Validators.required],
       'date': ['', Validators.required],
       'note': [''],
       //TODO: add validations form?
@@ -136,6 +128,29 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
     return invalid;
   }
 
+  generateAnswersFullObject(startObject: {[id: string]: QuestionnaireAnswers[]}) {
+    console.log(startObject);
+    let newObject = { };
+
+    for (let questionnaire of this.questionnaires) {
+      const array = startObject[questionnaire.id] ? [...startObject[questionnaire.id]] : [ ];
+      array.push({
+        id: 'new',
+        questionnaire_ref: questionnaire.id,
+        table_id: this.data.tableId,
+        slot_number: this.data.slotNumber,
+        date: null,
+        answers: null,
+        note: null,
+        validations: null,
+      });
+
+      newObject[questionnaire.id] = array;
+    }
+
+    return newObject;
+  }
+
   saveNewQuestionnaire(id: number) {
     let form: FormGroup = this.forms[id]['new'];
     form.patchValue({date: moment().toISOString(true)});
@@ -160,15 +175,10 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
   }
 
   saveToDatabase(values: QuestionnaireAnswers): void {
-    this.databaseService.saveQuestionnaireAnswers(values).subscribe((result) => {
-      console.log(result);
-      let newAnswers = [...this.answers[result.questionnaire_ref]];
-      newAnswers.push(result);
-
-      this.answers[result.questionnaire_ref] = newAnswers;
-      this.createFormGroups();
-      this.showNewPanel[result.questionnaire_ref] = false;
-      this.cdr.detectChanges();
+    this.databaseService.saveQuestionnaireAnswers(values).subscribe((newQuestionnaireAnswers) => {
+      console.log(newQuestionnaireAnswers);
+      this.answers[newQuestionnaireAnswers.questionnaire_ref].push(newQuestionnaireAnswers);
+      this.generateFormObjects();
     })
   }
 }
