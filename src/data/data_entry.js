@@ -1335,8 +1335,8 @@ ipc.on('database-op', (event, values) => {
   }
   let parameters = values.parameters;
   let returnChannel = values.operation;
-  if(parameters.tableId) {
-    returnChannel = returnChannel + '-' + parameters.tableId;
+  if (values.uid) {
+    returnChannel = returnChannel + '-' + values.uid;
   }
 
   logger.verbose(logObject("database-op", "Received op from ", senderId, " with values: ",  values));

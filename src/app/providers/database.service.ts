@@ -8,6 +8,7 @@ import * as crypto from 'crypto';
 import * as _ from 'lodash-es';
 import {LoggerService} from './logger.service';
 import {enterZone} from '../commons/RxjsZone';
+import {Utils} from '../commons/Utils';
 
 @Injectable({
   providedIn: 'root'
@@ -55,13 +56,21 @@ export class DatabaseService {
     this.databaseWebContentId = electronService.databaseWebContentId;
   }
 
-  private sendToDatabase(operation: string, data: any) {
+  private sendToDatabase(operation: string, data: any, unique?: boolean | number | string) {
     const params = {
       operation: operation,
       parameters: data
     };
 
+    if (unique && typeof unique === 'boolean') {
+      params['uid'] = Utils.randomHexString(6);
+    } else if (unique) {
+      params['uid'] = unique;
+    }
+
     this.electronService.ipcSendTo(this.databaseWebContentId, 'database-op', params);
+
+    return unique ? `${operation}-${params['uid']}` : operation;
   }
 
   private encrypt(msg: string) {
@@ -136,12 +145,12 @@ export class DatabaseService {
     }
 
     let obs: Observable<R[]> = new Observable((subscriber) => {
-      this.sendToDatabase('table-get-all', params);
-      this.electronService.ipcOnce('table-get-all-' + tableId, (event, data) => {
+      const returnChannel = this.sendToDatabase('table-get-all', params, tableId);
+      this.electronService.ipcOnce(returnChannel, (event, data) => {
         if (data.result === 'error') {
           subscriber.error(data.message);
         } else {
-          this.electronService.ipcRemoveAllListeners('table-get-all-' + tableId);
+          this.electronService.ipcRemoveAllListeners(returnChannel);
           subscriber.next(data.response);
           subscriber.complete();
         }
@@ -160,8 +169,9 @@ export class DatabaseService {
   insertRow(tableId: number, values: any): Observable<any> {
     const params = {tableId: tableId, values: this.valuesSanitize(values)};
     return new Observable((subscriber => {
-      this.sendToDatabase('table-insert-row', params);
-      this.electronService.ipcOnce('table-insert-row-' + tableId, (event, data) => {
+      const returnChannel = this.sendToDatabase('table-insert-row', params, tableId);
+      console.log(returnChannel);
+      this.electronService.ipcOnce(returnChannel, (event, data) => {
         if (data.result === 'error') {
           subscriber.error(data.message);
         } else {
@@ -175,8 +185,8 @@ export class DatabaseService {
   deleteRow(tableId: number, slotNumber: any): Observable<any> {
     const params = {tableId: tableId, slotNumber: slotNumber};
     return new Observable((subscriber => {
-      this.sendToDatabase('table-delete-row', params);
-      this.electronService.ipcOnce('table-delete-row-' + tableId, (event, data) => {
+      const returnChannel = this.sendToDatabase('table-delete-row', params, tableId);
+      this.electronService.ipcOnce(returnChannel, (event, data) => {
         if (data.result === 'error') {
           subscriber.error(data.message);
         } else {
@@ -191,8 +201,8 @@ export class DatabaseService {
     const params = {tableId: tableId};
 
     return new Observable((subscriber) => {
-      this.sendToDatabase('table-get-definition', params);
-      this.electronService.ipcOnce('table-get-definition-' + tableId, (event, data) => {
+      const returnChannel = this.sendToDatabase('table-get-definition', params, tableId);
+      this.electronService.ipcOnce(returnChannel, (event, data) => {
           // if (data.response.id === tableId) {
           if (data.result === 'error') {
             subscriber.error(data.message);
@@ -212,8 +222,8 @@ export class DatabaseService {
     const params = {tableId: tableId};
 
     return new Observable((subscriber) => {
-      this.sendToDatabase('table-get-available-slots', params);
-      this.electronService.ipcOnce('table-get-available-slots-' + tableId, (event, data) => {
+      const returnChannel = this.sendToDatabase('table-get-available-slots', params, tableId);
+      this.electronService.ipcOnce(returnChannel, (event, data) => {
         if (data.result === 'error') {
           subscriber.error(data.message);
         } else {
@@ -250,8 +260,8 @@ export class DatabaseService {
     const params = {tableId: tableId, rowId: rowId, values: this.valuesSanitize(values)};
 
     return new Observable((subscriber) => {
-        this.sendToDatabase('table-update-row', params);
-        this.electronService.ipcOnce('table-update-row-' + tableId, (event, data) => {
+        const returnChannel = this.sendToDatabase('table-update-row', params, tableId);
+        this.electronService.ipcOnce(returnChannel, (event, data) => {
           if (data.result === 'error') {
             subscriber.error(data.message);
           } else {
@@ -276,7 +286,7 @@ export class DatabaseService {
           subscriber.next(data.response);
           subscriber.complete();
         }
-      }))
+      }));
     });
 
     return obs.pipe(enterZone(this.zone));
