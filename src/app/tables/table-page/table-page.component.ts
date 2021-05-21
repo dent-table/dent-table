@@ -9,8 +9,8 @@ import {ConfirmDialogComponent} from '../../components/confirm-dialog/confirm-di
 import {LoggerService} from '../../providers/logger.service';
 import {Utils} from '../../commons/Utils';
 import {TranslateService} from '@ngx-translate/core';
-import * as _ from 'lodash-es';
 import {QuestionnaireComponent} from '../../components/questionnaire/questionnaire.component';
+import {openSnackbar} from '../../commons/Utils';
 
 @Component({
   selector: 'app-table-page',
@@ -37,7 +37,7 @@ export class TablePageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.tableId = _.toNumber(this.activatedRoute.snapshot.params['id']);
+    this.tableId = Number.parseInt(this.activatedRoute.snapshot.params['id'], 10);
     this.orderColumn = this.tableId === 3 ? 'date_out' : 'date';
     this.warnDateColumnName = this.orderColumn;
   }

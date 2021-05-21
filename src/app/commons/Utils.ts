@@ -1,6 +1,9 @@
-import { MatSnackBar } from '@angular/material/snack-bar';
-import * as _ from 'lodash-es';
-import {AbstractControl, FormGroup} from "@angular/forms";
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {AbstractControl, FormGroup} from '@angular/forms';
+import keys from 'lodash-es/keys';
+import includes from 'lodash-es/includes';
+import isString from 'lodash-es/isString';
+import some from 'lodash-es/some';
 
 export class Utils {
 
@@ -10,8 +13,6 @@ export class Utils {
       bounds: [9000, 9099]
     }
   };
-
-  static specialCasesKeys = _.keys(Utils.specialCases);
 
   static typeof(element: any, type?: string): boolean | string {
     if (type) {
@@ -26,7 +27,7 @@ export class Utils {
     // if (Utils.typeof(value, 'string')) {
     //   return value.trim() === '';
     // }
-    if (_.isString(value)) {
+    if (isString(value)) {
       return value.trim() === '';
     }
   }
@@ -54,7 +55,7 @@ export class Utils {
     const toReturn = {};
     for (const key of this.specialCasesKeys) {
       const sCase = this.specialCases[key];
-      if (_.includes(sCase.tables, tableId)) {
+      if (includes(sCase.tables, tableId)) {
         toReturn[key] = sCase;
       }
     }
@@ -119,46 +120,6 @@ export class Utils {
       });
     }
     return paths;
-  }
-
-
-  /**
-   * Same as <i>paths</i> but returns all paths of controls in a FormGroup.
-   * @see Utils.paths
-   * @param root FormGroup to analyze
-   */
-  static controlsPaths(root: FormGroup): string[][] {
-    let paths = [];
-    let nodes = [{
-      obj: root.controls,
-      path: []
-    }];
-    while (nodes.length > 0) {
-      let n = nodes.pop();
-      Object.keys(n.obj).forEach(k => {
-        if (n.obj[k] instanceof AbstractControl) {
-          let path = n.path.concat(k);
-
-          // if current object is a FormGroup we have to dig into it, otherwise we have reached a final control and
-          // we can add its path to paths list
-          if (n.obj[k] instanceof FormGroup) {
-            nodes.unshift({
-              obj: n.obj[k]['controls'],
-              path: path
-            });
-          } else {
-            paths.push(path);
-          }
-        }
-      });
-    }
-    return paths;
-  }
-
-  static hasArrayObjectWithValue(array, property, value) {
-    return _.some(array, function (el) {
-      return el[property] === value;
-    });
   }
 
   static randomHexString(size: number): string {

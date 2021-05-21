@@ -21,7 +21,6 @@ import {Router} from '@angular/router';
 import {TableDefinition} from '../../model/model';
 import * as moment from 'moment';
 import {formatDate} from '@angular/common';
-import * as _ from 'lodash-es';
 import {DropEvent} from 'angular-draggable-droppable';
 import {Utils} from '../../commons/Utils';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -30,6 +29,10 @@ import {switchMap} from 'rxjs/operators';
 import {zip} from 'rxjs';
 import {QuestionnaireComponent} from '../../components/questionnaire/questionnaire.component';
 import {MatDialog} from '@angular/material/dialog';
+import isBoolean from 'lodash-es/isBoolean'
+import isInteger from 'lodash-es/isInteger'
+import toInteger from 'lodash-es/toInteger';
+import {openSnackbar} from '../../commons/Utils';
 
 export interface CellClickEvent {
   columnName;
@@ -121,13 +124,13 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   ngOnInit() {
-    if (!_.isInteger(this.tableId)) {
-      this.tableId = _.toInteger(this.tableId);
+    if (!isInteger(this.tableId)) {
+      this.tableId = toInteger(this.tableId);
     }
-    if (!_.isInteger(this.rowSize)) {
-      this.rowSize = _.toInteger(this.rowSize);
+    if (!isInteger(this.rowSize)) {
+      this.rowSize = toInteger(this.rowSize);
     }
-    if (!_.isBoolean(this.showButtons)) {
+    if (!isBoolean(this.showButtons)) {
       this.showButtons = this.showButtons === "true";
     }
 

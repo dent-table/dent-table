@@ -5,10 +5,16 @@ import {map} from 'rxjs/operators';
 import {Questionnaire, QuestionnaireAnswers, TableDefinition, ToDeliver, ToDo} from '../model/model';
 import * as moment from 'moment';
 import * as crypto from 'crypto';
-import * as _ from 'lodash-es';
 import {LoggerService} from './logger.service';
 import {enterZone} from '../commons/RxjsZone';
-import {Utils} from '../commons/Utils';
+import {randomHexString} from '../commons/Utils';
+import forEach from 'lodash-es/forEach'
+import isBoolean from 'lodash-es/isBoolean'
+import isEmpty from 'lodash-es/isEmpty'
+import isNil from 'lodash-es/isNil'
+import isObjectLike from 'lodash-es/isObjectLike'
+import isString from 'lodash-es/isString'
+import trim from 'lodash-es/trim';
 
 @Injectable({
   providedIn: 'root'
@@ -89,11 +95,11 @@ export class DatabaseService {
   }
 
   private valueSanitize(value: any, valueName?: string) {
-    if (_.isString(value) && _.isEmpty(_.trim(value))) {
+    if (isString(value) && isEmpty(trim(value))) {
       value = null;
-    } else if (_.isBoolean(value)) {
+    } else if (isBoolean(value)) {
       value = value ? 1 : 0;
-    } else if (!_.isNil(value) && !_.isNil(valueName) && valueName.indexOf('date') >= 0) {
+    } else if (!isNil(value) && !isNil(valueName) && valueName.indexOf('date') >= 0) {
       // string date conversion to timestamp milliseconds
       value = moment(value, ['DD/MM/YYYY', 'MM/DD/YYYY', 'x', 'X']).valueOf();
     }
@@ -102,13 +108,13 @@ export class DatabaseService {
   }
 
   private valuesSanitize(values: any) {
-    if (_.isObjectLike(values)) {
+    if (isObjectLike(values)) {
       // const keys = Object.keys(values);
       // for (const key of keys) {
       //   values[key] = this.valueSanitize(values[key], key);
       // }
 
-      _.forEach(values, (value, key) => {
+      forEach(values, (value, key) => {
         values[key] = this.valueSanitize(value, key);
       });
     } else {
