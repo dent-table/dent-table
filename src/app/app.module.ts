@@ -32,6 +32,7 @@ import { TitleBarComponent } from './components/title-bar/title-bar.component';
 import { PreferencesDialogComponent } from './components/preferences-dialog/preferences-dialog.component';
 import { QuestionnaireComponent } from './components/questionnaire/questionnaire.component';
 import {SharedModule} from './shared/shared.module';
+import {QuestionnairesModule} from './questionnaires/questionnaires.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -63,6 +64,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     MaterialModule,
     TablesModule,
+    QuestionnairesModule,
     FormsModule,
     SharedModule,
     ReactiveFormsModule,

@@ -73,7 +73,7 @@ export interface Questionnaire {
   table_ids: number[];
   sections: {
     [key: string]: QuestionnaireSection
-  } | object;
+  };
   validations: object;
 }
 

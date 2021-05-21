@@ -298,6 +298,26 @@ export class DatabaseService {
     return obs.pipe(enterZone(this.zone));
   }
 
+  //TODO: merge this method with the one above
+  getQuestionnaireById(questionnaireId: number): Observable<Questionnaire> {
+    const params = {questionnaireId};
+
+    let obs: Observable<Questionnaire> = new Observable((subscriber) => {
+      this.sendToDatabase('questionnaire-get-by', params);
+      this.electronService.ipcOnce('questionnaire-get-by', ((event, data) => {
+        if (data.result === 'error') {
+          subscriber.error(data.message);
+        } else {
+
+          subscriber.next(data.response);
+          subscriber.complete();
+        }
+      }));
+    });
+
+    return obs.pipe(enterZone(this.zone));
+  }
+
   saveQuestionnaireAnswers(answersObject: QuestionnaireAnswers): Observable<QuestionnaireAnswers> {
     const obs: Observable<QuestionnaireAnswers> = new Observable((subscriber => {
       this.sendToDatabase('questionnaire-save-answers', answersObject);
@@ -323,6 +343,24 @@ export class DatabaseService {
     let obs: Observable<{[id: string]: QuestionnaireAnswers[]}> = new Observable((subscriber) => {
       this.sendToDatabase('questionnaire-get-answers', params);
       this.electronService.ipcOnce('questionnaire-get-answers', ((event, data) => {
+        if (data.result === 'error') {
+          subscriber.error(data.message);
+        } else {
+          subscriber.next(data.response);
+          subscriber.complete();
+        }
+      }))
+    });
+
+    return obs.pipe(enterZone(this.zone));
+  }
+
+  getQuestionnaireAnswerById(questionnaireId: number): Observable<QuestionnaireAnswers> {
+    const params = {questionnaireId};
+
+    let obs: Observable<QuestionnaireAnswers> = new Observable((subscriber) => {
+      this.sendToDatabase('questionnaire-get-answer-by-id', params);
+      this.electronService.ipcOnce('questionnaire-get-answer-by-id', ((event, data) => {
         if (data.result === 'error') {
           subscriber.error(data.message);
         } else {

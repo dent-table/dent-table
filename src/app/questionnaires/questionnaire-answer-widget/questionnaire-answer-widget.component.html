@@ -1,0 +1,52 @@
+<ng-template #childComponentTemplate>
+  <mat-expansion-panel *ngIf="formGroup">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{formGroup.value.name || ('COMMONS.ADD' | translate)}}
+      </mat-panel-title>
+      <mat-panel-description fxLayoutAlign="end">
+        {{this.answer?.date ?
+        (this.answer.date | stringToDate | date: 'dd/MM/YYYY HH:mm') : ('COMMONS.ADD' | translate)}}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div>
+      <form [formGroup]="formGroup" (ngSubmit)="saveNewQuestionnaire()">
+        <mat-form-field appearance="outline" class="form-row">
+          <mat-label>Nome</mat-label>
+          <input type="text" matInput [formControlName]="'name'" [id]="'name'">
+          <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
+        </mat-form-field>
+        <div formGroupName="sections">
+          <mat-list>
+            <div *ngFor="let section of questionnaire.sections | keyvalue" [formGroupName]="section.key">
+              <mat-divider></mat-divider>
+              <div mat-subheader>{{section.value.section_name}}</div>
+              <mat-list-item *ngFor="let question of section.value.questions" class="form-list-item">
+                <!--                        <mat-icon mat-list-icon>folder</mat-icon>-->
+                <div mat-line>{{question.text}}</div>
+
+                <ng-container [ngSwitch]="question.type">
+                  <mat-button-toggle-group [formControlName]="question.key" *ngSwitchCase="'boolean'">
+                    <mat-button-toggle [value]="true" class="green"><mat-icon>done</mat-icon></mat-button-toggle>
+                    <mat-button-toggle [value]="false" class="red"><mat-icon>close</mat-icon></mat-button-toggle>
+                  </mat-button-toggle-group>
+                  <!--TODO: add here other switch cases for other question type-->
+                </ng-container>
+              </mat-list-item>
+            </div>
+          </mat-list>
+        </div>
+        <mat-divider [ngStyle]="{margin: '10px'}"></mat-divider>
+        <mat-form-field appearance="fill" class="form-row">
+          <mat-label>Note</mat-label>
+          <textarea type="text" matInput [formControlName]="'note'" [id]="'note'"></textarea>
+          <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
+        </mat-form-field>
+        <mat-action-row *ngIf="!answer">
+          <!--                    <button mat-button color="primary" type="reset">Reset</button>-->
+          <button mat-button color="primary" type="submit">{{'COMMONS.SAVE' | translate}}</button>
+        </mat-action-row>
+      </form>
+    </div>
+  </mat-expansion-panel>
+</ng-template>
