@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {Utils} from '../../commons/Utils';
+import {specialCase} from '../../commons/Utils';
 
 @Pipe({
   name: 'slotNumberTransform'
@@ -7,7 +7,7 @@ import {Utils} from '../../commons/Utils';
 export class SlotNumberTransformPipe implements PipeTransform {
 
   transform(value: number, tableId: number): any {
-    return Utils.specialCase(value, tableId) || value;
+    return specialCase(value, tableId) || value;
   }
 
 }

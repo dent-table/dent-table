@@ -7,7 +7,6 @@ import * as moment from 'moment';
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {zip} from 'rxjs';
-import {Utils} from '../../commons/Utils';
 import {DialogData} from '../../tables/row-dialog/row-dialog.component';
 
 export interface QuestionnaireDialogData {

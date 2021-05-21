@@ -4,7 +4,7 @@ import {RowDialogComponent} from '../../tables/row-dialog/row-dialog.component';
 import {DatabaseService} from '../../providers/database.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import {Utils} from '../../commons/Utils';
+import {openSnackbar} from '../../commons/Utils';
 import {LoggerService} from '../../providers/logger.service';
 import {TranslateService} from '@ngx-translate/core';
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
@@ -118,7 +118,7 @@ export class HomeComponent implements OnInit {
         };
 
         this.zone.run(() => {
-          snackbarRef = Utils.openSnackbar(
+          snackbarRef = openSnackbar(
             this.snackBar, snackbarText, snackbarDuration, snackbarActionText, snackbarActionCallback);
         });
         this.reloadTable(tableId);
@@ -127,7 +127,7 @@ export class HomeComponent implements OnInit {
         this.logger.error(this.logTag, 'Delete error!', errors);
         snackbarText = this.translateService.instant('ERRORS.GENERIC');
         snackbarDuration = 3000;
-        Utils.openSnackbar(
+        openSnackbar(
           this.snackBar, snackbarText, snackbarDuration);
       });
   }

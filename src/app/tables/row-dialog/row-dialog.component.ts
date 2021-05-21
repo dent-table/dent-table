@@ -69,14 +69,14 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
       this.createFormGroup();
     }
 
-    this.specialCases = _.keys(Utils.getSpecialCases(this.data.tableId));
+    this.specialCases = Object.keys(getSpecialCases(this.data.tableId));
 
   }
 
   ngAfterViewInit(): void {
     this.availableSlots = this.data.availableSlots ? this.data.availableSlots : [];
 
-    if (this.dialogType === 'update' && this.data.element['slot_number'] && !Utils.specialCase(this.data.element['slot_number'], this.data.tableId)) {
+    if (this.dialogType === 'update' && this.data.element['slot_number'] && !specialCase(this.data.element['slot_number'], this.data.tableId)) {
       this.availableSlots.push(this.data.element['slot_number']);
     }
 
@@ -87,15 +87,15 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     }
   }
 
-  typeOf = Utils.typeof;
+  typeOf = _typeof;
 
   createFormGroup() {
     const group = {};
     let elementSlotNumber = this.data.element ? this.data.element['slot_number'] : '';
     // check if slot number is one of special cases
-    elementSlotNumber = Utils.specialCase(elementSlotNumber, this.data.tableId) === false
+    elementSlotNumber = specialCase(elementSlotNumber, this.data.tableId) === false
       ? elementSlotNumber
-      : Utils.specialCase(elementSlotNumber, this.data.tableId);
+      : specialCase(elementSlotNumber, this.data.tableId);
 
     group['slot_number'] = this.fb.control(elementSlotNumber);
 
@@ -143,7 +143,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     const toUpdate = {};
     let someDirty = false;
     if (this.formGroup.valid && this.formGroup.dirty) {
-      const controlPaths = Utils.controlsPaths(this.formGroup);
+      const controlPaths = controlsPaths(this.formGroup);
       for (let controlPath of controlPaths) {
         if (this.formGroup.get(controlPath).dirty && this.formGroup.get(controlPath).valid) {
           someDirty = true;

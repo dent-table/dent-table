@@ -22,7 +22,6 @@ import {TableDefinition} from '../../model/model';
 import * as moment from 'moment';
 import {formatDate} from '@angular/common';
 import {DropEvent} from 'angular-draggable-droppable';
-import {Utils} from '../../commons/Utils';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateService} from '@ngx-translate/core';
 import {switchMap} from 'rxjs/operators';
@@ -331,7 +330,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
         // https://stackoverflow.com/questions/55146484/matdialog-dialog-from-angular-material-is-not-closing
         this.ngZone.run(() => {
           // res[0] = translated error message, res[1] translated close text
-          Utils.openSnackbar(this.snackBar, message, 5000, close);
+          openSnackbar(this.snackBar, message, 5000, close);
         });
       }
     );

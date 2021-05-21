@@ -69,7 +69,7 @@ export class DatabaseService {
     };
 
     if (unique && typeof unique === 'boolean') {
-      params['uid'] = Utils.randomHexString(6);
+      params['uid'] = randomHexString(6);
     } else if (unique) {
       params['uid'] = unique;
     }

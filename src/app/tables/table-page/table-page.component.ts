@@ -7,7 +7,6 @@ import {CellClickEvent, TableWidgetComponent} from '../table-widget/table-widget
 import {DatabaseService} from '../../providers/database.service';
 import {ConfirmDialogComponent} from '../../components/confirm-dialog/confirm-dialog.component';
 import {LoggerService} from '../../providers/logger.service';
-import {Utils} from '../../commons/Utils';
 import {TranslateService} from '@ngx-translate/core';
 import {QuestionnaireComponent} from '../../components/questionnaire/questionnaire.component';
 import {openSnackbar} from '../../commons/Utils';
@@ -130,7 +129,7 @@ export class TablePageComponent implements OnInit {
 
         };
         this.zone.run(() => {
-          snackbarRef = Utils.openSnackbar(
+          snackbarRef = openSnackbar(
             this.snackBar, snackbarText, snackbarDuration, snackbarActionText, snackbarActionCallback);
 
         });
@@ -140,7 +139,7 @@ export class TablePageComponent implements OnInit {
         this.logger.error(this.logTag, 'Delete error!', errors);
         snackbarText = this.translateService.instant('ERRORS.GENERIC');
         snackbarDuration = 3000;
-        Utils.openSnackbar(
+        openSnackbar(
           this.snackBar, snackbarText, snackbarDuration);
       });
   }
