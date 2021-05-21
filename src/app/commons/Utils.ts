@@ -4,6 +4,8 @@ import keys from 'lodash-es/keys';
 import includes from 'lodash-es/includes';
 import isString from 'lodash-es/isString';
 import some from 'lodash-es/some';
+import isMatch from 'date-fns/isMatch';
+import parse from 'date-fns/parse'
 
 /*export class Utils {
 
@@ -330,5 +332,16 @@ const hasArrayObjectWithValue = function (array, property, value) {
   });
 }
 
+const parseDateString = function (dateString: any): Date {
+  const formats = ['dd/MM/yyyy', 'T', 'MM/dd/yyy', 't'];
+  for (const format of formats) {
+    if (isMatch(dateString, format)) {
+      return parse(dateString, format, new Date());
+    }
+  }
+
+  return null;
+}
+
 export {specialCases, specialCasesKeys, _typeof, isEmpty, specialCase,
-  getSpecialCases, openSnackbar, paths, controlsPaths, hasArrayObjectWithValue, randomHexString};
+  getSpecialCases, openSnackbar, paths, controlsPaths, hasArrayObjectWithValue, randomHexString, parseDateString};

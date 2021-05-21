@@ -3,11 +3,11 @@ import {DatabaseService} from '../../providers/database.service';
 import {Questionnaire, QuestionnaireAnswers} from '../../model/model';
 import {LoggerService} from '../../providers/logger.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import * as moment from 'moment';
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {zip} from 'rxjs';
 import {DialogData} from '../../tables/row-dialog/row-dialog.component';
+import formatISO from 'date-fns/formatISO';
 
 export interface QuestionnaireDialogData {
   tableId: number;
@@ -152,7 +152,7 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
 
   saveNewQuestionnaire(id: number) {
     let form: FormGroup = this.forms[id]['new'];
-    form.patchValue({date: moment().toISOString(true)});
+    form.patchValue({date: formatISO(new Date())});
 
     if (!form.valid) {
       console.log(this.findInvalidControls(form));

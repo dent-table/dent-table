@@ -5,6 +5,7 @@ import {TablePageComponent} from './tables/table-page/table-page.component';
 import {LoginComponent} from './components/login/login.component';
 import {LoginGuard} from './providers/login.guard';
 import {PreferencesDialogComponent} from './components/preferences-dialog/preferences-dialog.component';
+import {QuestionnaireWidgetComponent} from './questionnaires/questionnaire-widget/questionnaire-widget.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [LoginGuard]},

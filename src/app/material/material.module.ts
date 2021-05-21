@@ -20,30 +20,33 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {MAT_MOMENT_DATE_FORMATS, MatMomentDateModule, MomentDateAdapter} from '@angular/material-moment-adapter';
+// import {MAT_MOMENT_DATE_FORMATS, MatMomentDateModule, MomentDateAdapter} from '@angular/material-moment-adapter';
 import {NgMatSearchBarModule} from 'ng-mat-search-bar';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatListModule} from '@angular/material/list';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {NGX_MAT_DATEFNS_LOCALES, NgxMatDateFnsDateModule} from 'ngx-mat-datefns-date-adapter';
+import { da, ja } from 'date-fns/esm/locale'
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule, BrowserAnimationsModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, MatFormFieldModule, MatInputModule,
-    FlexLayoutModule, MatPaginatorModule, MatIconModule, MatToolbarModule, MatCardModule, MatDatepickerModule, MatMomentDateModule,
+    FlexLayoutModule, MatPaginatorModule, MatIconModule, MatToolbarModule, MatCardModule, MatDatepickerModule, NgxMatDateFnsDateModule,
     MatRippleModule, NgMatSearchBarModule, MatSnackBarModule, MatProgressSpinnerModule, MatTabsModule, MatExpansionModule, MatListModule,
     MatButtonToggleModule
   ],
   exports: [
     BrowserAnimationsModule, MatButtonModule, MatCheckboxModule, MatTableModule, MatTooltipModule, MatFormFieldModule, MatInputModule,
-    FlexLayoutModule, MatPaginatorModule, MatIconModule, MatToolbarModule, MatCardModule, MatDatepickerModule, MatMomentDateModule,
+    FlexLayoutModule, MatPaginatorModule, MatIconModule, MatToolbarModule, MatCardModule, MatDatepickerModule, NgxMatDateFnsDateModule,
     MatRippleModule, NgMatSearchBarModule, MatSnackBarModule, MatProgressSpinnerModule, MatTabsModule, MatExpansionModule, MatListModule,
     MatButtonToggleModule
   ],
   providers: [
-    {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
-    {provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS},
-    {provide: MAT_DATE_LOCALE, useValue: navigator.language}
+    // {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
+    // {provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS},
+    {provide: NGX_MAT_DATEFNS_LOCALES, useValue: [da, ja]},
+    {provide: MAT_DATE_LOCALE, useValue: 'ja'}
   ]
 })
 export class MaterialModule { }

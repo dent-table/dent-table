@@ -10,9 +10,9 @@ import {
   Validators
 } from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import * as moment from 'moment';
 import {_typeof, controlsPaths, getSpecialCases, specialCase} from '../../commons/Utils';
 import {LoggerService} from '../../providers/logger.service';
+import parse from 'date-fns/parse';
 
 export interface DialogData {
   tableId: any;
@@ -106,9 +106,9 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
       let currentValue = this.data.element ? this.data.element[column.name] : '';
 
       if (currentValue && column.type.name === 'date' && currentValue !== '') {
-        currentValue = moment(currentValue);
+        currentValue = parse(currentValue, 'T', new Date());
       } else if (column.type.name === 'date' && column.required) {
-        currentValue = moment();
+        currentValue = new Date();
       }
       if (column.required) {
         validators.push(Validators.required);

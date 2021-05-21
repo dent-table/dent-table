@@ -3,8 +3,8 @@ import * as winston from 'winston';
 import {ElectronService} from './electron.service';
 import {Logger} from 'winston';
 import * as path from 'path';
-import * as moment from 'moment';
-import {format} from 'winston';
+// import {format} from 'winston';
+import format from 'date-fns/format';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +26,7 @@ export class LoggerService {
   logger: Logger;
 
   constructor(private electronService: ElectronService) {
-    this.logger = this.createLogger('logs_' + moment().format('YYYY-MM-DD'));
+    this.logger = this.createLogger('logs_' + format(new Date(), 'yyyy-MM-dd'));
   }
 
   /*  getLogger(filename: string): Logger {

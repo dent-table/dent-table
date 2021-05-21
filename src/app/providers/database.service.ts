@@ -3,18 +3,19 @@ import {ElectronService} from './electron.service';
 import {Observable, OperatorFunction} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Questionnaire, QuestionnaireAnswers, TableDefinition, ToDeliver, ToDo} from '../model/model';
-import * as moment from 'moment';
 import * as crypto from 'crypto';
 import {LoggerService} from './logger.service';
 import {enterZone} from '../commons/RxjsZone';
-import {randomHexString} from '../commons/Utils';
+import {parseDateString, randomHexString} from '../commons/Utils';
 import forEach from 'lodash-es/forEach'
 import isBoolean from 'lodash-es/isBoolean'
 import isEmpty from 'lodash-es/isEmpty'
 import isNil from 'lodash-es/isNil'
 import isObjectLike from 'lodash-es/isObjectLike'
 import isString from 'lodash-es/isString'
+import isNumber from 'lodash-es/isNumber';
 import trim from 'lodash-es/trim';
+import isValid from 'date-fns/isValid';
 
 @Injectable({
   providedIn: 'root'
@@ -99,10 +100,13 @@ export class DatabaseService {
       value = null;
     } else if (isBoolean(value)) {
       value = value ? 1 : 0;
-    } else if (!isNil(value) && !isNil(valueName) && valueName.indexOf('date') >= 0) {
-      // string date conversion to timestamp milliseconds
-      value = moment(value, ['DD/MM/YYYY', 'MM/DD/YYYY', 'x', 'X']).valueOf();
+    // } else if (!isNil(value) && !isNil(valueName) && valueName.indexOf('date') >= 0) {
+    } else if (isString(value) && isValid(parseDateString(value))) { // check if value is a string parsable as a valid date
+      value = parseDateString(value).valueOf();
+    } else if (!isNil(value) && value instanceof Date && isValid(value)) { // check if value is a valid Date object
+      value = value.valueOf();
     }
+
     this.loggerService.debug(this.logTag, value, typeof value);
     return value;
   }

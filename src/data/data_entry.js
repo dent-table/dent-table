@@ -6,7 +6,8 @@ let fs = require('fs');
 let Database = require('better-sqlite3');
 let crypto = require('crypto');
 let _ = require('lodash');
-let moment = require('moment');
+let format = require('date-fns/format');
+let formatISO = require('date-fns/formatISO')
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -50,7 +51,7 @@ let logger = winston.createLogger({
     }),
     new winston.transports.File({
       dirname: logPath,
-      filename: `data_${moment().format('YYYY-MM-DD')}.log`,
+      filename: `data_${format(new Date(), 'yyyy-MM-dd')}.log`,
       format: logFormat
     })
   ],
@@ -761,6 +762,8 @@ function deleteSlotByTableRef(tableId, tableRef) {
  *  </ul>
  */
 function insertIntoTable({tableId, values, slot_number}) {
+  console.log(values);
+
   checkRequiredParameters(tableId, values);
 
   let tableName = getTableDefinition(tableId).name;
@@ -1166,7 +1169,7 @@ function saveQuestionnaireAnswers(answers) {
     questionnaire_ref: answers.questionnaire_ref,
     slot_number: answers.slot_number,
     name: answers.name,
-    date: answers.date || moment().toISOString(),
+    date: answers.date || formatISO(new Date()),
     note: answers.note,
     answers: JSON.stringify(answersObj),
     validations: JSON.stringify(answers.validations)

@@ -19,7 +19,6 @@ import {TablesService} from '../../providers/tables.service';
 import {Router} from '@angular/router';
 
 import {TableDefinition} from '../../model/model';
-import * as moment from 'moment';
 import {formatDate} from '@angular/common';
 import {DropEvent} from 'angular-draggable-droppable';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -31,7 +30,8 @@ import {MatDialog} from '@angular/material/dialog';
 import isBoolean from 'lodash-es/isBoolean'
 import isInteger from 'lodash-es/isInteger'
 import toInteger from 'lodash-es/toInteger';
-import {openSnackbar} from '../../commons/Utils';
+import {openSnackbar, parseDateString} from '../../commons/Utils';
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 
 export interface CellClickEvent {
   columnName;
@@ -308,10 +308,12 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
 
   // Return true if row date is under 7 day until today
   checkDateRow(row: any) {
-    const rowDate = moment(row[this.warnDateColumnName], 'x');
-    const currentDate = moment();
+    const rowDate = parseDateString(row[this.warnDateColumnName]);
+    const currentDate = new Date();
+    const difference = differenceInCalendarDays(rowDate, currentDate);
+    console.log(this.logTag, difference);
 
-    return currentDate.add(7, 'd').isAfter(rowDate);
+    return difference <= 7;
   }
 
   private showEmptyFieldMessage(column: string): void {
