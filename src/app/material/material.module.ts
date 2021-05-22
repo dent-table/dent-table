@@ -25,8 +25,10 @@ import {NgMatSearchBarModule} from 'ng-mat-search-bar';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatListModule} from '@angular/material/list';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import {NGX_MAT_DATEFNS_LOCALES, NgxMatDateFnsDateModule} from 'ngx-mat-datefns-date-adapter';
-import { da, ja } from 'date-fns/esm/locale'
+import it from 'date-fns/esm/locale/it'
+// import {NgxMatDateFnsDateModule, NGX_MAT_DATEFNS_LOCALES} from 'ngx-mat-datefns-date-adapter';
+import {NgxMatDateFnsDateModule} from '../ngx-date-fns-date/ngx-date-fns-date.module';
+import {NGX_MAT_DATEFNS_LOCALES} from '../ngx-date-fns-date/ngx-mat-datefns-locales';
 
 @NgModule({
   declarations: [],
@@ -45,8 +47,8 @@ import { da, ja } from 'date-fns/esm/locale'
   providers: [
     // {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
     // {provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS},
-    {provide: NGX_MAT_DATEFNS_LOCALES, useValue: [da, ja]},
-    {provide: MAT_DATE_LOCALE, useValue: 'ja'}
+    {provide: NGX_MAT_DATEFNS_LOCALES, useValue: [it]},
+    {provide: MAT_DATE_LOCALE, useValue: navigator.language}
   ]
 })
 export class MaterialModule { }
