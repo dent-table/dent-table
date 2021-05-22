@@ -90,6 +90,9 @@
             "dev": {
               "browserTarget": "dent-table:build:dev"
             },
+            "web": {
+              "browserTarget": "dent-table:build:web"
+            },
             "production": {
               "browserTarget": "dent-table:build:production"
             }
@@ -127,7 +130,7 @@
           "options": {
             "eslintConfig": ".eslintrc.json",
             "lintFilePatterns": [
-              "src/**.ts",
+              "src/**/*.ts",
               "main.ts"
             ]
           }

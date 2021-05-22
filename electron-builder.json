@@ -7,29 +7,32 @@
   "files": [
     "**/*",
     "!**/*.ts",
-    "!*.code-workspace",
-    "!LICENSE.md",
+    "!.github",
+    "!.vscode",
+    "!.code-workspace",
+    "!.npmrc",
+    "!*.md",
     "!package.json",
     "!package-lock.json",
     "!src/",
     "!e2e/",
     "!hooks/",
-    "!angular.json",
     "!_config.yml",
-    "!karma.conf.js",
-    "!tsconfig.json",
+    "!angular.json",
+    "!tsconfig*.json",
     "!tslint.json",
-    "!older/"
-  ],
-  "extraFiles": [
-    "src/assets/preferences.json"
+    "!.eslintrc.json",
+    "!karma.conf.js",
+    "!angular.webpack.js",
+    "!*.map",
+     "!older/"
   ],
   "win": {
     "icon": "dist/assets/icons",
     "target": [
       {
         "target": "portable",
-        "arch": ["ia32","x64"]
+        "arch": ["x64"]
       },
 //      {
 //        "target": "nsis",
@@ -42,16 +45,15 @@
   "nsis": {
     "oneClick": false
   },
+  "portable": {
+    "splashImage": "dist/assets/icons/electron.bmp"
+  },
   "mac": {
     "icon": "dist/assets/icons",
-    "target": [
-      "dmg"
-    ]
+    "target": ["dmg"]
   },
   "linux": {
     "icon": "dist/assets/icons",
-    "target": [
-      "AppImage"
-    ]
+    "target": ["AppImage"]
   }
 }

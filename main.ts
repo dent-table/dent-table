@@ -43,7 +43,7 @@ function createMainWindow() {
     webPreferences: {
       nodeIntegration: true,
       // allowRunningInsecureContent: (serve) ? true : false,
-      // contextIsolation: false,  // false if you want to run 2e2 test with Spectron
+      contextIsolation: false,  // false if you want to run 2e2 test with Spectron
       enableRemoteModule : true // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
     },
     frame: false
@@ -127,6 +127,7 @@ function createDatabaseWindow() {
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
+      contextIsolation: false
     }
   };
 
