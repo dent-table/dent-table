@@ -180,7 +180,6 @@ export class DatabaseService {
     const params = {tableId: tableId, values: this.valuesSanitize(values)};
     return new Observable((subscriber => {
       const returnChannel = this.sendToDatabase('table-insert-row', params, tableId);
-      console.log(returnChannel);
       this.electronService.ipcOnce(returnChannel, (event, data) => {
         if (data.result === 'error') {
           subscriber.error(data.message);

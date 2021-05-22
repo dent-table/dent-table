@@ -310,10 +310,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   checkDateRow(row: any) {
     const rowDate = parseDateString(row[this.warnDateColumnName]);
     const currentDate = new Date();
-    const difference = differenceInCalendarDays(rowDate, currentDate);
-    console.log(this.logTag, difference);
-
-    return difference <= 7;
+    return  differenceInCalendarDays(rowDate, currentDate) <= 7;
   }
 
   private showEmptyFieldMessage(column: string): void {
