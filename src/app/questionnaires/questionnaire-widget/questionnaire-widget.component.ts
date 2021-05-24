@@ -1,9 +1,8 @@
-import {AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {AfterContentInit, ChangeDetectorRef, Component, Input} from '@angular/core';
 import {Questionnaire, QuestionnaireAnswers} from '../../model/model';
 import {zip} from 'rxjs';
 import {DatabaseService} from '../../providers/database.service';
 import {LoggerService} from '../../providers/logger.service';
-import {MatExpansionPanel} from '@angular/material/expansion';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {openSnackbar} from '../../commons/Utils';
 

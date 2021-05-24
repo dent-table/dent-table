@@ -1,14 +1,7 @@
 import {AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core';
 import {DatabaseService} from '../../providers/database.service';
 import {TableDefinition} from '../../model/model';
-import {
-  AbstractControl,
-  AsyncValidatorFn,
-  FormBuilder,
-  FormGroup,
-  ValidationErrors,
-  Validators
-} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {_typeof, controlsPaths, getSpecialCases, specialCase} from '../../commons/Utils';
 import {LoggerService} from '../../providers/logger.service';

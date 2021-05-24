@@ -1,9 +1,8 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
-import { ElectronService } from './providers/electron.service';
-import { TranslateService } from '@ngx-translate/core';
-import { AppConfig } from '../environments/environment';
+import {ElectronService} from './providers/electron.service';
+import {TranslateService} from '@ngx-translate/core';
 import {PreferencesService} from './providers/preferences.service';
-import { MatDialog } from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {ConfirmDialogComponent} from './components/confirm-dialog/confirm-dialog.component';
 import {LoggerService} from './providers/logger.service';
 
@@ -48,7 +47,7 @@ export class AppComponent implements OnInit, OnDestroy {
         location.reload();
       }
     });
-    
+
     this.preferencesService.load();
   }
 

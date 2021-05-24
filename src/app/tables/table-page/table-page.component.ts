@@ -1,7 +1,7 @@
 import {Component, NgZone, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+import {MatDialog} from '@angular/material/dialog';
+import {MatSnackBar} from '@angular/material/snack-bar';
 import {RowDialogComponent} from '../row-dialog/row-dialog.component';
 import {CellClickEvent, TableWidgetComponent} from '../table-widget/table-widget.component';
 import {DatabaseService} from '../../providers/database.service';

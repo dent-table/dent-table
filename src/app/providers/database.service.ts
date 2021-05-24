@@ -7,13 +7,12 @@ import * as crypto from 'crypto';
 import {LoggerService} from './logger.service';
 import {enterZone} from '../commons/RxjsZone';
 import {parseDateString, randomHexString} from '../commons/Utils';
-import forEach from 'lodash-es/forEach'
-import isBoolean from 'lodash-es/isBoolean'
-import isEmpty from 'lodash-es/isEmpty'
-import isNil from 'lodash-es/isNil'
-import isObjectLike from 'lodash-es/isObjectLike'
-import isString from 'lodash-es/isString'
-import isNumber from 'lodash-es/isNumber';
+import forEach from 'lodash-es/forEach';
+import isBoolean from 'lodash-es/isBoolean';
+import isEmpty from 'lodash-es/isEmpty';
+import isNil from 'lodash-es/isNil';
+import isObjectLike from 'lodash-es/isObjectLike';
+import isString from 'lodash-es/isString';
 import trim from 'lodash-es/trim';
 import isValid from 'date-fns/isValid';
 

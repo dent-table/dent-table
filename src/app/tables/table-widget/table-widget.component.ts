@@ -4,17 +4,24 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef, EventEmitter, Inject,
-  Input, LOCALE_ID, NgZone, OnDestroy,
-  OnInit, Output,
-  ViewChild, ViewRef
+  ElementRef,
+  EventEmitter,
+  Inject,
+  Input,
+  LOCALE_ID,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewRef
 } from '@angular/core';
 import {DatabaseService} from '../../providers/database.service';
 import {LoggerService} from '../../providers/logger.service';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatTooltip } from '@angular/material/tooltip';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
+import {MatTooltip} from '@angular/material/tooltip';
 import {TablesService} from '../../providers/tables.service';
 import {Router} from '@angular/router';
 
@@ -27,11 +34,11 @@ import {switchMap} from 'rxjs/operators';
 import {zip} from 'rxjs';
 import {QuestionnaireComponent} from '../../components/questionnaire/questionnaire.component';
 import {MatDialog} from '@angular/material/dialog';
-import isBoolean from 'lodash-es/isBoolean'
-import isInteger from 'lodash-es/isInteger'
+import isBoolean from 'lodash-es/isBoolean';
+import isInteger from 'lodash-es/isInteger';
 import toInteger from 'lodash-es/toInteger';
 import {openSnackbar, parseDateString} from '../../commons/Utils';
-import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
+import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
 
 export interface CellClickEvent {
   columnName;
