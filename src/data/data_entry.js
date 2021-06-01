@@ -283,7 +283,8 @@ function createDatabase() {
     defaultUserInsertStatement.run('carbone', '9f409e3a8ffdadf787dc034b83bddda3');
 
     logger.info(logObject('createDatabase', "Populating dbversion..."));
-    let dbVersionStatement = db.prepare("INSERT INTO dbversion(version) VALUES(1)");
+    // TODO: update this value according the current db version
+    let dbVersionStatement = db.prepare("INSERT INTO dbversion(version) VALUES(4)");
     dbVersionStatement.run();
 
     //TODO: remove this
@@ -384,6 +385,48 @@ function updateDatabase() {
     result = stmt.run();
   });
 
+  let v4 = db.transaction(() => {
+    logger.info(logObject('updateDatabase/v4', "Creating questionnaires tables..."));
+
+    let createStatements = [
+      db.prepare("CREATE TABLE questionnaire (" +
+        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+        "name TEXT NOT NULL," +
+        "sections TEXT NOT NULL," +
+        "validations TEXT NOT NULL" +
+        ")"),
+      db.prepare("CREATE TABLE table_questionnaires (" +
+        "table_id INTEGER NOT NULL," +
+        "questionnaire_ref INTEGER NOT NULL," +
+        "PRIMARY KEY (table_id, questionnaire_ref)," +
+        "FOREIGN KEY (table_id) REFERENCES tables_definition (id)," +
+        "FOREIGN KEY (questionnaire_ref) REFERENCES questionnaire (id)" +
+        ")"),
+      db.prepare("CREATE TABLE questionnaire_answers (" +
+        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+        "table_id INTEGER NOT NULL," +
+        "questionnaire_ref INTEGER NOT NULL," +
+        "slot_number INTEGER NOT NULL," +
+        "name TEXT," +
+        "date TEXT NOT NULL," +
+        "answers TEXT," +
+        "note TEXT," +
+        "validations TEXT," +
+        "FOREIGN KEY (table_id) REFERENCES tables_definition (id)," +
+        "FOREIGN KEY (questionnaire_ref) REFERENCES questionnaire (id)" +
+        ")"),
+    ];
+
+    logger.info(logObject('updateDatabase/v4', "Running queries..."));
+    for (const createStatement of createStatements) {
+      createStatement.run();
+    }
+
+    logger.info(logObject('updateDatabase/v4', "Updating dbversion..."));
+    const stmt = db.prepare("UPDATE dbversion SET version=4 WHERE version=3");
+    const result = stmt.run();
+  })
+
   let version;
   let updates = 0;
   do {
@@ -401,13 +444,19 @@ function updateDatabase() {
       v3();
       updates++;
     } else if (version === 3) {
-      // logger.info(logObject('updateDatabase', "Update completed!"));
-      // TODO: change this else-if case when version will be greater than 3 (call v4 update transaction in this row)
+      logger.info(logObject('updateDatabase', "Updating database to v4..."));
+      v4();
+      updates++;
+    } else if (version === 4) {
+      // logger.info(logObject('updateDatabase', "Updating database to v5..."));
+      // v5();
+      // updates++;
+      // TODO: uncomment lines above when version will be greater than 4
     } else {
       logger.warn(logObject('updateDatabase', `Database version ${version} not recognized`));
       break;
     }
-  } while (version !== 3); // TODO: change also this row when version will be greater than 3 (increase 3 to 4)
+  } while (version !== 4); // TODO: change also this row when version will be greater than 4 (increase 4 to 5)
   //
   //   queryString = "SELECT version FROM dbversion";
   //   version = db.prepare(queryString)
