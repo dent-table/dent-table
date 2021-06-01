@@ -25,7 +25,7 @@
     "!karma.conf.js",
     "!angular.webpack.js",
     "!*.map",
-     "!older/"
+    "!older/"
   ],
   "win": {
     "icon": "dist/assets/icons",
@@ -34,19 +34,19 @@
         "target": "portable",
         "arch": ["x64"]
       },
-//      {
-//        "target": "nsis",
-//        "arch": [
-//          "x64"
-//        ]
-//      }
+      //      {
+      //        "target": "nsis",
+      //        "arch": [
+      //          "x64"
+      //        ]
+      //      }
     ]
   },
   "nsis": {
     "oneClick": false
   },
   "portable": {
-    "splashImage": "dist/assets/icons/electron.bmp"
+    "splashImage": "dist/assets/icons/favicon.512x512.png"
   },
   "mac": {
     "icon": "dist/assets/icons",

@@ -5,8 +5,8 @@
                         [orderColumn]="orderColumn" [warnDateColumnName]="warnDateColumnName"
                         rowSize="36" buttonsSize="24" showButtons="true" draggable="false"></app-table-widget>
     </mat-card-content>
-    <button mat-fab>
-      <mat-icon aria-label="Add Row" (click)="openRowDialog()">add</mat-icon>
+    <button mat-fab (click)="openRowDialog()">
+      <mat-icon aria-label="Add Row">add</mat-icon>
     </button>
   </mat-card>
 </div>
