@@ -4,11 +4,14 @@ import {DatabaseService} from '../../providers/database.service';
 import {LoggerService} from '../../providers/logger.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {openSnackbar} from '../../commons/Utils';
+import {TranslateService} from '@ngx-translate/core';
+import {FAB_ANIMATION_TRIGGER} from '../../commons/Animations';
 
 @Component({
   selector: 'app-questionnaire-widget[questionnaire][row]',
   templateUrl: './questionnaire-widget.component.html',
   styleUrls: ['./questionnaire-widget.component.scss'],
+  animations: [FAB_ANIMATION_TRIGGER]
 })
 export class QuestionnaireWidgetComponent implements AfterViewInit {
   logTag = QuestionnaireWidgetComponent.name;

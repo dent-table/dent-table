@@ -1,6 +1,6 @@
 <ng-template #childComponentTemplate>
-  <mat-expansion-panel *ngIf="formGroup">
-    <mat-expansion-panel-header>
+  <mat-expansion-panel *ngIf="formGroup" [expanded]="!answer" [@questionnaireAnswer] #expansionPanel>
+    <mat-expansion-panel-header [ngClass]="!answer ? 'answer-new': null">
       <mat-panel-title>
         {{formGroup.value.name}} &nbsp;
         <div *ngIf="formGroup.get('validations').value && formGroup.get('validations').value.length > 0">

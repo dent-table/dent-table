@@ -14,6 +14,29 @@ import {MatExpansionPanel} from '@angular/material/expansion';
   host: {
     'class': 'expansion-panel-wrapper',
   },
+  animations: [
+    trigger(
+      'questionnaireAnswer',
+      [
+        transition(
+          ':enter',
+          [
+            style({ opacity: 0, transform: 'translateY(-10px)' }),
+            animate('350ms cubic-bezier(0.87, 0, 0.13, 1)',
+              style({ opacity: 1, transform: 'translateY(0)' })),
+          ]
+        ),
+        transition(
+          ':leave',
+          [
+            style({ opacity: 1 }),
+            animate('300ms cubic-bezier(0.85, 0, 0.15, 1)',
+              style({ opacity: 0 }))
+          ]
+        )
+      ]
+    )
+  ]
 })
 export class QuestionnaireAnswerWidgetComponent implements AfterContentInit {
   @Input() questionnaire: Questionnaire;

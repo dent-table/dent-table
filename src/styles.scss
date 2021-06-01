@@ -127,3 +127,25 @@ html, body {
   height: 100%;
   width: 100%;
 }
+
+// temporary fix for expansion panels until Angular Material Issue is fixed,
+// see https://github.com/angular/material2/issues/13870 and https://github.com/angular/components/issues/11765
+mat-accordion mat-expansion-panel {
+  mat-expansion-panel-header {
+    height: 40px; // height may be different for you
+  }
+
+  .mat-expansion-panel-content {
+    height: 0;
+  }
+
+  &.mat-expanded {
+    mat-expansion-panel-header {
+      height: 64px; // height may be different for you
+    }
+
+    .mat-expansion-panel-content {
+      height: auto;
+    }
+  }
+}
