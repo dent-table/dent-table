@@ -26,20 +26,24 @@ import it from 'date-fns/esm/locale/it';
 // import {NgxMatDateFnsDateModule, NGX_MAT_DATEFNS_LOCALES} from 'ngx-mat-datefns-date-adapter';
 import {NgxMatDateFnsDateModule} from '../ngx-date-fns-date/ngx-date-fns-date.module';
 import {NGX_MAT_DATEFNS_LOCALES} from '../ngx-date-fns-date/ngx-mat-datefns-locales';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatSelectModule} from '@angular/material/select';
+import {MatBadgeModule} from '@angular/material/badge';
 
 @NgModule({
-  declarations: [],
+  declarations: [ ],
   imports: [
     CommonModule, BrowserAnimationsModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, MatFormFieldModule, MatInputModule,
     FlexLayoutModule, MatPaginatorModule, MatIconModule, MatToolbarModule, MatCardModule, MatDatepickerModule, NgxMatDateFnsDateModule,
     MatRippleModule, NgMatSearchBarModule, MatSnackBarModule, MatProgressSpinnerModule, MatTabsModule, MatExpansionModule, MatListModule,
-    MatButtonToggleModule
+    MatButtonToggleModule, MatChipsModule, MatDialogModule, MatSelectModule, MatBadgeModule
   ],
   exports: [
     BrowserAnimationsModule, MatButtonModule, MatCheckboxModule, MatTableModule, MatTooltipModule, MatFormFieldModule, MatInputModule,
     FlexLayoutModule, MatPaginatorModule, MatIconModule, MatToolbarModule, MatCardModule, MatDatepickerModule, NgxMatDateFnsDateModule,
     MatRippleModule, NgMatSearchBarModule, MatSnackBarModule, MatProgressSpinnerModule, MatTabsModule, MatExpansionModule, MatListModule,
-    MatButtonToggleModule
+    MatButtonToggleModule, MatChipsModule, MatDialogModule, MatSelectModule, MatBadgeModule
   ],
   providers: [
     // {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},

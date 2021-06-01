@@ -1,0 +1,12 @@
+<mat-dialog-content class="dialog-content">
+  <mat-spinner *ngIf="!loaded"></mat-spinner>
+  <mat-tab-group *ngIf="loaded" animationDuration="0ms">
+    <mat-tab *ngFor="let questionnaire of questionnaires" [label]="questionnaire.name">
+      <!-- https://github.com/angular/components/issues/14704
+           https://github.com/angular/angular/issues/37895 -->
+      <ng-template matTabContent>
+        <app-questionnaire-widget [questionnaire]="questionnaire" [row]="rowData"></app-questionnaire-widget>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>

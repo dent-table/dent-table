@@ -1,0 +1,44 @@
+.form-row {
+  display: block;
+  margin: 10px;
+}
+
+.form-list-item {
+  height: 46px !important;
+}
+
+.mat-input-element:disabled {
+  color: black;
+}
+
+.mat-dialog-content {
+  max-height: 100%;
+}
+
+.chips {
+  padding: 10px;
+}
+
+.mat-chip-disabled {
+  pointer-events: none;
+}
+
+.answer-new {
+  background: repeating-linear-gradient(
+      35deg,
+      #ffffff,
+      #ffffff 10px,
+      #efefef 10px,
+      #efefef 20px
+  )!important;
+}
+
+.answer-new:hover {
+  background: repeating-linear-gradient(
+      35deg,
+      #ffffff,
+      #ffffff 10px,
+      #e1e1e1 10px,
+      #e1e1e1 20px
+  )!important;
+}

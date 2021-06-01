@@ -1,27 +1,26 @@
-<mat-tab-group>
-  <mat-spinner *ngIf="!questionnaire" mode="indeterminate"></mat-spinner>
-  <mat-tab [label]="questionnaire?.name" *ngIf="questionnaire">
-    <ng-template matTabContent>
-      <div class="tab-content">
-        <mat-accordion>
-          <!--Wrapping mat-expansion-panel into a Component generate an additional html element (in this
-          case, <app-questionnaire-answer-widget>) that mess up the css of MatExpansionPanel
-          (see https://github.com/angular/components/issues/13419).
-          So, we remove this extra html element injecting the component's html code (stored into wrapper.childComponentTemplate)
-           directly into the DOM (with *ngTemplateOutlet directive)
-          (https://stackoverflow.com/questions/52169086/angular2-render-a-component-without-any-wrapping-tag-at-all) -->
-          <ng-container *ngFor="let answer of answers">
-            <app-questionnaire-answer-widget #wrapper [answer]="answer" [questionnaire]="questionnaire"></app-questionnaire-answer-widget>
-            <ng-container *ngTemplateOutlet="wrapper.childComponentTemplate"></ng-container>
-          </ng-container>
-          <ng-container *ngIf="!showNewPanel">
-            <app-questionnaire-answer-widget #wrapper [questionnaire]="questionnaire" (onSave)="saveNewAnswer($event)"></app-questionnaire-answer-widget>
-            <ng-container *ngTemplateOutlet='wrapper.childComponentTemplate'></ng-container>
-          </ng-container>
-        </mat-accordion>
-        <button mat-button (click)="showNewPanel = !showNewPanel"
-                [ngStyle]="{display: !showNewPanel ? 'none': 'block'}">Nuovo</button>
-      </div>
-    </ng-template>
-  </mat-tab>
-</mat-tab-group>
+<div class="tab-content">
+  <mat-accordion>
+    <!--Wrapping mat-expansion-panel into a Component generate an additional html element (in this case,
+     <app-questionnaire-answer-widget>) that mess up the css of MatExpansionPanel
+    (see https://github.com/angular/components/issues/13419).
+    So, we remove this extra html element injecting the component's html code (stored into wrapper.childComponentTemplate)
+     directly into the DOM (with *ngTemplateOutlet directive)
+    (https://stackoverflow.com/questions/52169086/angular2-render-a-component-without-any-wrapping-tag-at-all) -->
+    <ng-container *ngFor="let answer of answers">
+      <app-questionnaire-answer-widget #wrapper [answer]="answer" [questionnaire]="questionnaire"></app-questionnaire-answer-widget>
+      <ng-container *ngTemplateOutlet="wrapper.childComponentTemplate"></ng-container>
+    </ng-container>
+    <ng-container *ngIf="showNewPanel">
+      <app-questionnaire-answer-widget #wrapper [questionnaire]="questionnaire" (onSave)="saveNewAnswer($event)"
+                                       [defaultName]="row?.name" (close)="showNewPanel = false">
+      </app-questionnaire-answer-widget>
+      <ng-container *ngTemplateOutlet='wrapper.childComponentTemplate'></ng-container>
+    </ng-container>
+  </mat-accordion>
+  <div class="floating-button">
+    <button  [@fabAnimation]="showNewPanel ? 'invisible' : 'visible'"
+             mat-mini-fab (click)="showNewPanel = !showNewPanel">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+</div>

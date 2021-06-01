@@ -20,6 +20,17 @@ export class ToDeliver {
   ) { }
 }
 
+/** Represent a generic table row obtanied from the database */
+export interface TableRow {
+  /** Slot number from table tables_slots */
+  slot_number: number;
+  /**  Id of the reference table */
+  table_id: number;
+  /**  Id of the table's row in the reference table */
+  table_ref: number;
+  [key: string]: any;
+}
+
 export interface ColumnTypeDefinition {
   name: string;
   special: boolean;

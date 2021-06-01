@@ -1,69 +1,53 @@
-import {AfterContentInit, ChangeDetectorRef, Component, Input} from '@angular/core';
-import {Questionnaire, QuestionnaireAnswers} from '../../model/model';
-import {zip} from 'rxjs';
+import {AfterViewInit, Component, Input} from '@angular/core';
+import {Questionnaire, QuestionnaireAnswers, TableRow} from '../../model/model';
 import {DatabaseService} from '../../providers/database.service';
 import {LoggerService} from '../../providers/logger.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {openSnackbar} from '../../commons/Utils';
 
 @Component({
-  selector: 'app-questionnaire-widget',
+  selector: 'app-questionnaire-widget[questionnaire][row]',
   templateUrl: './questionnaire-widget.component.html',
   styleUrls: ['./questionnaire-widget.component.scss'],
 })
-export class QuestionnaireWidgetComponent implements AfterContentInit {
+export class QuestionnaireWidgetComponent implements AfterViewInit {
   logTag = QuestionnaireWidgetComponent.name;
 
-  @Input() questionnaireId: number = 1;
-  @Input() tableId = 1;
-  @Input() slotNumber = 1;
+  @Input() questionnaire: Questionnaire;
+  @Input() row: TableRow;
 
-  questionnaire: Questionnaire;
   answers: QuestionnaireAnswers[];
-
-  showNewPanel;
+  showNewPanel = false;
 
   constructor(
     private databaseService: DatabaseService,
     private loggerService: LoggerService,
+    private translateService: TranslateService,
     private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef,
   ) { }
 
-  ngOnInit(): void {
-  }
-
-  ngAfterContentInit(): void {
-    const questionnaires$ = this.databaseService.getQuestionnaireById(this.questionnaireId);
-    const answers$ = this.databaseService.getQuestionnaireAnswersBy(this.tableId, this.slotNumber);
-
-    zip(questionnaires$, answers$).subscribe(
-      ([questionnaire, answers]) => {
-        this.questionnaire = questionnaire;
-        this.answers = answers[this.questionnaireId];
-
-        console.log(this.questionnaire, this.answers);
-
-        this.showNewPanel = (this.answers && this.answers.length > 0);
+  ngAfterViewInit(): void {
+    this.databaseService.getQuestionnaireAnswersBy(this.row.table_id, this.row.slot_number).subscribe(
+      answers => {
+        this.answers = answers[this.questionnaire.id];
       },
-      (error) => this.loggerService.error(this.logTag + '/ngAfterContentInit', error));
+      error => this.loggerService.error(this.logTag + '/ngAfterContentInit', error)
+    );
   }
 
   saveNewAnswer(answer: QuestionnaireAnswers) {
-    answer.table_id = this.tableId;
-    answer.slot_number = this.slotNumber;
+    answer.table_id = this.row.table_id;
+    answer.slot_number = this.row.slot_number;
 
     this.databaseService.saveQuestionnaireAnswers(answer).subscribe(
       (newAnswer) => {
         this.answers = [...this.answers, newAnswer];
-        console.log(this.showNewPanel);
-        this.showNewPanel = true;
-        console.log(this.showNewPanel);
-        this.cdr.detectChanges();
+        this.showNewPanel = false;
       },
       (error) => {
-        openSnackbar(this.snackBar, "Impossibile salvare");
+        openSnackbar(this.snackBar, this.translateService.instant('ERRORS.GENERIC2'));
         this.loggerService.error(this.logTag, error);
       });
   }
+
 }

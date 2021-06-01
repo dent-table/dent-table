@@ -6,11 +6,13 @@ import { QuestionnaireWidgetComponent } from './questionnaire-widget/questionnai
 import { QuestionnaireAnswerWidgetComponent } from './questionnaire-answer-widget/questionnaire-answer-widget.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {TranslateModule} from '@ngx-translate/core';
+import { QuestionnaireDialogComponent } from './questionnaire-dialog/questionnaire-dialog.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
-  declarations: [QuestionnaireWidgetComponent, QuestionnaireAnswerWidgetComponent],
+  declarations: [QuestionnaireWidgetComponent, QuestionnaireAnswerWidgetComponent, QuestionnaireDialogComponent],
   imports: [
-    MaterialModule, CommonModule, SharedModule, ReactiveFormsModule, TranslateModule
+    MaterialModule, CommonModule, SharedModule, ReactiveFormsModule, TranslateModule, BrowserAnimationsModule
   ]
 })
 export class QuestionnairesModule { }

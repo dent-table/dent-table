@@ -66,7 +66,6 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
   }
 
   createFormGroups(): void {
-    console.log(this.answers);
     for (let questionnaire of this.questionnaires) {
       // generate an empty questionnaire answers list for a questionnaire if not exists (TODO: move this to data.js?)
       this.answers[questionnaire.id] = this.answers[questionnaire.id] || [ ];

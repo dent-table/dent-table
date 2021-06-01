@@ -1,11 +1,12 @@
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {AbstractControl, FormGroup} from '@angular/forms';
+import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
 import keys from 'lodash-es/keys';
 import includes from 'lodash-es/includes';
 import isString from 'lodash-es/isString';
 import some from 'lodash-es/some';
 import isMatch from 'date-fns/isMatch';
 import parse from 'date-fns/parse'
+import pickBy from 'lodash-es/pickBy';
 
 /*export class Utils {
 
@@ -343,5 +344,63 @@ const parseDateString = function (dateString: any): Date {
   return null;
 }
 
-export {specialCases, specialCasesKeys, _typeof, isEmpty, specialCase,
-  getSpecialCases, openSnackbar, paths, controlsPaths, hasArrayObjectWithValue, randomHexString, parseDateString};
+/**
+ * Returns the path of all invalid controls into the form
+ * @param form The form
+ * @param path Initial path prefix (used for recursion). Default ''
+ */
+const findInvalidFormControls = function (form: FormGroup | FormArray, path: string = ''): string[] {
+  const invalids = [];
+  const controls = form.controls;
+  for (const name of Object.keys(controls)) {
+    if (controls[name].invalid) {
+      const newPath = isEmpty(path) ? name : path + '.' + name;
+      if (controls[name].hasOwnProperty('controls')) {
+        invalids.push(findInvalidFormControls(controls[name], newPath));
+      } else {
+        invalids.push(newPath);
+      }
+    }
+  }
+
+  return invalids.flat(10);
+}
+
+/**
+ * Find all keys in an object whose properties match to <i>match</a>.
+ * @example
+ * var object = {'A': {'p': 1}, 'B': {'p': 1, 'q': 5}, 'C': {'p': 2}};
+ *
+ * keysThatMatch(object, {'p': 1})
+ * // => ["A", "B"]
+ *
+ * keysThatMatch(object, (o) => o.p == 2)
+ * // => ["C"]
+ * @param object Object to test
+ * @param match A function used to test object properties or an object to compare
+ */
+const keysThatMatch = function (object, match) {
+  return keys(pickBy(object, match));
+}
+
+/**
+ * Perform the difference between arrays <pre>
+ *   arr1 - arr2
+ * </pre>
+ *
+ * @example
+ * var arr1 = [1, 2, 3];
+ * var arr2 = [2, 5];
+ *
+ * arraysDifference(arr1, arr2);
+ * // => [1, 3]
+ * @param arr1
+ * @param arr2
+ */
+const arraysDifference = function (arr1: any[], arr2: any[]): any[] {
+  return arr1.filter(x => !arr2.includes(x));
+}
+
+export {specialCases, specialCasesKeys, _typeof, isEmpty, specialCase, findInvalidFormControls,
+  getSpecialCases, openSnackbar, paths, controlsPaths, hasArrayObjectWithValue, randomHexString,
+  parseDateString, keysThatMatch, arraysDifference};

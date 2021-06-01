@@ -2,11 +2,14 @@
   <mat-expansion-panel *ngIf="formGroup">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        {{formGroup.value.name || ('COMMONS.ADD' | translate)}}
+        {{formGroup.value.name}} &nbsp;
+        <div *ngIf="formGroup.get('validations').value && formGroup.get('validations').value.length > 0">
+          (<span *ngFor="let value of formGroup.get('validations').value; let first = first"><span *ngIf="!first">, </span>{{questionnaire.validations[value]}}</span>)
+        </div>
       </mat-panel-title>
       <mat-panel-description fxLayoutAlign="end">
         {{this.answer?.date ?
-        (this.answer.date | stringToDate | date: 'dd/MM/YYYY HH:mm') : ('COMMONS.ADD' | translate)}}
+        (this.answer.date | stringToDate | date: 'dd/MM/YYYY HH:mm') : ('COMMONS.NEW' | translate)}}
       </mat-panel-description>
     </mat-expansion-panel-header>
     <div>
@@ -16,24 +19,36 @@
           <input type="text" matInput [formControlName]="'name'" [id]="'name'">
           <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
         </mat-form-field>
+        <div class="chips">
+          <mat-chip-list selectable multiple [formControlName]="'validations'">
+            <mat-chip [value]="element.key" #chip="matChip" (click)="chip.toggleSelected(true)"
+                      *ngFor="let element of questionnaire.validations | keyvalue"
+                      color="warn">
+              {{element.value}}
+            </mat-chip>
+          </mat-chip-list>
+        </div>
         <div formGroupName="sections">
           <mat-list>
-            <div *ngFor="let section of questionnaire.sections | keyvalue" [formGroupName]="section.key">
-              <mat-divider></mat-divider>
-              <div mat-subheader>{{section.value.section_name}}</div>
-              <mat-list-item *ngFor="let question of section.value.questions" class="form-list-item">
-                <!--                        <mat-icon mat-list-icon>folder</mat-icon>-->
-                <div mat-line>{{question.text}}</div>
+            <ng-container *ngFor="let section of questionnaire.sections | keyvalue">
+              <div [formGroupName]="section.key"
+                   *ngIf="formGroup.get('validations').value && formGroup.get('validations').value.includes(''+section.value.validated_by)">
+                <mat-divider></mat-divider>
+                <div mat-subheader>{{section.value.section_name}}</div>
+                <mat-list-item *ngFor="let question of section.value.questions" class="form-list-item">
+                  <!--                        <mat-icon mat-list-icon>folder</mat-icon>-->
+                  <div mat-line>{{question.text}}</div>
 
-                <ng-container [ngSwitch]="question.type">
-                  <mat-button-toggle-group [formControlName]="question.key" *ngSwitchCase="'boolean'">
-                    <mat-button-toggle [value]="true" class="green"><mat-icon>done</mat-icon></mat-button-toggle>
-                    <mat-button-toggle [value]="false" class="red"><mat-icon>close</mat-icon></mat-button-toggle>
-                  </mat-button-toggle-group>
-                  <!--TODO: add here other switch cases for other question type-->
-                </ng-container>
-              </mat-list-item>
-            </div>
+                  <ng-container [ngSwitch]="question.type">
+                    <mat-button-toggle-group [formControlName]="question.key" *ngSwitchCase="'boolean'">
+                      <mat-button-toggle [value]="true" class="green"><mat-icon>done</mat-icon></mat-button-toggle>
+                      <mat-button-toggle [value]="false" class="red"><mat-icon>close</mat-icon></mat-button-toggle>
+                    </mat-button-toggle-group>
+                    <!--TODO: add here other switch cases for other question type-->
+                  </ng-container>
+                </mat-list-item>
+              </div>
+            </ng-container>
           </mat-list>
         </div>
         <mat-divider [ngStyle]="{margin: '10px'}"></mat-divider>
@@ -42,9 +57,12 @@
           <textarea type="text" matInput [formControlName]="'note'" [id]="'note'"></textarea>
           <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
         </mat-form-field>
+        <span>{{formGroup.value | json}}</span>
         <mat-action-row *ngIf="!answer">
-          <!--                    <button mat-button color="primary" type="reset">Reset</button>-->
-          <button mat-button color="primary" type="submit">{{'COMMONS.SAVE' | translate}}</button>
+          <button mat-button color="primary" type="button" (click)="emitClose()">{{'COMMONS.CLOSE' | translate}}</button>
+          <button mat-button color="primary" type="submit" [disabled]="!formGroup.get('validations').valid">
+            {{'COMMONS.SAVE' | translate}}
+          </button>
         </mat-action-row>
       </form>
     </div>

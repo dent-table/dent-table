@@ -21,7 +21,6 @@ import {LoggerService} from '../../providers/logger.service';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-import {MatTooltip} from '@angular/material/tooltip';
 import {TablesService} from '../../providers/tables.service';
 import {Router} from '@angular/router';
 
@@ -32,13 +31,13 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {TranslateService} from '@ngx-translate/core';
 import {switchMap} from 'rxjs/operators';
 import {zip} from 'rxjs';
-import {QuestionnaireComponent} from '../../components/questionnaire/questionnaire.component';
 import {MatDialog} from '@angular/material/dialog';
 import isBoolean from 'lodash-es/isBoolean';
 import isInteger from 'lodash-es/isInteger';
 import toInteger from 'lodash-es/toInteger';
 import {openSnackbar, parseDateString} from '../../commons/Utils';
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays';
+import {QuestionnaireDialogComponent} from '../../questionnaires/questionnaire-dialog/questionnaire-dialog.component';
 
 export interface CellClickEvent {
   columnName;
@@ -64,7 +63,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
 
   @ViewChild(MatPaginator, { static: true }) matPaginator: MatPaginator;
   @ViewChild(MatSort) matSort: MatSort;
-  @ViewChild('tooltip') tooltip: MatTooltip;
+  // @ViewChild('tooltip') tooltip: MatTooltip;
 
   @Output() cellClick: EventEmitter<CellClickEvent> = new EventEmitter();
 
@@ -288,9 +287,9 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   fireTableCellClicked(columnName: string, element?: any) {
     if (columnName === 'open_questionnaires') {
       this.ngZone.run(() => {
-        this.dialog.open(QuestionnaireComponent, {
-          data: {tableId: this.tableId, slotNumber: element.slot_number, itemName: element.name},
-          width: '60%', height: '90%'
+        this.dialog.open(QuestionnaireDialogComponent, {
+          data: element,
+          panelClass: 'my-dialog', width: '80%', height: '90%'
         });
       });
     } else {

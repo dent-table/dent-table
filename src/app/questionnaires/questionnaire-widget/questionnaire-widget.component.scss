@@ -1,3 +1,33 @@
 .tab-content {
   padding: 10px;
 }
+
+.content-end {
+  display: flex;
+  padding: 10px;
+  justify-content: flex-end;
+}
+
+.floating-button {
+  position : fixed;
+  bottom : 7%;
+  width: 74%;
+  z-index:5;
+  display : flex;
+  justify-content : flex-end;
+  //margin-bottom : 12px;
+}
+
+.questionnaire-fab {
+  // fab button starts floating around during page loading, so we start it as invisible and
+  // then we make it visible after some delay with an animation
+  opacity: 0;
+}
+
+
+//.fab-bottom-right {
+//  position: fixed;
+//  left: 75%;
+//  top: 85%;
+//  z-index: 100;
+//}
