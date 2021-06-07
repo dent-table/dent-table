@@ -1,13 +1,14 @@
+@use '~@angular/material' as mat;
 @import '~@angular/material/theming';
 
 // https://stackoverflow.com/questions/53836382/theming-in-angular-6-and-7-for-mat-button-toggle
 @mixin questionnaires-theme($theme) {
   $warn: map-get($theme, warn);
 
-  $green-palette: mat-palette($mat-teal);
-  $red-palette: mat-palette($mat-red);
-  $green: mat-color($green-palette, A400);
-  $red: mat-color($red-palette, A400);
+  $green-palette: mat.define-palette(mat.$teal-palette);
+  $red-palette: mat.define-palette(mat.$red-palette);
+  $green: mat.get-color-from-palette($green-palette, A400);
+  $red: mat.get-color-from-palette($red-palette, A400);
 
   // normal
   .mat-button-toggle.green {
@@ -29,7 +30,7 @@
     background-color: $green;
 
     .mat-button-toggle-label-content{
-      color: mat-contrast($green-palette, 900);
+      color: mat.get-contrast-color-from-palette($green-palette, 900);
       line-height: 36px !important;
     }
   }
@@ -38,7 +39,7 @@
     background-color: $red;
 
     .mat-button-toggle-label-content{
-      color: mat-contrast($red-palette, A400);
+      color: mat.get-contrast-color-from-palette($red-palette, A400);
       line-height: 36px !important;
     }
   }

@@ -1,3 +1,4 @@
+@use '~@angular/material' as mat;
 @import '~@angular/material/theming';
 
 @mixin table-widget-theme($theme) {
@@ -8,45 +9,45 @@
   $foreground: map-get($theme, foreground);
 
   div .dnd-drag-over {
-    border: 2px dashed mat-color($warn);
+    border: 2px dashed mat.get-color-from-palette($warn);
   }
 
   .overlay-content mat-icon {
-    color: mat-color($primary, darker);
+    color: mat.get-color-from-palette($primary, darker);
   }
 
   .table-title-header {
-    background-color: mat-color($primary);
+    background-color: mat.get-color-from-palette($primary);
   }
 
   .paginator {
-    background-color: mat-color($primary);
-    color: mat-color($primary, default-contrast);
+    background-color: mat.get-color-from-palette($primary);
+    color: mat.get-color-from-palette($primary, default-contrast);
   }
 
   .mat-header-row {
-    background-color: mat-color($primary);
+    background-color: mat.get-color-from-palette($primary);
   }
 
   .table-title-text {
-    color: mat-color($primary, default-contrast);
+    color: mat.get-color-from-palette($primary, default-contrast);
   }
 
   .mat-header-cell {
-    color: mat-color($primary, default-contrast);
+    color: mat.get-color-from-palette($primary, default-contrast);
   }
 
   .mat-row:hover {
-    background-color: mat-color($background, background)
+    background-color: mat.get-color-from-palette($background, background)
   }
 
   .date-warn {
-    background-color: mat-color($primary, darker);
-    border-color: mat-color($warn);
-    color: mat-color($primary, default-contrast);
+    background-color: mat.get-color-from-palette($primary, darker);
+    border-color: mat.get-color-from-palette($warn);
+    color: mat.get-color-from-palette($primary, default-contrast);
   }
 
   .table-widget-row-icon {
-    color: mat-color($primary);
+    color: mat.get-color-from-palette($primary);
   }
 }

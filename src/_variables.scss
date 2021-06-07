@@ -1,11 +1,12 @@
+@use '~@angular/material' as mat;
 @import '~@angular/material/theming';
 
 // Copy the palettes from your selected theme (usually theme.scss).
-$app-primary: mat-palette($mat-deep-purple);
-$app-accent: mat-palette($mat-amber, A200, A100, A400);
-$app-warn: mat-palette($mat-deep-orange);
+$app-primary: mat.define-palette(mat.$deep-purple-palette);
+$app-accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
+$app-warn: mat.define-palette(mat.$deep-orange-palette);
 
 // Create your Sass color vars (will be available in all the project)
-$primary: mat-color($app-primary);
-$accent: mat-color($app-accent);
-$warn: mat-color($app-warn);
+$primary: mat.get-color-from-palette($app-primary);
+$accent: mat.get-color-from-palette($app-accent);
+$warn: mat.get-color-from-palette($app-warn);

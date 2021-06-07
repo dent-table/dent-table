@@ -1,149 +1,150 @@
+@use '~@angular/material' as mat;
 @import '~@angular/material/theming';
 // define 3 theme color
 // mat-palette accepts $palette-name, main, lighter and darker variants
-$my-theme-primary: mat-palette($mat-deep-purple);
-$my-theme-accent: mat-palette($mat-teal);
-$my-theme-warn: mat-palette($mat-deep-orange);
+$my-theme-primary: mat.define-palette(mat.$deep-purple-palette);
+$my-theme-accent: mat.define-palette(mat.$teal-palette);
+$my-theme-warn: mat.define-palette(mat.$deep-orange-palette);
 
-$my-theme-primary-red: mat-palette($mat-red);
-$my-theme-primary-pink: mat-palette($mat-pink);
-$my-theme-primary-deep-purple: mat-palette($mat-deep-purple);
-$my-theme-primary-blue: mat-palette($mat-blue);
-$my-theme-primary-cyan: mat-palette($mat-cyan);
-$my-theme-primary-teal: mat-palette($mat-teal);
-$my-theme-primary-green: mat-palette($mat-green);
-$my-theme-primary-amber: mat-palette($mat-amber);
-$my-theme-primary-deep-orange: mat-palette($mat-deep-orange);
-$my-theme-primary-brown: mat-palette($mat-brown);
+$my-theme-primary-red: mat.define-palette(mat.$red-palette);
+$my-theme-primary-pink: mat.define-palette(mat.$pink-palette);
+$my-theme-primary-deep-purple: mat.define-palette(mat.$deep-purple-palette);
+$my-theme-primary-blue: mat.define-palette(mat.$blue-palette);
+$my-theme-primary-cyan: mat.define-palette(mat.$cyan-palette);
+$my-theme-primary-teal: mat.define-palette(mat.$teal-palette);
+$my-theme-primary-green: mat.define-palette(mat.$green-palette);
+$my-theme-primary-amber: mat.define-palette(mat.$amber-palette);
+$my-theme-primary-deep-orange: mat.define-palette(mat.$deep-orange-palette);
+$my-theme-primary-brown: mat.define-palette(mat.$brown-palette);
 
 // create theme (use mat-dark-theme for themes with dark backgrounds)
-$app-light-theme: mat-light-theme(
+$app-light-theme: mat.define-light-theme(
     $my-theme-primary,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$app-dark-theme: mat-dark-theme(
+$app-dark-theme: mat.define-dark-theme(
     $my-theme-primary,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$red-theme-light: mat-light-theme(
+$red-theme-light: mat.define-light-theme(
     $my-theme-primary-red,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$red-theme-dark: mat-dark-theme(
+$red-theme-dark: mat.define-dark-theme(
     $my-theme-primary-red,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$pink-theme-light: mat-light-theme(
+$pink-theme-light: mat.define-light-theme(
     $my-theme-primary-pink,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$pink-theme-dark: mat-dark-theme(
+$pink-theme-dark: mat.define-dark-theme(
     $my-theme-primary-pink,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$deep-purple-theme-light: mat-light-theme(
+$deep-purple-theme-light: mat.define-light-theme(
     $my-theme-primary-deep-purple,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$deep-purple-theme-dark: mat-dark-theme(
+$deep-purple-theme-dark: mat.define-dark-theme(
     $my-theme-primary-deep-purple,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$blue-theme-light: mat-light-theme(
+$blue-theme-light: mat.define-light-theme(
     $my-theme-primary-blue,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$blue-theme-dark: mat-dark-theme(
+$blue-theme-dark: mat.define-dark-theme(
     $my-theme-primary-blue,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$brown-theme-light: mat-light-theme(
+$brown-theme-light: mat.define-light-theme(
     $my-theme-primary-brown,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$brown-theme-dark: mat-dark-theme(
+$brown-theme-dark: mat.define-dark-theme(
     $my-theme-primary-brown,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$cyan-theme-light: mat-light-theme(
+$cyan-theme-light: mat.define-light-theme(
     $my-theme-primary-cyan,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$cyan-theme-dark: mat-dark-theme(
+$cyan-theme-dark: mat.define-dark-theme(
     $my-theme-primary-cyan,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$teal-theme-light: mat-light-theme(
+$teal-theme-light: mat.define-light-theme(
     $my-theme-primary-teal,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$teal-theme-dark: mat-dark-theme(
+$teal-theme-dark: mat.define-dark-theme(
     $my-theme-primary-teal,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$green-theme-light: mat-light-theme(
+$green-theme-light: mat.define-light-theme(
     $my-theme-primary-green,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$green-theme-dark: mat-dark-theme(
+$green-theme-dark: mat.define-dark-theme(
     $my-theme-primary-green,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$amber-theme-light: mat-light-theme(
+$amber-theme-light: mat.define-light-theme(
     $my-theme-primary-amber,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$amber-theme-dark: mat-dark-theme(
+$amber-theme-dark: mat.define-dark-theme(
     $my-theme-primary-amber,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$deep-orange-theme-light: mat-light-theme(
+$deep-orange-theme-light: mat.define-light-theme(
     $my-theme-primary-deep-orange,
     $my-theme-accent,
     $my-theme-warn
 );
 
-$deep-orange-theme-dark: mat-dark-theme(
+$deep-orange-theme-dark: mat.define-dark-theme(
     $my-theme-primary-deep-orange,
     $my-theme-accent,
     $my-theme-warn

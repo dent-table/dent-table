@@ -1,9 +1,10 @@
+@use '~@angular/material' as mat;
 @mixin container-theme($theme) {
   $background: map-get($theme, background);
 
   .app-container {
-    background-color: mat-color($background, background);
-    //background-image: linear-gradient(to bottom right, mat-color($accent), mat-color($primary));
+    background-color: mat.get-color-from-palette($background, background);
+    //background-image: linear-gradient(to bottom right, mat.get-color-from-palette($accent), mat.get-color-from-palette($primary));
   }
 }
 

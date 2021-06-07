@@ -1,9 +1,10 @@
+@use '~@angular/material' as mat;
 @import '~@angular/material/theming';
 @import "~mobile-drag-drop/default.css";
 @import '~material-icons/iconfont/material-icons.css';
 
 // always include only once per project
-@include mat-core();
+@include mat.core();
 
 // import our custom theme
 @import 'app-themes.scss';
@@ -18,7 +19,7 @@
 // specify theme class eg: <body class="my-theme"> ... </body>
 .app-light-theme {
   // use our theme with angular-material-theme mixin
-  @include angular-material-theme($app-light-theme);
+  @include mat.all-component-themes($app-light-theme);
   @include table-widget-theme($app-light-theme);
   @include container-theme($app-light-theme);
   @include login-page-theme($app-light-theme);
@@ -69,7 +70,7 @@
 
 .app-dark-theme {
   // use our theme with angular-material-theme mixin
-  @include angular-material-theme($app-dark-theme);
+  @include mat.all-component-themes($app-dark-theme);
   @include table-widget-theme($app-dark-theme);
   @include container-theme($app-dark-theme);
   @include login-page-theme($app-dark-theme);
