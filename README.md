@@ -1,4 +1,5 @@
 [![Angular Logo](https://www.vectorlogo.zone/logos/angular/angular-icon.svg)](https://angular.io/) [![Electron Logo](https://www.vectorlogo.zone/logos/electronjs/electronjs-icon.svg)](https://electronjs.org/)
+![MyOdPlan Logo][app-logo]
 
 ![Maintained][maintained-badge]
 [![License][license-badge]](LICENSE.md)
@@ -130,6 +131,7 @@ Finally from VsCode press **Ctrl+Shift+D** and select **Application Debug** and 
 
 Please note that Hot reload is only available in Renderer process.
 
+[app-logo]: https://github.com/vincios/dent-table/blob/master/src/assets/icons/favicon.png
 [maintained-badge]: https://img.shields.io/badge/maintained-yes-brightgreen
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license]: https://github.com/vincios/dent-table/blob/master/LICENSE.md
