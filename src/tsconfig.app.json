@@ -9,7 +9,9 @@
   },
   "include": [
     "main.ts",
-    "polyfill.ts"
+    "polyfills.ts",
+    "app/**/*.ts",
+    "environments/environment.ts"
   ],
   "exclude": [
     "**/*.spec.ts"
