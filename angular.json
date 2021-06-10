@@ -11,14 +11,12 @@
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "aot": true,
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "assets": [
-              "src/data",
               "src/assets"
             ],
             "styles": [
@@ -33,7 +31,7 @@
           "configurations": {
             "dev": {
               "optimization": false,
-              "outputHashing": "all",
+              "outputHashing": "none",
               "sourceMap": true,
               "namedChunks": false,
               "aot": false,
@@ -49,7 +47,7 @@
             },
             "web": {
               "optimization": false,
-              "outputHashing": "all",
+              "outputHashing": "none",
               "sourceMap": true,
               "namedChunks": false,
               "aot": false,
@@ -117,7 +115,7 @@
               "src/styles.scss"
             ],
             "assets": [
-            "src/data",
+              "src/data",
               "src/assets"
             ],
             "customWebpackConfig": {
@@ -131,7 +129,7 @@
             "eslintConfig": ".eslintrc.json",
             "lintFilePatterns": [
               "src/**/*.ts",
-              "main.ts"
+              "app/**.ts"
             ]
           }
         }
@@ -146,7 +144,7 @@
           "options": {
             "eslintConfig": ".eslintrc.json",
             "lintFilePatterns": [
-              "e2e/**.ts"
+              "e2e/**/*.ts"
             ]
           }
         }

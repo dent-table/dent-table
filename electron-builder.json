@@ -7,25 +7,19 @@
   "files": [
     "**/*",
     "!**/*.ts",
-    "!.github",
-    "!.vscode",
-    "!.code-workspace",
-    "!.npmrc",
-    "!*.md",
+    "!*.map",
     "!package.json",
     "!package-lock.json",
-    "!src/",
-    "!e2e/",
-    "!hooks/",
-    "!_config.yml",
-    "!angular.json",
-    "!tsconfig*.json",
-    "!tslint.json",
-    "!.eslintrc.json",
-    "!karma.conf.js",
-    "!angular.webpack.js",
-    "!*.map",
-    "!older/"
+    "!older"
+  ],
+  "extraResources": [
+    {
+      "from": "dist",
+      "to": "dist",
+      "filter": [
+        "**/*"
+      ]
+    }
   ],
   "win": {
     "icon": "dist/assets/icons",
@@ -33,7 +27,7 @@
       {
         "target": "portable",
         "arch": ["x64"]
-      },
+      }//,
       //      {
       //        "target": "nsis",
       //        "arch": [
