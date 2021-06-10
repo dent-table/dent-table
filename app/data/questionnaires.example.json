@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Checklist chirurgica pre-intervento",
+    "table_ids": 3,
+    "sections": {
+      "A": {
+        "section_name": "Checklist pretrattamento (ASO)",
+        "validated_by": 1,
+        "questions": {
+          "1": {
+            "text": "Gli esami radiografici (CBCT/RX endorale) completati e disponibili?",
+            "type": "boolean",
+            "required": true,
+            "position": 1
+          },
+          "2": {
+            "text": "Pianificato provvisorio/dima e allertato laboratorio?",
+            "type": "boolean",
+            "required": true,
+            "position": 2
+          },
+          "3": {
+            "text": "Foto pre-intervento presenti?",
+            "type": "boolean",
+            "required": true,
+            "position": 3
+          }
+        }
+      },
+      "B": {
+        "section_name": "Checklist materiali (ASO)",
+        "validated_by": 1,
+        "questions": {
+          "1": {
+            "text": "Tutti i monouso sterili presenti?",
+            "type": "boolean",
+            "required": true,
+            "position": 1
+          },
+          "2": {
+            "text": "Verificata la presenza/ordinati impianti + componenti protesiche?",
+            "type": "boolean",
+            "required": true,
+            "position": 2
+          },
+          "3": {
+            "text": "Verificata la presenza di tutti i biomateriali?",
+            "type": "boolean",
+            "required": true,
+            "position": 3
+          }
+        }
+      },
+      "C": {
+        "section_name": "Checklist Reception (Antonella-Marilina)",
+        "validated_by": 2,
+        "questions": {
+          "1": {
+            "text": "Anamnesi recente raccolta e inserita in Orisdent?",
+            "type": "boolean",
+            "required": true,
+            "position": 1
+          },
+          "2": {
+            "text": "Info preoperatorie consegnate/mail?",
+            "type": "boolean",
+            "required": true,
+            "position": 2
+          },
+          "3": {
+            "text": "Consenso informato firmato?",
+            "type": "boolean",
+            "required": true,
+            "position": 3
+          },
+          "4": {
+            "text": "Farmaci prescritti?",
+            "type": "boolean",
+            "required": true,
+            "position": 4
+          },
+          "5": {
+            "text": "Mail?",
+            "type": "boolean",
+            "required": true,
+            "position": 5
+          },
+          "6": {
+            "text": "Anestesista?",
+            "type": "boolean",
+            "required": true,
+            "position": 6
+          }
+        }
+      }
+    },
+    "validations": {
+      "1": "ASO",
+      "2": "Segreteria"
+    }
+  }
+]

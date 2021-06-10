@@ -1,4 +1,3 @@
-/*
 require('@electron/remote/main').initialize();
 import {app, BrowserWindow, ipcMain, nativeImage, screen} from 'electron';
 import * as path from 'path';
@@ -61,12 +60,12 @@ function createMainWindow() {
 
   if (serve) {
     require('electron-reload')(__dirname, {
-      electron: require(`${__dirname}/node_modules/electron`)
+      electron: require(`${__dirname}/../node_modules/electron`)
     });
     mainWindow.loadURL('http://localhost:4200');
   } else {
     mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'dist/index.html'),
+      pathname: path.join(__dirname, '../dist/index.html'),
       protocol: 'file:',
       slashes: true
     }));
@@ -141,18 +140,19 @@ function createDatabaseWindow() {
 
   if (serve) {
     require('electron-reload')(__dirname, {
-      electron: require(`${__dirname}/node_modules/electron`)
+      electron: require(`${__dirname}/../node_modules/electron`)
     });
     // databaseWin.loadURL('http://localhost:4200/data/index.html');
+    // databaseWin.loadURL('http://localhost:5000');
     databaseWin.loadURL(url.format({
-      pathname: path.join(__dirname, 'app/data/index.html'),
+      pathname: path.join(__dirname, 'data/index.html'),
       protocol: 'file:',
       slashes: true
     }));
   } else {
     logger.info('Loading ' + path.join(__dirname, 'dist/data/index.html'));
     databaseWin.loadURL(url.format({
-      pathname: path.join(__dirname, 'dist/data/index.html'),
+      pathname: path.join(__dirname, 'dist', 'data', 'index.html'),
       protocol: 'file:',
       slashes: true
     }));
@@ -191,7 +191,7 @@ function createWindows() {
 }
 
 try {
-  /!*  const shouldQuit = !app.requestSingleInstanceLock();
+  /*  const shouldQuit = !app.requestSingleInstanceLock();
 
     app.on('second-instance', function (argv, cwd) {
       if (mainWindow) {
@@ -204,7 +204,7 @@ try {
     if (shouldQuit) {
       app.quit();
       // return;
-    }*!/
+    }*/
 
   if (!fs.existsSync(dataPath)) {
     fs.mkdirSync(dataPath);
@@ -213,15 +213,15 @@ try {
   let preferencePath;
 
   if (serve) {
-    preferencePath = __dirname + path.sep + 'src' + path.sep + 'assets' + path.sep + 'preferences.json';
+    preferencePath = path.join(__dirname, 'src', 'assets', 'preferences.json');
   } else {
-    preferencePath = 'src' + path.sep + 'assets' + path.sep + 'preferences.json';
+    preferencePath = path.join('src', 'assets', 'preferences.json');
   }
 
   if (!fs.existsSync(dataPath + 'preferences.json')) {
     fs.copyFileSync(
       preferencePath,
-      dataPath + 'preferences.json'
+      path.join(dataPath + 'preferences.json')
     );
   }
 
@@ -254,4 +254,3 @@ try {
 
   logger.error(e);
 }
-*/
