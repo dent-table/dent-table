@@ -15,7 +15,9 @@ import setDay from 'date-fns/setDay';
 import setMonth from 'date-fns/setMonth';
 import toDate from 'date-fns/toDate';
 import parseJSON from 'date-fns/parseJSON';
-import { zonedTimeToUtc } from 'date-fns-tz/esm';
+
+
+import { zonedTimeToUtc } from 'date-fns-tz';
 import enUS from 'date-fns/esm/locale/en-US';
 import { NGX_MAT_DATEFNS_LOCALES } from './ngx-mat-datefns-locales';
 
@@ -177,8 +179,8 @@ export class NgxDateFnsDateAdapter extends DateAdapter<Date> {
     const formatStr = map[style];
     const date = new Date();
 
-    return range(0, 6).map((month) =>
-      format(setDay(date, month), formatStr, {
+    return range(0, 6).map((day) =>
+      format(setDay(date, day), formatStr, {
         locale: this._dateFnsLocale,
       })
     );
