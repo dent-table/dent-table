@@ -19,6 +19,13 @@
       "filter": [
         "**/*"
       ]
+    },
+    {
+      "from": "node_modules/@electron/remote",
+      "to": "node_modules/@electron/remote",
+      "filter": [
+        "**/*"
+      ]
     }
   ],
   "win": {

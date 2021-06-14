@@ -1,9 +1,11 @@
-require('@electron/remote/main').initialize();
 import {app, BrowserWindow, ipcMain, nativeImage, screen} from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import {createLogger, format, transports} from 'winston';
 import * as fs from 'fs';
+
+// Initialize remote module
+require('@electron/remote/main').initialize();
 
 let mainWindow, databaseWin, serve = null, canQuit = false;
 const args = process.argv.slice(1);
@@ -51,8 +53,8 @@ function createMainWindow() {
 
   if (!serve) {
     // windowConf.alwaysOnTop = true;
-    windowConf.titleBarStyle = 'hidden';
-    windowConf.fullscreen = true;
+    // windowConf.titleBarStyle = 'hidden';
+    // windowConf.fullscreen = true;
   }
 
   // Create the browser window.
@@ -64,14 +66,16 @@ function createMainWindow() {
     });
     mainWindow.loadURL('http://localhost:4200');
   } else {
+    const indexPath = path.join(__dirname, '..', 'dist', 'index.html');
+    logger.info('Loading ' + indexPath)
     mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, '../dist/index.html'),
+      pathname: indexPath,
       protocol: 'file:',
       slashes: true
     }));
   }
 
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   if (serve) {
     mainWindow.webContents.openDevTools();
@@ -132,7 +136,7 @@ function createDatabaseWindow() {
   };
 
   if (!serve) {
-    windowConf.show = false;
+    // windowConf.show = false;
   }
 
   // Create the browser window.
@@ -150,9 +154,10 @@ function createDatabaseWindow() {
       slashes: true
     }));
   } else {
-    logger.info('Loading ' + path.join(__dirname, 'dist/data/index.html'));
+    const indexPath = path.join(__dirname, 'data', 'index.html');
+    logger.info('Loading ' + indexPath);
     databaseWin.loadURL(url.format({
-      pathname: path.join(__dirname, 'dist', 'data', 'index.html'),
+      pathname: indexPath,
       protocol: 'file:',
       slashes: true
     }));
