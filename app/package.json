@@ -1,6 +1,7 @@
 {
-  "name": "angular-electron",
+  "name": "dent-table",
   "version": "1.0.0-beta.1",
+  "author": "vincios.dev",
   "main": "main.js",
   "private": true,
   "dependencies": {
