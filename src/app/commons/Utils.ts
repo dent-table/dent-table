@@ -7,6 +7,7 @@ import some from 'lodash-es/some';
 import isMatch from 'date-fns/isMatch';
 import parse from 'date-fns/parse'
 import pickBy from 'lodash-es/pickBy';
+import flattenDeep from 'lodash-es/flattenDeep';
 
 /*export class Utils {
 
@@ -363,7 +364,7 @@ const findInvalidFormControls = function (form: FormGroup | FormArray, path: str
     }
   }
 
-  return invalids.flat(10);
+  return flattenDeep(invalids);
 }
 
 /**
