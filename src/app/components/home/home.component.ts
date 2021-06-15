@@ -44,10 +44,13 @@ export class HomeComponent implements OnInit {
     const colName = event.columnName;
 
     if (event.columnName === 'verified') {
-      const value = el[colName] === 0 ? 1 : 0;
-      this.databaseService.updateRow(el.table_id, el.table_ref, {verified: value}).subscribe((result) => {
-        this.logger.debug(this.logTag, result);
-        this.reloadTable(tableId);
+      this.logger.info(this.logTag, 'Updating verified column...');
+      updateVerifiedColumn(el, this.databaseService).subscribe({
+        next: value => {
+          this.logger.info(this.logTag, `Update result`, value);
+          this.reloadTable(tableId);
+        },
+        error: error => this.logger.error(this.logTag, 'Update error', error)
       });
     } else if (colName === 'delete_row') {
       this.zone.run(() => {
@@ -94,7 +97,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  deleteRow(tableId: number, el: any) {
+  deleteRow(tableId: number, el: any): void {
     this.logger.debug(this.logTag, 'deleting', el);
     let snackbarText, snackbarDuration, snackbarActionText, snackbarActionCallback, snackbarRef;
 
@@ -109,7 +112,7 @@ export class HomeComponent implements OnInit {
           this.logger.info(this.logTag, 'Delete undo requested');
           result['slot_number'] = el.slot_number;
           this.logger.debug(result);
-          this.databaseService.insertRow(tableId, result).subscribe((result2) => {
+          this.databaseService.insertRow(tableId, result).subscribe(() => {
             this.logger.info(this.logTag, 'Delete undo success');
             this.reloadTable(tableId);
           }, (error2) => {

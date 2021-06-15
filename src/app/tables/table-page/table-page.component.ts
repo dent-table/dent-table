@@ -47,15 +47,13 @@ export class TablePageComponent implements OnInit {
     const el = event.element;
 
     if (event.columnName === 'verified') {
-      this.logger.info(this.logTag, 'Updating verified column...');
-      const value = el[colName] === 0 ? 1 : 0;
-      this.databaseService.updateRow(el.table_id, el.table_ref, {verified: value}).subscribe((result) => {
-          this.logger.info(this.logTag, `Update result`, result);
+      updateVerifiedColumn(el, this.databaseService).subscribe({
+        next: value => {
+          this.logger.info(this.logTag, `Update result`, value);
           this.tableWidget.reload();
         },
-        (error1) => {
-          this.logger.error(this.logTag, 'Update error', error1);
-        });
+        error: error => this.logger.error(this.logTag, 'Update error', error)
+      });
     } else if (event.columnName === 'delete_row') {
       this.logger.info(this.logTag, 'Opening delete row dialog...');
       this.zone.run(() => {
@@ -119,7 +117,7 @@ export class TablePageComponent implements OnInit {
           this.logger.info(this.logTag, 'Delete undo requested');
           this.logger.info(this.logTag, 'Element to reinsert: ', result);
           result['slot_number'] = el.slot_number;
-          this.databaseService.insertRow(this.tableId, result).subscribe((result2) => {
+          this.databaseService.insertRow(this.tableId, result).subscribe(() => {
             this.logger.info(this.logTag, 'Delete undo success');
             this.tableWidget.reload();
           }, (error2) => {
