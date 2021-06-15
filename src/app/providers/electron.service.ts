@@ -20,12 +20,12 @@ import * as path from 'path';
 })
 export class ElectronService {
 
-  ipcRenderer: typeof ipcRenderer;
-  webFrame: typeof webFrame;
-  remote: typeof remote;
-  childProcess: typeof childProcess;
-  fs: typeof fs;
+  private ipcRenderer: typeof ipcRenderer;
+  private webFrame: typeof webFrame;
+  private childProcess: typeof childProcess;
+  private fs: typeof fs;
 
+  remote: typeof remote;
   databaseWebContentId: number;
 
   get appVersion(): string {
