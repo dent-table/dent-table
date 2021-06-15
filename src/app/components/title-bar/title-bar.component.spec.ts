@@ -10,7 +10,7 @@ describe('TitleBarComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ TitleBarComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

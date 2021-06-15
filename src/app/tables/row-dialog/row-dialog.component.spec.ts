@@ -10,7 +10,7 @@ describe('RowDialogComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ RowDialogComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

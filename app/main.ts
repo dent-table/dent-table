@@ -34,9 +34,7 @@ const logger = createLogger({
 function createMainWindow() {
 
   const size = screen.getPrimaryDisplay().workAreaSize;
-  let windowConf;
-
-  windowConf = {
+  const windowConf = {
     x: 0,
     y: 0,
     width: size.width,
@@ -48,14 +46,12 @@ function createMainWindow() {
       contextIsolation: false,  // false if you want to run 2e2 test with Spectron
       enableRemoteModule : true // true if you want to run 2e2 test  with Spectron or use remote module in renderer context (ie. Angular)
     },
-    frame: false
+    frame: false,
+    fullscreen: !serve
   };
 
-  if (!serve) {
-    // windowConf.alwaysOnTop = true;
-    // windowConf.titleBarStyle = 'hidden';
-    // windowConf.fullscreen = true;
-  }
+  // workaround for a strange error if titleBarStyle is defined into object declaration
+  windowConf['titleBarStyle'] = !serve ? "hidden" : "default";
 
   // Create the browser window.
   mainWindow = new BrowserWindow(windowConf);
@@ -67,7 +63,7 @@ function createMainWindow() {
     mainWindow.loadURL('http://localhost:4200');
   } else {
     const indexPath = path.join(__dirname, '..', 'dist', 'index.html');
-    logger.info('Loading ' + indexPath)
+    logger.info('Loading ' + indexPath);
     mainWindow.loadURL(url.format({
       pathname: indexPath,
       protocol: 'file:',
@@ -96,18 +92,18 @@ function createMainWindow() {
   });
 
 
-  ipcMain.on('start-app-shutdown', (event) => {
+  ipcMain.on('start-app-shutdown', () => {
     logger.info('Requested app shutdown');
     logger.info(databaseWin);
     if (databaseWin) {
       databaseWin.webContents.send('shutdown');
-      ipcMain.once('database-shutdown', (result) => {
+      ipcMain.once('database-shutdown', () => {
         databaseWin.close();
       });
     }
   });
 
-// Emitted when the window is closed.
+  // Emitted when the window is closed.
   mainWindow.on('closed', () => {
     logger.info('Main window closed');
     // Dereference the window object, usually you would store window
@@ -121,9 +117,8 @@ function createMainWindow() {
 function createDatabaseWindow() {
   logger.info('Create database windows');
   const size = screen.getPrimaryDisplay().workAreaSize;
-  let windowConf;
 
-  windowConf = {
+  const windowConf = {
     x: 0,
     y: 0,
     width: size.width,
@@ -132,12 +127,9 @@ function createDatabaseWindow() {
       nodeIntegration: true,
       enableRemoteModule: true,
       contextIsolation: false
-    }
+    },
+    show: serve
   };
-
-  if (!serve) {
-    // windowConf.show = false;
-  }
 
   // Create the browser window.
   databaseWin = new BrowserWindow(windowConf);

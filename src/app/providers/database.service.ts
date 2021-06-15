@@ -75,8 +75,7 @@ export class DatabaseService {
     }
 
     this.electronService.ipcSendTo(this.databaseWebContentId, 'database-op', params);
-
-    return unique ? `${operation}-${params['uid']}` : operation;
+    return unique ? `${operation}-${(params['uid'] as string)}` : operation;
   }
 
   private encrypt(msg: string) {
@@ -94,12 +93,12 @@ export class DatabaseService {
 
   }
 
-  private valueSanitize(value: any, valueName?: string) {
+  private valueSanitize(value: any/*, valueName?: string*/) {
     if (isString(value) && isEmpty(trim(value))) {
       value = null;
     } else if (isBoolean(value)) {
       value = value ? 1 : 0;
-    // } else if (!isNil(value) && !isNil(valueName) && valueName.indexOf('date') >= 0) {
+      // } else if (!isNil(value) && !isNil(valueName) && valueName.indexOf('date') >= 0) {
     } else if (isString(value) && isValid(parseDateString(value))) { // check if value is a string parsable as a valid date
       value = parseDateString(value).valueOf();
     } else if (!isNil(value) && value instanceof Date && isValid(value)) { // check if value is a valid Date object
@@ -118,13 +117,12 @@ export class DatabaseService {
       // }
 
       forEach(values, (value, key) => {
-        values[key] = this.valueSanitize(value, key);
+        values[key] = this.valueSanitize(value/*, key*/);
       });
     } else {
       values = this.valueSanitize(values);
     }
 
-    // console.log(values);
     return values;
   }
 
@@ -264,7 +262,7 @@ export class DatabaseService {
     });
   }
 
-  updateRow(tableId: number, rowId: number, values: {}) {
+  updateRow(tableId: number, rowId: number, values: {[name: string]: unknown}): Observable<any> {
     const params = {tableId: tableId, rowId: rowId, values: this.valuesSanitize(values)};
 
     return new Observable((subscriber) => {
@@ -284,7 +282,7 @@ export class DatabaseService {
   getQuestionnairesBy(tableId: number): Observable<Questionnaire[]> {
     const params = {table_id: tableId};
 
-    let obs: Observable<Questionnaire[]> = new Observable((subscriber) => {
+    const obs: Observable<Questionnaire[]> = new Observable((subscriber) => {
       this.sendToDatabase('questionnaire-get-all', params);
       this.electronService.ipcOnce('questionnaire-get-all', ((event, data) => {
         if (data.result === 'error') {
@@ -304,7 +302,7 @@ export class DatabaseService {
   getQuestionnaireById(questionnaireId: number): Observable<Questionnaire> {
     const params = {questionnaireId};
 
-    let obs: Observable<Questionnaire> = new Observable((subscriber) => {
+    const obs: Observable<Questionnaire> = new Observable((subscriber) => {
       this.sendToDatabase('questionnaire-get-by', params);
       this.electronService.ipcOnce('questionnaire-get-by', ((event, data) => {
         if (data.result === 'error') {
@@ -336,13 +334,13 @@ export class DatabaseService {
     return obs.pipe(enterZone(this.zone));
   }
 
-  getQuestionnaireAnswersBy(tableId, slotNumber, questionnaireRef?): Observable<{[id: string]: QuestionnaireAnswers[]}> {
+  getQuestionnaireAnswersBy(tableId: number, slotNumber: number, questionnaireRef?: number): Observable<{[id: string]: QuestionnaireAnswers[]}> {
     const params = {slot_number: slotNumber, table_id: tableId};
     if (questionnaireRef) {
       params['questionnaire_ref'] = questionnaireRef;
     }
 
-    let obs: Observable<{[id: string]: QuestionnaireAnswers[]}> = new Observable((subscriber) => {
+    const obs: Observable<{[id: string]: QuestionnaireAnswers[]}> = new Observable((subscriber) => {
       this.sendToDatabase('questionnaire-get-answers', params);
       this.electronService.ipcOnce('questionnaire-get-answers', ((event, data) => {
         if (data.result === 'error') {
@@ -351,7 +349,7 @@ export class DatabaseService {
           subscriber.next(data.response);
           subscriber.complete();
         }
-      }))
+      }));
     });
 
     return obs.pipe(enterZone(this.zone));
@@ -360,7 +358,7 @@ export class DatabaseService {
   getQuestionnaireAnswerById(questionnaireId: number): Observable<QuestionnaireAnswers> {
     const params = {questionnaireId};
 
-    let obs: Observable<QuestionnaireAnswers> = new Observable((subscriber) => {
+    const obs: Observable<QuestionnaireAnswers> = new Observable((subscriber) => {
       this.sendToDatabase('questionnaire-get-answer-by-id', params);
       this.electronService.ipcOnce('questionnaire-get-answer-by-id', ((event, data) => {
         if (data.result === 'error') {
@@ -369,7 +367,7 @@ export class DatabaseService {
           subscriber.next(data.response);
           subscriber.complete();
         }
-      }))
+      }));
     });
 
     return obs.pipe(enterZone(this.zone));

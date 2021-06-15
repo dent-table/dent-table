@@ -14,7 +14,7 @@ describe('HomeComponent', () => {
         TranslateModule.forRoot()
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

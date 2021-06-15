@@ -11,7 +11,6 @@ export class TitleBarComponent implements OnInit {
 
   constructor(public electronService: ElectronService) { }
 
-  ngOnInit() {
-  }
+  ngOnInit(): void { }
 
 }

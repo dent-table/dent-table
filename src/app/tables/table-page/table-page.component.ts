@@ -10,6 +10,8 @@ import {LoggerService} from '../../providers/logger.service';
 import {TranslateService} from '@ngx-translate/core';
 import {QuestionnaireComponent} from '../../components/questionnaire/questionnaire.component';
 import {openSnackbar} from '../../commons/Utils';
+import {TableRow} from '../../model/model';
+import {updateVerifiedColumn} from '../common/TableUtils';
 
 @Component({
   selector: 'app-table-page',
@@ -35,15 +37,14 @@ export class TablePageComponent implements OnInit {
     private translateService: TranslateService
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.tableId = Number.parseInt(this.activatedRoute.snapshot.params['id'], 10);
     this.orderColumn = this.tableId === 3 ? 'date_out' : 'date';
     this.warnDateColumnName = this.orderColumn;
   }
 
-  cellClicked(event: CellClickEvent) {
+  cellClicked(event: CellClickEvent): void {
     const el = event.element;
-    const colName = event.columnName;
 
     if (event.columnName === 'verified') {
       this.logger.info(this.logTag, 'Updating verified column...');
@@ -77,7 +78,7 @@ export class TablePageComponent implements OnInit {
     }
   }
 
-  openQuestionnaireDialog(tableId: number, element) {
+  openQuestionnaireDialog(tableId: number, element: TableRow): void {
     this.zone.run(() => {
       this.dialog.open(QuestionnaireComponent, {
         data: {tableId: tableId, element: element},
@@ -86,7 +87,7 @@ export class TablePageComponent implements OnInit {
     });
   }
 
-  openRowDialog(el?: any) {
+  openRowDialog(el?: TableRow): void {
     let dialogRef;
 
     // component' onInit not fired without Zone
@@ -105,7 +106,7 @@ export class TablePageComponent implements OnInit {
     });
   }
 
-  deleteRow(el: any) {
+  deleteRow(el: TableRow): void {
     this.logger.debug(this.logTag, 'deleting', el);
     let snackbarText, snackbarDuration, snackbarActionText, snackbarActionCallback, snackbarRef;
 

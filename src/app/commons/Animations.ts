@@ -4,7 +4,7 @@ export const fabEnterAnimation = animation([
   style({ transform: 'scale(0) rotate(360deg)' }),
   group([
     animate('300ms {{delay}} cubic-bezier(0.4, 0.0, 1, 1)',
-      style({ transform: 'scale(1) rotate(0deg)' })),
+            style({ transform: 'scale(1) rotate(0deg)' })),
   ]),
 ]);
 
@@ -12,7 +12,7 @@ export const fabExitAnimation = animation([
   style({ transform: 'scale(1) rotate(0deg)', opacity: 1 }),
   group([
     animate('300ms {{delay}} cubic-bezier(0.4, 0.0, 1, 1)',
-      style({ transform: 'scale(0) rotate(360deg)' })),
+            style({ transform: 'scale(0) rotate(360deg)' })),
     // animate('300ms {{delay}}',
     //   style({ opacity: 0 }))
   ]),

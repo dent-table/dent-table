@@ -80,7 +80,7 @@ export class QuestionnaireAnswerWidgetComponent implements AfterContentInit {
   }
 
   private createEmptyFormGroup() {
-    let controlsGroup = {
+    const controlsGroup = {
       'name': [this.defaultName || '', Validators.required],
       'questionnaire_ref': [this.questionnaire.id, Validators.required],
       // 'table_id': [this.parameters.tableId, Validators.required],
@@ -88,15 +88,15 @@ export class QuestionnaireAnswerWidgetComponent implements AfterContentInit {
       'note': [''],
       'validations': [[], Validators.required],
       // 'selected_sections': [[]]
-    }
+    };
 
-    let sectionsGroup = { };
-    for (let sectionKey of Object.keys(this.questionnaire.sections)) {
+    const sectionsGroup = { };
+    for (const sectionKey of Object.keys(this.questionnaire.sections)) {
       const section = this.questionnaire.sections[sectionKey];
       // each section has a 'questions' object having the definition of each question
-      const questionsGroup = { }
-      for (let question of section.questions) {
-        questionsGroup[question.key] = ['', Validators.required]
+      const questionsGroup = { };
+      for (const question of section.questions) {
+        questionsGroup[question.key] = ['', Validators.required];
       }
 
       sectionsGroup[sectionKey] = this.fb.group(questionsGroup);
@@ -109,7 +109,7 @@ export class QuestionnaireAnswerWidgetComponent implements AfterContentInit {
   private createFormGroup() {
     this.formGroup = this.createEmptyFormGroup();
     if (this.answer) {
-      this.answer['sections'] = this.answer.answers
+      this.answer['sections'] = this.answer.answers;
       this.formGroup.patchValue(this.answer);
       this.formGroup.disable();
     } else {
@@ -120,7 +120,7 @@ export class QuestionnaireAnswerWidgetComponent implements AfterContentInit {
     }
   }
 
-  saveNewQuestionnaire() {
+  saveNewQuestionnaire(): void {
     if (!this.formGroup.valid) {
       console.log(findInvalidFormControls(this.formGroup));
       const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -138,11 +138,11 @@ export class QuestionnaireAnswerWidgetComponent implements AfterContentInit {
     }
   }
 
-  emitNewAnswer(answer) {
+  emitNewAnswer(answer: QuestionnaireAnswers): void {
     this.onSave.emit(answer);
   }
 
-  emitClose() {
+  emitClose(): void {
     this.expansionPanel.close();
     this.close.emit();
   }

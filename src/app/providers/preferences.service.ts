@@ -20,7 +20,9 @@ export class PreferencesService {
   };
 
   private filePath = this.electronService.getAppPath('data' + path.sep + 'preferences.json');
-  private preferences: object;
+  private preferences: {
+    [category: string]: { [preference: string]: any }
+  };
 
   constructor(private electronService: ElectronService) { }
 
@@ -39,7 +41,7 @@ export class PreferencesService {
     }
   }
 
-  put(category: string, name: string, value: any) {
+  put(category: string, name: string, value: any): void {
     if (this.preferences[category][name] === undefined || this.preferences[category][name] === null) {
       throw Error(`No preference found for ${name}`);
     }
@@ -47,7 +49,7 @@ export class PreferencesService {
     this.preferences[category][name] = value;
   }
 
-  save() {
+  save(): void {
     writeFileSync(this.filePath, JSON.stringify(this.preferences));
   }
 }

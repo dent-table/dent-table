@@ -9,7 +9,6 @@ export class PreferencesDialogComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-  }
+  ngOnInit(): void { }
 
 }

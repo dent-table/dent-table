@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
     private cdr: ChangeDetectorRef) { }
 
 
-  ngOnInit() {
+  ngOnInit(): void {
 
     let savedUsername = null;
     if (this.rememberUsernamePreference) {
@@ -53,11 +53,9 @@ export class LoginComponent implements OnInit {
     this.formGroup = new FormGroup(controls);
   }
 
-  loginSuccess() {
+  loginSuccess(): void {
     const saveUsernameChoice = this.formGroup.value['saveUsername'],
       username = this.formGroup.value['username'];
-
-    let saveUser, usernameValue;
 
     if (saveUsernameChoice === true) {
       this.preferencesService.put(this.loginCatKey, this.rememberPrefKey, true);
@@ -77,7 +75,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.loginResult = null;
     if (this.formGroup.valid) {
       this.databaseService.login(this.formGroup.value['username'], this.formGroup.value['password']).subscribe(

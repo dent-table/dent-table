@@ -1,13 +1,14 @@
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {AbstractControl, FormArray, FormControl, FormGroup} from '@angular/forms';
+import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
+import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
 import keys from 'lodash-es/keys';
 import includes from 'lodash-es/includes';
 import isString from 'lodash-es/isString';
 import some from 'lodash-es/some';
 import isMatch from 'date-fns/isMatch';
-import parse from 'date-fns/parse'
+import parse from 'date-fns/parse';
 import pickBy from 'lodash-es/pickBy';
 import flattenDeep from 'lodash-es/flattenDeep';
+import {SpecialCasesDefinition} from '../model/model';
 
 /*export class Utils {
 
@@ -177,7 +178,7 @@ const randomHexString = function (size: number): string {
   return [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
 };
 
-const specialCases: object = {
+const specialCases: SpecialCasesDefinition = {
   'CEREC': {
     tables: [1],
     bounds: [9000, 9099]
@@ -192,7 +193,7 @@ const _typeof = function (element: any, type?: string): boolean | string {
   } else {
     return typeof element;
   }
-}
+};
 
 const isEmpty = function (value: any): boolean {
   if (!value) { return true; }
@@ -202,7 +203,7 @@ const isEmpty = function (value: any): boolean {
   if (isString(value)) {
     return value.trim() === '';
   }
-}
+};
 
 /**
  * Check if slotNumber is a special case for the given tableId
@@ -210,7 +211,7 @@ const isEmpty = function (value: any): boolean {
  * @param tableId table id with regard to check slotNumber
  * @return the special case name if slotNumber is a special case, false otherwise
  */
-const specialCase = function (slotNumber: number, tableId: number) {
+const specialCase = function (slotNumber: number, tableId: number): string | boolean {
   for (const key of specialCasesKeys) {
     const bounds = specialCases[key].bounds;
     const applicableTables = specialCases[key].tables;
@@ -221,9 +222,9 @@ const specialCase = function (slotNumber: number, tableId: number) {
   }
 
   return false;
-}
+};
 
-const getSpecialCases = function (tableId: number) {
+const getSpecialCases = function (tableId: number): SpecialCasesDefinition {
   const toReturn = {};
   for (const key of specialCasesKeys) {
     const sCase = specialCases[key];
@@ -233,9 +234,9 @@ const getSpecialCases = function (tableId: number) {
   }
 
   return toReturn;
-}
+};
 
-const openSnackbar = function (snackBar: MatSnackBar, text: string, duration?: number, actionText?: string, actionCallback?: () => void) {
+const openSnackbar = function (snackBar: MatSnackBar, text: string, duration?: number, actionText?: string, actionCallback?: () => void): MatSnackBarRef<any> {
   const snackBarRef = snackBar.open(text, actionText, {duration: duration});
 
   if (actionText) {
@@ -243,7 +244,7 @@ const openSnackbar = function (snackBar: MatSnackBar, text: string, duration?: n
   }
 
   return snackBarRef;
-}
+};
 
 
 /**
@@ -272,17 +273,17 @@ const openSnackbar = function (snackBar: MatSnackBar, text: string, duration?: n
  * @see https://lowrey.me/getting-all-paths-of-an-javascript-object/
  * @param root object to analyze
  */
-const paths = function (root) {
-  let paths = [];
-  let nodes = [{
+const paths = function (root: {[key: string]: any}): string[][] {
+  const paths = [];
+  const nodes = [{
     obj: root,
     path: []
   }];
   while (nodes.length > 0) {
-    let n = nodes.pop();
+    const n = nodes.pop();
     Object.keys(n.obj).forEach(k => {
       if (typeof n.obj[k] === 'object') {
-        let path = n.path.concat(k);
+        const path = n.path.concat(k);
         paths.push(path);
         nodes.unshift({
           obj: n.obj[k],
@@ -292,7 +293,7 @@ const paths = function (root) {
     });
   }
   return paths;
-}
+};
 
 
 /**
@@ -301,16 +302,16 @@ const paths = function (root) {
  * @param root FormGroup to analyze
  */
 const controlsPaths = function (root: FormGroup): string[][] {
-  let paths = [];
-  let nodes = [{
+  const paths = [];
+  const nodes = [{
     obj: root.controls,
     path: []
   }];
   while (nodes.length > 0) {
-    let n = nodes.pop();
+    const n = nodes.pop();
     Object.keys(n.obj).forEach(k => {
       if (n.obj[k] instanceof AbstractControl) {
-        let path = n.path.concat(k);
+        const path = n.path.concat(k);
 
         // if current object is a FormGroup we have to dig into it, otherwise we have reached a final control and
         // we can add its path to paths list
@@ -326,15 +327,15 @@ const controlsPaths = function (root: FormGroup): string[][] {
     });
   }
   return paths;
-}
+};
 
-const hasArrayObjectWithValue = function (array, property, value) {
+const hasArrayObjectWithValue = function (array: any, property: any, value: any): boolean {
   return some(array, function (el) {
     return el[property] === value;
   });
-}
+};
 
-const parseDateString = function (dateString: any): Date {
+const parseDateString = function (dateString: string): Date {
   const formats = ['dd/MM/yyyy', 'T', 'MM/dd/yyy', 't'];
   for (const format of formats) {
     if (isMatch(dateString, format)) {
@@ -343,20 +344,20 @@ const parseDateString = function (dateString: any): Date {
   }
 
   return null;
-}
+};
 
 /**
  * Returns the path of all invalid controls into the form
  * @param form The form
  * @param path Initial path prefix (used for recursion). Default ''
  */
-const findInvalidFormControls = function (form: FormGroup | FormArray, path: string = ''): string[] {
+const findInvalidFormControls = function (form: FormGroup | FormArray, path= ''): string[] {
   const invalids = [];
   const controls = form.controls;
   for (const name of Object.keys(controls)) {
     if (controls[name].invalid) {
       const newPath = isEmpty(path) ? name : path + '.' + name;
-      if (controls[name].hasOwnProperty('controls')) {
+      if (Object.prototype.hasOwnProperty.call(controls[name], 'controls')) {
         invalids.push(findInvalidFormControls(controls[name], newPath));
       } else {
         invalids.push(newPath);
@@ -365,7 +366,7 @@ const findInvalidFormControls = function (form: FormGroup | FormArray, path: str
   }
 
   return flattenDeep(invalids);
-}
+};
 
 /**
  * Find all keys in an object whose properties match to <i>match</a>.
@@ -380,9 +381,9 @@ const findInvalidFormControls = function (form: FormGroup | FormArray, path: str
  * @param object Object to test
  * @param match A function used to test object properties or an object to compare
  */
-const keysThatMatch = function (object, match) {
+const keysThatMatch = function (object: {[key: string]: any}, match: any): string[] {
   return keys(pickBy(object, match));
-}
+};
 
 /**
  * Perform the difference between arrays <pre>
@@ -400,7 +401,7 @@ const keysThatMatch = function (object, match) {
  */
 const arraysDifference = function (arr1: any[], arr2: any[]): any[] {
   return arr1.filter(x => !arr2.includes(x));
-}
+};
 
 export {specialCases, specialCasesKeys, _typeof, isEmpty, specialCase, findInvalidFormControls,
   getSpecialCases, openSnackbar, paths, controlsPaths, hasArrayObjectWithValue, randomHexString,

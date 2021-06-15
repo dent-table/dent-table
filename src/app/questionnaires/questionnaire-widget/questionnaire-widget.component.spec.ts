@@ -10,7 +10,7 @@ describe('QuestionnaireWidgetComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ QuestionnaireWidgetComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

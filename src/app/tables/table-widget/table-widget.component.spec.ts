@@ -10,7 +10,7 @@ describe('TableWidgetComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ TableWidgetComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

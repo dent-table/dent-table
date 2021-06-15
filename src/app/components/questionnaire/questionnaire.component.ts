@@ -24,9 +24,9 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
 
   questionnaires: Questionnaire[];
   answers: {[id:string]: QuestionnaireAnswers[]};
-  answersWithNew: {[id:string]: QuestionnaireAnswers[]}
+  answersWithNew: {[id:string]: QuestionnaireAnswers[]};
 
-  forms: object = { };
+  forms: any = { };
 
   showNewPanel = { };
   panelOpenState: boolean;
@@ -60,19 +60,19 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
 
   // forms needs an array of answers with an empty fake QuestionnaireAnswers object for the new form and a set of FormGroup objects
   // one of each questionnaire answers object. This method creates both.
-  generateFormObjects() {
+  generateFormObjects(): void {
     this.answersWithNew = this.generateAnswersFullObject(this.answers);
     this.createFormGroups();
   }
 
   createFormGroups(): void {
-    for (let questionnaire of this.questionnaires) {
+    for (const questionnaire of this.questionnaires) {
       // generate an empty questionnaire answers list for a questionnaire if not exists (TODO: move this to data.js?)
       this.answers[questionnaire.id] = this.answers[questionnaire.id] || [ ];
 
       this.forms[questionnaire.id] = this.forms[questionnaire.id] || {}; // create field forms[questionnaire.id] if not exists
 
-      for (let answer of this.answersWithNew[questionnaire.id]) {
+      for (const answer of this.answersWithNew[questionnaire.id]) {
         answer['sections'] = answer.answers; // form group needs that answers must be in a field called 'sections'
         this.forms[questionnaire.id][answer.id] = this.createEmptyQuestionnaireFormGroup(questionnaire);
         if (answer.id !== 'new') {
@@ -88,7 +88,7 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
   }
 
   private createEmptyQuestionnaireFormGroup(questionnaire: Questionnaire): FormGroup {
-    let controlsGroup = {
+    const controlsGroup = {
       'name': [this.data.itemName || '', Validators.required],
       'questionnaire_ref': [questionnaire.id, Validators.required],
       'table_id': [this.data.tableId, Validators.required],
@@ -96,15 +96,15 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
       'date': ['', Validators.required],
       'note': [''],
       //TODO: add validations form?
-    }
+    };
 
-    let sectionsGroup = { };
-    for (let sectionKey of Object.keys(questionnaire.sections)) {
+    const sectionsGroup = { };
+    for (const sectionKey of Object.keys(questionnaire.sections)) {
       const section = questionnaire.sections[sectionKey];
       // each section has a 'questions' object having the definition of each question
-      const questionsGroup = { }
-      for (let question of section.questions) {
-        questionsGroup[question.key] = ['', Validators.required]
+      const questionsGroup = { };
+      for (const question of section.questions) {
+        questionsGroup[question.key] = ['', Validators.required];
       }
 
       sectionsGroup[sectionKey] = this.fb.group(questionsGroup);
@@ -114,7 +114,7 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
     return this.fb.group(controlsGroup);
   }
 
-  findInvalidControls(form) {
+  findInvalidControls(form: FormGroup): string[] {
     const invalid = [];
     const controls = form.controls;
     for (const name in controls) {
@@ -125,11 +125,11 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
     return invalid;
   }
 
-  generateAnswersFullObject(startObject: {[id: string]: QuestionnaireAnswers[]}) {
+  generateAnswersFullObject(startObject: {[id: string]: QuestionnaireAnswers[]}): any {
     console.log(startObject);
-    let newObject = { };
+    const newObject = { };
 
-    for (let questionnaire of this.questionnaires) {
+    for (const questionnaire of this.questionnaires) {
       const array = startObject[questionnaire.id] ? [...startObject[questionnaire.id]] : [ ];
       array.push({
         id: 'new',
@@ -148,8 +148,8 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
     return newObject;
   }
 
-  saveNewQuestionnaire(id: number) {
-    let form: FormGroup = this.forms[id]['new'];
+  saveNewQuestionnaire(id: number): void {
+    const form: FormGroup = this.forms[id]['new'];
     form.patchValue({date: formatISO(new Date())});
 
     if (!form.valid) {
@@ -176,6 +176,6 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
       console.log(newQuestionnaireAnswers);
       this.answers[newQuestionnaireAnswers.questionnaire_ref].push(newQuestionnaireAnswers);
       this.generateFormObjects();
-    })
+    });
   }
 }

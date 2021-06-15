@@ -24,10 +24,9 @@ export class ToolbarComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit(): void { }
 
-  onSearchFieldChange(query) {
+  onSearchFieldChange(query: string): void {
     this.tablesService.search(query);
   }
 

@@ -20,7 +20,7 @@ export class ToDeliver {
   ) { }
 }
 
-/** Represent a generic table row obtanied from the database */
+/** Represent a generic table row obtained from the database */
 export interface TableRow {
   /** Slot number from table tables_slots */
   slot_number: number;
@@ -28,6 +28,7 @@ export interface TableRow {
   table_id: number;
   /**  Id of the table's row in the reference table */
   table_ref: number;
+  /**  Undefined number of any other properties */
   [key: string]: any;
 }
 
@@ -40,9 +41,9 @@ export interface ColumnTypeDefinition {
 export class ColumnDefinition {
   constructor(
     public name: string,
-    public type: ColumnTypeDefinition, // TODO: remove this after converted all columns to ColumnTypeDefinition
-    public required,
-    public displayed
+    public type: ColumnTypeDefinition,
+    public required: boolean,
+    public displayed: boolean
   ) { }
 }
 
@@ -52,7 +53,7 @@ export class TableDefinition {
               public columnsDefinition: ColumnDefinition[]
   ) { }
 
-  static create(object): TableDefinition {
+  static create(object: any): TableDefinition {
     const columnsDef: Array<any> = object.columns_def;
     const columnsDefinitions: Array<ColumnDefinition> = [];
 
@@ -62,6 +63,10 @@ export class TableDefinition {
 
     return new TableDefinition(object.id, object.name, columnsDefinitions);
   }
+}
+
+export interface SpecialCasesDefinition {
+  [name: string]: {tables: number[], bounds: number[]}
 }
 
 export interface QuestionnaireQuestion {
@@ -85,7 +90,7 @@ export interface Questionnaire {
   sections: {
     [key: string]: QuestionnaireSection
   };
-  validations: object;
+  validations: {[id: string]: string};
 }
 
 export interface QuestionnaireAnswers {
@@ -94,7 +99,7 @@ export interface QuestionnaireAnswers {
   table_id: number;
   slot_number: number;
   date: string;
-  answers: { [key: string]: any } | object;
+  answers: { [key: string]: any } | any;
   note: string;
-  validations: object;
+  validations: {[id: string]: string};
 }

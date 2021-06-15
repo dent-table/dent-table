@@ -50,7 +50,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.tableDefinition = this.data.tableDefinition;
 
     if (!this.tableDefinition) {
@@ -82,7 +82,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
 
   typeOf = _typeof;
 
-  createFormGroup() {
+  createFormGroup(): void {
     const group = {};
     let elementSlotNumber = this.data.element ? this.data.element['slot_number'] : '';
     // check if slot number is one of special cases
@@ -108,9 +108,10 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
       }
 
       // special columns needs something else
-      if (column.type.special) {
-
-      }
+      // uncomment this block when will be necessary
+      // if (column.type.special) {
+      //
+      // }
 
       group[column.name] = this.fb.control(currentValue || '',
         {validators: validators, asyncValidators: asyncValidators, updateOn: "change"});
@@ -119,7 +120,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  onInsert() {
+  onInsert(): void {
     if (this.formGroup.valid) {
       const values = this.formGroup.value;
 
@@ -132,12 +133,12 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onUpdate() {
+  onUpdate(): void {
     const toUpdate = {};
     let someDirty = false;
     if (this.formGroup.valid && this.formGroup.dirty) {
       const controlPaths = controlsPaths(this.formGroup);
-      for (let controlPath of controlPaths) {
+      for (const controlPath of controlPaths) {
         if (this.formGroup.get(controlPath).dirty && this.formGroup.get(controlPath).valid) {
           someDirty = true;
           // control name is the last element of the path
@@ -156,7 +157,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     }
   }
 
-  onSubmit() {
+  onSubmit(): void {
     switch (this.dialogType) {
       case 'insert': this.onInsert(); break;
       case 'update': this.onUpdate(); break;

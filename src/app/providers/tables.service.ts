@@ -22,15 +22,15 @@ export class TablesService implements OnDestroy {
     this.electronService.ipcOn('move-row', this.moveRowIpcListener);
   }
 
-  onDragStarted(tableId: number) {
+  onDragStarted(tableId: number): void {
     this.dragStartedObservable.emit(tableId);
   }
 
-  onDragEnded(tableId: number) {
+  onDragEnded(tableId: number): void {
     this.dragEndedObservable.emit(tableId);
   }
 
-  search(query: string) {
+  search(query: string): void {
     this.onSearchEvent.emit(query);
   }
 

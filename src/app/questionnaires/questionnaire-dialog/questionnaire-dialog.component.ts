@@ -12,7 +12,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 export class QuestionnaireDialogComponent implements OnInit {
   logTag = QuestionnaireDialogComponent.name;
   questionnaires: Questionnaire[];
-  loaded: boolean = false;
+  loaded = false;
 
   dialogWidth = 60;
   dialogHeight = 90;

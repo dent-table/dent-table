@@ -9,6 +9,8 @@ import {LoggerService} from '../../providers/logger.service';
 import {TranslateService} from '@ngx-translate/core';
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
 import {QuestionnaireComponent} from '../questionnaire/questionnaire.component';
+import {updateVerifiedColumn} from '../../tables/common/TableUtils';
+import {TableRow} from '../../model/model';
 
 @Component({
   selector: 'app-home',
@@ -34,10 +36,10 @@ export class HomeComponent implements OnInit {
   ) {
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
 
-  cellClicked(tableId: number, event: CellClickEvent) {
+  cellClicked(tableId: number, event: CellClickEvent): void {
     const el = event.element;
     const colName = event.columnName;
 
@@ -64,7 +66,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  openQuestionnaireDialog(tableId: number, element) {
+  openQuestionnaireDialog(tableId: number, element: TableRow): void {
     this.zone.run(() => {
       this.dialog.open(QuestionnaireComponent, {
         data: {tableId: tableId, element: element},
@@ -73,7 +75,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  openRowDialog(tableId: number, element?: any) {
+  openRowDialog(tableId: number, element?: any): void {
     let dialogRef;
 
     // component' onInit not fired without Zone
@@ -132,7 +134,7 @@ export class HomeComponent implements OnInit {
       });
   }
 
-  reloadTable(tableId: number) {
+  reloadTable(tableId: number): void {
     switch (tableId) {
       case 1: this.table1.reload(); break;
       case 2: this.table2.reload(); break;

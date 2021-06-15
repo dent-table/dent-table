@@ -15,7 +15,9 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ElectronService {
 
   ipcRenderer: typeof ipcRenderer;
@@ -25,7 +27,10 @@ export class ElectronService {
   fs: typeof fs;
 
   databaseWebContentId: number;
-  appVersion = require('../../../package.json').version;
+
+  get appVersion(): string {
+    return require('../../../package.json').version;
+  }
 
   constructor() {
     // Conditional imports
@@ -41,9 +46,9 @@ export class ElectronService {
     }
   }
 
-  isElectron = () => {
+  isElectron = (): string => {
     return window && window.process && window.process.type;
-  }
+  };
 
   getAppPath(append: string): string {
     if (append) {
@@ -59,42 +64,39 @@ export class ElectronService {
     return this.getAppPath('logs');
   }
 
-  ipcSendTo(webContentId: number, channel: string, data: any) {
+  ipcSendTo(webContentId: number, channel: string, data: any): void {
     this.ipcRenderer.sendTo(webContentId, channel, data);
   }
 
-  ipcSend(channel: string, data?: any) {
+  ipcSend(channel: string, data?: any): void {
     this.ipcRenderer.send(channel, data);
   }
 
-  ipcOnce(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void) {
+  ipcOnce(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): void {
     this.ipcRenderer.once(channel, listener);
   }
 
-  ipcOn(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void) {
-    // if (channel.startsWitx h('table-get-all-')) {
-    //   console.log('ipc on: Registering channel ', channel);
-    // }
+  ipcOn(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): void {
     this.ipcRenderer.on(channel, listener);
   }
 
-  ipcRemoveListener(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void) {
+  ipcRemoveListener(channel: string, listener: (event: IpcRendererEvent, ...args: any[]) => void): void {
     this.ipcRenderer.removeListener(channel, listener);
   }
 
-  ipcRemoveAllListeners(channel: string) {
+  ipcRemoveAllListeners(channel: string): void {
     this.ipcRenderer.removeAllListeners(channel);
   }
 
-  close() {
+  close(): void {
     this.remote.getCurrentWindow().close();
   }
 
-  minimize() {
+  minimize(): void {
     this.remote.getCurrentWindow().minimize();
   }
 
-  toggleMaximize() {
+  toggleMaximize(): void {
     if (!this.remote.getCurrentWindow().isMaximized()) {
       this.remote.getCurrentWindow().maximize();
     } else {
@@ -102,7 +104,7 @@ export class ElectronService {
     }
   }
 
-  toggleFullscreen() {
+  toggleFullscreen(): void {
     const isFullscreen = this.remote.getCurrentWindow().isFullScreen();
     this.remote.getCurrentWindow().setFullScreen(!isFullscreen);
     this.remote.getCurrentWindow().setAlwaysOnTop(!isFullscreen);

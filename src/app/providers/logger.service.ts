@@ -83,27 +83,27 @@ export class LoggerService {
     return {label: label, message: stringified.join(' ')};
   }
 
-  public debug(component: string, ...text: any) {
+  public debug(component: string, ...text: any): void {
     this.logger.debug(this.logObject(component, text));
   }
 
-  public info(component: string, ...text: any) {
+  public info(component: string, ...text: any): void {
     this.logger.info(this.logObject(component, text));
   }
 
-  public error(component: string, ...text: any) {
+  public error(component: string, ...text: any): void {
     this.logger.error(this.logObject(component, text));
   }
 
-  public verbose(component: string, ...text: any) {
+  public verbose(component: string, ...text: any): void {
     this.logger.verbose(this.logObject(component, text));
   }
 
-  public warn(component: string, ...text: any) {
+  public warn(component: string, ...text: any): void {
     this.logger.warn(this.logObject(component, text));
   }
 
-  public crit(component: string, ...text: any) {
+  public crit(component: string, ...text: any): void {
     this.logger.crit(this.logObject(component, text));
   }
 }

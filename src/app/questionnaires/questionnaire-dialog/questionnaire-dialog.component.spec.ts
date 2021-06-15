@@ -10,7 +10,7 @@ describe('QuestionnaireDialogComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ QuestionnaireDialogComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

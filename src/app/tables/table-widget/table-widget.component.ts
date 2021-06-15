@@ -24,7 +24,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import {TablesService} from '../../providers/tables.service';
 import {Router} from '@angular/router';
 
-import {TableDefinition} from '../../model/model';
+import {TableDefinition, TableRow} from '../../model/model';
 import {formatDate} from '@angular/common';
 import {DropEvent} from 'angular-draggable-droppable';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -103,7 +103,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
         dataString = formatDate(dataString, 'dd/MM', this.locale);
       }
 
-      return currentTerm + dataString + '◬';
+      return `${currentTerm}${dataString}◬`;
     }, '').toLowerCase();
 
     // Transform the filter by converting it to lowercase and removing whitespace.
@@ -128,7 +128,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     // this.logger = loggerService.getLogger('table-widget.component.ts');
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (!isInteger(this.tableId)) {
       this.tableId = toInteger(this.tableId);
     }
@@ -197,7 +197,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     this.searchEventSubscription.unsubscribe();
   }
 
-  reload() {
+  reload(): void {
     this.databaseService.getAll(this.tableId, this.limit, this.orderColumn).subscribe((data) => {
         // this.data = new MatTableDataSource(data);
         this.data.data = [...data];
@@ -215,7 +215,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
       });
   }
 
-  tableConstruction(values: TableDefinition) {
+  tableConstruction(values: TableDefinition): void {
     // this.tableName = values.name;
     this.table_def = values;
     const displayedCols: string[] = ['slotNumber'];
@@ -234,7 +234,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     this.isLoaded = true;
   }
 
-  calcRowNumber() {
+  calcRowNumber(): void {
     const headersSize = 73;
     // const newRowNumber = Math.floor((this.el.nativeElement.offsetHeight - 69) / this.rowSize);
     const newRowNumber = Math.floor((this.el.nativeElement.offsetHeight - headersSize) / this.rowSize);
@@ -244,14 +244,14 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     }
   }
 
-  navigateToTablePage() {
+  navigateToTablePage(): void {
     this.router.navigate(['./table', this.tableId]);
   }
 
-  onDropData($event: DropEvent) {
+  onDropData($event: DropEvent): void {
     const droppedRow = $event.dropData;
     this.databaseService.moveRow(droppedRow.table_id, droppedRow.slot_number, this.tableId).subscribe(
-      (next) => {
+      () => {
         // nothing to do
       }, (error: string) => {
         if (error.includes("must be not null")) {
@@ -264,13 +264,13 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
     );
   }
 
-  isDragAllowed(row: any) {
-    return (dragData: any) => {
+  isDragAllowed(row: TableRow): (any) => boolean {
+    return (/*dragData: any*/) => {
       return row.date !== null;
-    }
+    };
   }
 
-  onDragEvent(event: string) {
+  onDragEvent(event: string): void {
     if (event === 'start') {
       this.tablesService.onDragStarted(this.tableId);
     } else if (event === 'end') {
@@ -279,12 +279,12 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   // prevent default on some drag events on dnd-droppable (important!)
-  public preventDefault(event) {
+  /*  public preventDefault(event) {
     event.mouseEvent.preventDefault();
     return false;
-  }
+  }*/
 
-  fireTableCellClicked(columnName: string, element?: any) {
+  fireTableCellClicked(columnName: string, element?: TableRow): void {
     if (columnName === 'open_questionnaires') {
       this.ngZone.run(() => {
         this.dialog.open(QuestionnaireDialogComponent, {
@@ -298,7 +298,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   // https://github.com/akserg/ng2-dnd/issues/177
-  delayDetectChanges () {
+  delayDetectChanges(): void {
     // Programmatically run change detection to fix issue in Safari
     setTimeout(() => {
       if ( this.cdr !== null &&
@@ -313,7 +313,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   // Return true if row date is under 7 day until today
-  checkDateRow(row: any) {
+  checkDateRow(row: TableRow): boolean {
     const rowDate = parseDateString(row[this.warnDateColumnName]);
     const currentDate = new Date();
     return  differenceInCalendarDays(rowDate, currentDate) <= 7;

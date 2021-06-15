@@ -10,7 +10,7 @@ describe('PreferencesDialogComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ PreferencesDialogComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

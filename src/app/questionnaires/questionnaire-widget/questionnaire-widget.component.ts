@@ -38,7 +38,7 @@ export class QuestionnaireWidgetComponent implements AfterViewInit {
     );
   }
 
-  saveNewAnswer(answer: QuestionnaireAnswers) {
+  saveNewAnswer(answer: QuestionnaireAnswers): void {
     answer.table_id = this.row.table_id;
     answer.slot_number = this.row.slot_number;
 

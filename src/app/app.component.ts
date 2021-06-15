@@ -13,7 +13,7 @@ import {LoggerService} from './providers/logger.service';
 })
 export class AppComponent implements OnInit, OnDestroy {
   constructor(public electronService: ElectronService,
-    private translate: TranslateService, private preferencesService: PreferencesService,
+              private translate: TranslateService, private preferencesService: PreferencesService,
               private zone: NgZone, private dialog: MatDialog, private logger: LoggerService) {
 
     translate.setDefaultLang('en');
@@ -27,7 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.electronService.remote.getCurrentWindow().on('close', (event) => {
+    this.electronService.remote.getCurrentWindow().on('close', (/*event*/) => {
       this.logger.info(AppComponent.name, 'Closing app...');
       this.zone.run(() => {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {data: {title: 'PAGES.CONFIRM_DIALOG.SURE'}});
