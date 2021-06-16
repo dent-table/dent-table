@@ -60,7 +60,7 @@ jobs:
 #        run: npm run e2e
 
     - name: List dist
-      run: ls -la dist/
+      run: ls -la release/
 
     - name: Obtain version string
       id: version
