@@ -1,6 +1,6 @@
 {
   "productName": "MyOdPlan",
-  "artifactName": "${productName}-${version}-${os}.${ext}",
+  "artifactName": "${productName}-${os}-${version}.${ext}",
   "buildDependenciesFromSource": true,
   "directories": {
     "output": "release/"
