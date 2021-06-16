@@ -68,7 +68,7 @@ jobs:
     - id: version
       uses: battila7/get-version-action@v2
 
-    - name:Release
+    - name: Release
       uses: ncipollo/release-action@v1
       if: startsWith(runner.os, 'Linux')
       with:
