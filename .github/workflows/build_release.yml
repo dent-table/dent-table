@@ -59,38 +59,14 @@ jobs:
 #      with:
 #        run: npm run e2e
 
-    - name: List release
-      run: ls release/
-
-    - name: Obtain version string
-      id: version
-      uses: battila7/get-version-action@v2
-
-    - name: Release
+  - name: Release
       uses: ncipollo/release-action@v1
       if: startsWith(runner.os, 'Windows')
       with:
         allowUpdates: true
         artifacts: |
-          release/MyOdPlan-${{ steps.version.outputs.version-without-v }}-win-installer.exe,
-          release/MyOdPlan-${{ steps.version.outputs.version-without-v }}-win-portable.exe
-        bodyFile: "CHANGELOG.md"
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Release
-      uses: ncipollo/release-action@v1
-      if: startsWith(runner.os, 'linux')
-      with:
-        allowUpdates: true
-        artifacts: release/MyOdPlan-${{ steps.version.outputs.version-without-v }}-linux.AppImage
-        bodyFile: "CHANGELOG.md"
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Release
-      uses: ncipollo/release-action@v1
-      if: startsWith(runner.os, 'macOS')
-      with:
-        allowUpdates: true
-        artifacts: release/MyOdPlan--${{ steps.version.outputs.version-without-v }}-mac.dmg
+          release/*.exe,
+          release/*.AppImage,
+          release/*.dmg
         bodyFile: "CHANGELOG.md"
         token: ${{ secrets.GITHUB_TOKEN }}
