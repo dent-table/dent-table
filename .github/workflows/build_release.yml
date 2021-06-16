@@ -59,9 +59,8 @@ jobs:
 #      with:
 #        run: npm run e2e
 
-  - name: Release
+    - name: Release
       uses: ncipollo/release-action@v1
-      if: startsWith(runner.os, 'Windows')
       with:
         allowUpdates: true
         artifacts: |
