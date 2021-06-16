@@ -43,6 +43,9 @@ jobs:
     - name: Install Dependencies
       run: npm i
 
+    - name: List release
+      run: ls release/
+
     - name: Check lint
       run: npm run lint
 
@@ -59,8 +62,8 @@ jobs:
 #      with:
 #        run: npm run e2e
 
-    - name: List dist
-      run: ls -la release/
+    - name: List release
+      run: ls release/
 
     - name: Obtain version string
       id: version
