@@ -1,15 +1,13 @@
 # This is a basic workflow to help you get started with Actions
-name: 'MacOS Build'
+name: Build Release
 
 # Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+' # Push events to any matching semantic tag. For example, 1.10.1 or 2.0.0.
+      - '[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+' # Push events to any matching semantic prerelease tag. For example, 1.10.1-beta.1
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -19,10 +17,10 @@ jobs:
   build:
     strategy:
       matrix:
-        node-version: [14.x]
+        os: [windows-latest, ubuntu-latest, macos-latest]
 
     # The type of runner that the job will run on
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v2
@@ -40,13 +38,41 @@ jobs:
           ${{ runner.os }}-build-
           ${{ runner.os }}-
 
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 14.x
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 14.x
+
     - name: Install Dependencies
       run: npm i
+
     - name: Check lint
       run: npm run lint
+
     - name: Build the app
       run: npm run electron:build
+
+#    - name: Run headless unit test
+#      uses: GabrielBB/xvfb-action@v1
+#      with:
+#        run: npm test
+#
+#    - name: Run headless unit test
+#      uses: GabrielBB/xvfb-action@v1
+#      with:
+#        run: npm run e2e
+
+    - name: List dist
+      run: ls -la dist/
+
+    - id: version
+      uses: battila7/get-version-action@v2
+
+    - name:Release
+      uses: ncipollo/release-action@v1
+      if: startsWith(runner.os, 'Linux')
+      with:
+        allowUpdates: true
+        artifacts: release/MyOdPlan-${{ steps.version.outputs.version-without-v }}-windows.exe
+        bodyFile: "CHANGELOG.md"
+        token: ${{ secrets.GITHUB_TOKEN }}
