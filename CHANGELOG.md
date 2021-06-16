@@ -1,4 +1,11 @@
 # Changelog
+## [1.0.0-beta.13](https://github.com/vincios/dent-table/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2021-06-16)
+
+
+### Continuous Integration
+
+* **prerelease:** fix a bug on prerelease condition ([0e7f60d](https://github.com/vincios/dent-table/commit/0e7f60dcbd94cb4fedbed1035bee114a2c2df695))
+
 ## [1.0.0-beta.12](https://github.com/vincios/dent-table/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2021-06-16)
 
 
