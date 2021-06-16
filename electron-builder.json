@@ -1,5 +1,6 @@
 {
   "productName": "MyOdPlan",
+  "artifactName": "${productName}-${version}-${os}.${ext}",
   "buildDependenciesFromSource": true,
   "directories": {
     "output": "release/"
@@ -34,13 +35,13 @@
       {
         "target": "portable",
         "arch": ["x64"]
-      }//,
-      //      {
-      //        "target": "nsis",
-      //        "arch": [
-      //          "x64"
-      //        ]
-      //      }
+      },
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
     ]
   },
   "nsis": {
