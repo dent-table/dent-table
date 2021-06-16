@@ -1,6 +1,6 @@
 {
   "productName": "MyOdPlan",
-  "artifactName": "${productName}-${os}-${version}.${ext}",
+  "artifactName": "${productName}-${version}-${os}.${ext}",
   "buildDependenciesFromSource": true,
   "directories": {
     "output": "release/"
@@ -45,10 +45,12 @@
     ]
   },
   "nsis": {
-    "oneClick": false
+    "oneClick": false,
+    "artifactName": "${productName}-${version}-${os}-installer.${ext}"
   },
   "portable": {
-    "splashImage": "dist/assets/icons/favicon.512x512.png"
+    "splashImage": "dist/assets/icons/favicon.512x512.png",
+    "artifactName": "${productName}-${version}-${os}-portable.${ext}"
   },
   "mac": {
     "icon": "dist/assets/icons",
