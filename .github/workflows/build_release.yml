@@ -71,9 +71,7 @@ jobs:
       if: startsWith(runner.os, 'Windows')
       with:
         allowUpdates: true
-        artifacts: |
-          release/MyOdPlan-${{ steps.version.outputs.version-without-v }}-win-installer.exe,
-          release/MyOdPlan-${{ steps.version.outputs.version-without-v }}-win-portable.exe
+        artifacts: "release/MyOdPlan-${{ steps.version.outputs.version-without-v }}-win-installer.exe,release/MyOdPlan-${{ steps.version.outputs.version-without-v }}-win-portable.exe"
         bodyFile: "CHANGELOG.md"
         token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -82,7 +80,7 @@ jobs:
       if: startsWith(runner.os, 'linux')
       with:
         allowUpdates: true
-        artifacts: release/MyOdPlan-${{ steps.version.outputs.version-without-v }}-linux.AppImage,
+        artifacts: "release/MyOdPlan-${{ steps.version.outputs.version-without-v }}-linux.AppImage",
         bodyFile: "CHANGELOG.md"
         token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -91,6 +89,6 @@ jobs:
       if: startsWith(runner.os, 'macOS')
       with:
         allowUpdates: true
-        artifacts: release/MyOdPlan--${{ steps.version.outputs.version-without-v }}-mac.dmg
+        artifacts: "release/MyOdPlan--${{ steps.version.outputs.version-without-v }}-mac.dmg"
         bodyFile: "CHANGELOG.md"
         token: ${{ secrets.GITHUB_TOKEN }}
