@@ -1,0 +1,35 @@
+{
+  "header": "# Changelog",
+  "types": [
+    { "type": "feat", "section": "Features" },
+    { "type": "feature", "section": "Features" },
+    { "type": "fix", "section": "Bug Fixes" },
+    { "type": "perf", "section": "Others" },
+    { "type": "revert", "section": "Reverts" },
+    { "type": "docs", "section": "Others" },
+    { "type": "style", "section": "Styles" },
+    { "type": "chore", "section": "Others" },
+    { "type": "refactor", "section": "Others" },
+    { "type": "test", "section": "Tests" },
+    { "type": "build", "section": "Build System" },
+    { "type": "ci", "section": "Continuous Integration" }
+  ],
+  "bumpFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    },
+    {
+      "filename": "app/package-lock.json",
+      "type": "json"
+    },
+    {
+      "filename": "app/package.json",
+      "type": "json"
+    },
+    {
+      "filename": "app/package-lock.json",
+      "type": "json"
+    }
+  ]
+}
