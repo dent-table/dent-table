@@ -9,9 +9,6 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+' # Push events to any matching semantic tag. For example, 1.10.1 or 2.0.0.
       - '[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+' # Push events to any matching semantic prerelease tag. For example, 1.10.1-beta.1
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
@@ -65,7 +62,8 @@ jobs:
     - name: List dist
       run: ls -la dist/
 
-    - id: version
+    - name: Obtain version string
+      id: version
       uses: battila7/get-version-action@v2
 
     - name: Release
