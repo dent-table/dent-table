@@ -108,20 +108,24 @@ export class TablePageComponent implements OnInit {
     this.logger.debug(this.logTag, 'deleting', el);
     let snackbarText, snackbarDuration, snackbarActionText, snackbarActionCallback, snackbarRef;
 
-    this.databaseService.deleteRow(el.table_id, el.slot_number).subscribe((result) => {
-        this.logger.debug(this.logTag, 'Delete result', result);
-        snackbarText = this.translateService.instant('SUCCESSES.DELETE');
+    this.databaseService.deleteRow(el.table_id, el.slot_number).subscribe({
+      next: (result) => {
+        this.logger.debug(this.logTag, "Delete result", result);
+        snackbarText = this.translateService.instant("SUCCESSES.DELETE");
         snackbarDuration = 5000;
-        snackbarActionText = this.translateService.instant('COMMONS.CANCEL');
+        snackbarActionText = this.translateService.instant("COMMONS.CANCEL");
         snackbarActionCallback = () => {
-          this.logger.info(this.logTag, 'Delete undo requested');
-          this.logger.info(this.logTag, 'Element to reinsert: ', result);
-          result['slot_number'] = el.slot_number;
-          this.databaseService.insertRow(this.tableId, result).subscribe(() => {
-            this.logger.info(this.logTag, 'Delete undo success');
-            this.tableWidget.reload();
-          }, (error2) => {
-            this.logger.error(this.logTag, 'Delete undo error!', error2);
+          this.logger.info(this.logTag, "Delete undo requested");
+          this.logger.info(this.logTag, "Element to reinsert: ", result);
+          result["slot_number"] = el.slot_number;
+          this.databaseService.insertRow(this.tableId, result).subscribe({
+            next: () => {
+              this.logger.info(this.logTag, "Delete undo success");
+              this.tableWidget.reload();
+            },
+            error: (error2) => {
+              this.logger.error(this.logTag, "Delete undo error!", error2);
+            }
           });
 
           snackbarRef.dismiss();
@@ -134,12 +138,13 @@ export class TablePageComponent implements OnInit {
         });
         this.tableWidget.reload();
       },
-      (errors) => {
-        this.logger.error(this.logTag, 'Delete error!', errors);
-        snackbarText = this.translateService.instant('ERRORS.GENERIC');
+      error: (errors) => {
+        this.logger.error(this.logTag, "Delete error!", errors);
+        snackbarText = this.translateService.instant("ERRORS.GENERIC");
         snackbarDuration = 3000;
         openSnackbar(
           this.snackBar, snackbarText, snackbarDuration);
-      });
+      }
+    });
   }
 }

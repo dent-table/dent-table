@@ -143,10 +143,10 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   ngAfterViewInit(): void {
-    this.databaseService.getTableDefinition(this.tableId).subscribe(
-      (data) => { this.tableConstruction(data); },
-      errors => { this.logger.error(this.logTag, errors); }
-    );
+    this.databaseService.getTableDefinition(this.tableId).subscribe({
+      next: (data) => this.tableConstruction(data),
+      error: (errors) => this.logger.error(this.logTag, errors)
+    });
 
     this.reload();
 
@@ -198,7 +198,8 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   }
 
   reload(): void {
-    this.databaseService.getAll(this.tableId, this.limit, this.orderColumn).subscribe((data) => {
+    this.databaseService.getAll(this.tableId, this.limit, this.orderColumn).subscribe({
+      next: (data) => {
         // this.data = new MatTableDataSource(data);
         this.data.data = [...data];
         this.dataLength = data.length;
@@ -210,9 +211,9 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
         } catch (e) {
           this.delayDetectChanges();
         }
-      }, errors => { this.logger.error(this.logTag, errors); },
-      () =>  {
-      });
+      },
+      error: errors => this.logger.error(this.logTag, errors)
+    });
   }
 
   tableConstruction(values: TableDefinition): void {
@@ -250,10 +251,11 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
 
   onDropData($event: DropEvent): void {
     const droppedRow = $event.dropData;
-    this.databaseService.moveRow(droppedRow.table_id, droppedRow.slot_number, this.tableId).subscribe(
-      () => {
+    this.databaseService.moveRow(droppedRow.table_id, droppedRow.slot_number, this.tableId).subscribe({
+      next: () => {
         // nothing to do
-      }, (error: string) => {
+      },
+      error: (error: string) => {
         if (error.includes("must be not null")) {
           const column = error.split(" ")[0].trim();
           this.showEmptyFieldMessage(column);
@@ -261,7 +263,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
           this.logger.error(this.logTag, error);
         }
       }
-    );
+    });
   }
 
   isDragAllowed(row: TableRow): (any) => boolean {

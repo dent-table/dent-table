@@ -48,14 +48,15 @@ export class QuestionnaireComponent implements OnInit, AfterViewInit {
     const questionnaires$ = this.databaseService.getQuestionnairesBy(this.data.tableId);
     const answers$ = this.databaseService.getQuestionnaireAnswersBy(this.data.tableId, this.data.slotNumber);
 
-    zip(questionnaires$, answers$).subscribe(
-      ([questionnaires, answers]) => {
+    zip(questionnaires$, answers$).subscribe({
+      next: ([questionnaires, answers]) => {
         this.questionnaires = [...questionnaires];
         this.answers = answers;
 
         this.generateFormObjects();
       },
-      (error) => this.loggerService.error(this.logTag + '/ngAfterViewInit', error));
+      error: (error) => this.loggerService.error(this.logTag + "/ngAfterViewInit", error)
+    });
   }
 
   // forms needs an array of answers with an empty fake QuestionnaireAnswers object for the new form and a set of FormGroup objects

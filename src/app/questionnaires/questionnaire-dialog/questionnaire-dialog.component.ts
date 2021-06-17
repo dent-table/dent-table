@@ -26,12 +26,12 @@ export class QuestionnaireDialogComponent implements OnInit {
 
   ngOnInit(): void {
     // this.dialogRef.updateSize(`${this.dialogWidth}%`, `${this.dialogHeight}%`);
-    this.databaseService.getQuestionnairesBy(this.rowData.table_id).subscribe(
-      questionnaires => {
+    this.databaseService.getQuestionnairesBy(this.rowData.table_id).subscribe({
+      next: (questionnaires) => {
         this.questionnaires = questionnaires;
         this.loaded = true;
       },
-      error => this.loggerService.error(this.logTag, error)
-    );
+      error: (error) => this.loggerService.error(this.logTag, error)
+    });
   }
 }

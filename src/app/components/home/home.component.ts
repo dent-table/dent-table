@@ -101,24 +101,27 @@ export class HomeComponent implements OnInit {
     this.logger.debug(this.logTag, 'deleting', el);
     let snackbarText, snackbarDuration, snackbarActionText, snackbarActionCallback, snackbarRef;
 
-    this.databaseService.deleteRow(el.table_id, el.slot_number).subscribe((result) => {
-      this.logger.debug(this.logTag, result);
-      this.logger.debug(this.logTag, result.date, typeof result.date);
-        this.logger.debug(this.logTag, 'Delete result', result);
-        snackbarText = this.translateService.instant('SUCCESSES.DELETE');
+    this.databaseService.deleteRow(el.table_id, el.slot_number).subscribe({
+      next: (result) => {
+        this.logger.debug(this.logTag, result);
+        this.logger.debug(this.logTag, result.date, typeof result.date);
+        this.logger.debug(this.logTag, "Delete result", result);
+        snackbarText = this.translateService.instant("SUCCESSES.DELETE");
         snackbarDuration = 5000;
-        snackbarActionText = this.translateService.instant('COMMONS.CANCEL');
+        snackbarActionText = this.translateService.instant("COMMONS.CANCEL");
         snackbarActionCallback = () => {
-          this.logger.info(this.logTag, 'Delete undo requested');
-          result['slot_number'] = el.slot_number;
+          this.logger.info(this.logTag, "Delete undo requested");
+          result["slot_number"] = el.slot_number;
           this.logger.debug(result);
-          this.databaseService.insertRow(tableId, result).subscribe(() => {
-            this.logger.info(this.logTag, 'Delete undo success');
-            this.reloadTable(tableId);
-          }, (error2) => {
-            this.logger.error(this.logTag, 'Delete undo error!', error2);
+          this.databaseService.insertRow(tableId, result).subscribe({
+            next: () => {
+              this.logger.info(this.logTag, "Delete undo success");
+              this.reloadTable(tableId);
+            },
+            error: (error2) => {
+              this.logger.error(this.logTag, "Delete undo error!", error2);
+            }
           });
-
           snackbarRef.dismiss();
         };
 
@@ -128,13 +131,14 @@ export class HomeComponent implements OnInit {
         });
         this.reloadTable(tableId);
       },
-      (errors) => {
-        this.logger.error(this.logTag, 'Delete error!', errors);
-        snackbarText = this.translateService.instant('ERRORS.GENERIC');
+      error: (errors) => {
+        this.logger.error(this.logTag, "Delete error!", errors);
+        snackbarText = this.translateService.instant("ERRORS.GENERIC");
         snackbarDuration = 3000;
         openSnackbar(
           this.snackBar, snackbarText, snackbarDuration);
-      });
+      },
+    });
   }
 
   reloadTable(tableId: number): void {

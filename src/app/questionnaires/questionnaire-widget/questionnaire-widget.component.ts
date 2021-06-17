@@ -30,27 +30,28 @@ export class QuestionnaireWidgetComponent implements AfterViewInit {
   ) { }
 
   ngAfterViewInit(): void {
-    this.databaseService.getQuestionnaireAnswersBy(this.row.table_id, this.row.slot_number).subscribe(
-      answers => {
+    this.databaseService.getQuestionnaireAnswersBy(this.row.table_id, this.row.slot_number).subscribe({
+      next: answers => {
         this.answers = answers[this.questionnaire.id];
       },
-      error => this.loggerService.error(this.logTag + '/ngAfterContentInit', error)
-    );
+      error: error => this.loggerService.error(this.logTag + "/ngAfterContentInit", error)
+    });
   }
 
   saveNewAnswer(answer: QuestionnaireAnswers): void {
     answer.table_id = this.row.table_id;
     answer.slot_number = this.row.slot_number;
 
-    this.databaseService.saveQuestionnaireAnswers(answer).subscribe(
-      (newAnswer) => {
+    this.databaseService.saveQuestionnaireAnswers(answer).subscribe({
+      next: (newAnswer) => {
         this.answers = [...this.answers, newAnswer];
         this.showNewPanel = false;
       },
-      (error) => {
-        openSnackbar(this.snackBar, this.translateService.instant('ERRORS.GENERIC2'));
+      error: (error) => {
+        openSnackbar(this.snackBar, this.translateService.instant("ERRORS.GENERIC2"));
         this.loggerService.error(this.logTag, error);
-      });
+      }
+    });
   }
 
 }
