@@ -1,12 +1,8 @@
-[![Angular Logo](https://www.vectorlogo.zone/logos/angular/angular-icon.svg)](https://angular.io/) [![Electron Logo](https://www.vectorlogo.zone/logos/electronjs/electronjs-icon.svg)](https://electronjs.org/)
-![MyOdPlan Logo][app-logo]
+![MyOdPlan Logo][app-logo] [![Angular Logo](https://www.vectorlogo.zone/logos/angular/angular-icon.svg)](https://angular.io/) [![Electron Logo](https://www.vectorlogo.zone/logos/electronjs/electronjs-icon.svg)](https://electronjs.org/)
+
 
 ![Maintained][maintained-badge]
-[![License][license-badge]](LICENSE.md)
-
-[![Linux Build][linux-build-badge]][linux-build]
-[![MacOS Build][macos-build-badge]][macos-build]
-[![Windows Build][windows-build-badge]][windows-build]
+[![Build Release][build-badge]][build]
 
 [![Watch on GitHub][github-watch-badge]][github-watch]
 [![Star on GitHub][github-star-badge]][github-star]
@@ -27,9 +23,9 @@ With this sample, you can:
 - Run your app in a production environment
 - Package your app into an executable file for Linux, Windows & Mac
 
-/!\ Hot reload only pertains to the renderer process. The main electron process is not able to be hot reloaded, only restarted.
+⚠️ Hot reload only pertains to the renderer process. The main electron process is not able to be hot reloaded, only restarted.
 
-/!\ Angular 12.x CLI needs Node 11 or later to work correctly.
+⚠️ Angular 12.x CLI needs Node 11 or later to work correctly.
 
 ## Getting Started
 
@@ -136,12 +132,8 @@ Please note that Hot reload is only available in Renderer process.
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license]: https://github.com/vincios/dent-table/blob/master/LICENSE.md
 
-[linux-build-badge]: https://github.com/vincios/dent-table/workflows/Linux%20Build/badge.svg
-[linux-build]: https://github.com/vincios/dent-table/actions?query=workflow%3A%22Linux+Build%22
-[macos-build-badge]: https://github.com/vincios/dent-table/workflows/MacOS%20Build/badge.svg
-[macos-build]: https://github.com/vincios/dent-table/actions?query=workflow%3A%22MacOS+Build%22
-[windows-build-badge]: https://github.com/vincios/dent-table/workflows/Windows%20Build/badge.svg
-[windows-build]: https://github.com/vincios/dent-table/actions?query=workflow%3A%22Windows+Build%22
+[build]: https://github.com/vincios/dent-table/actions/workflows/build_release.yml
+[build-badge]: https://github.com/vincios/dent-table/actions/workflows/build_release.yml/badge.svg?branch=v1.0.0-beta.13
 
 [github-watch-badge]: https://img.shields.io/github/watchers/vincios/dent-table.svg?style=social
 [github-watch]: https://github.com/vincios/dent-table/watchers
