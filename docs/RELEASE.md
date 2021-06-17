@@ -18,7 +18,7 @@ If all your commits (or, at least, most of them) follows [commits guidelines](CO
 - Create a git `tag` for the release (note that GitHub releases are based on tags)
 - Push the tag to the `master` branch
 
-Standard Version will change your version number following these guides:
+standard-version will change your version number following these guides:
 - A `git commit -m "fix: …"` commit will trigger a _patch_ update (1.0.0 → 1.0.1)
 - A `git commit -m "feat: …"` commit will trigger a _minor_ update (1.0.0 → 1.1.0)
 - A `BREAKING CHANGE: …` in the commit body and with any type of commit will trigger a _major_ update (1.0.0 → 2.0.0)
