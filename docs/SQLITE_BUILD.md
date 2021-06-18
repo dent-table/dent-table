@@ -11,7 +11,7 @@ Follow this steps **starting from project root directory**:
 <br/>
 Include also build tools v140. (**<- This will not be necessary if you use windows-build-tools**)
 <br>
-**NB (2021)**: Now node-gyp works aslw with Visual Studio 2019
+**NB (2021)**: Now node-gyp works also with Visual Studio 2019
   
 - `npm install --save-dev electron-rebuild`
 - `npm install --save better-sqlite3`
