@@ -1,5 +1,7 @@
 # New: Instructions to install better-sqlite3
 (From [here](https://github.com/JoshuaWise/better-sqlite3/issues/126))
+
+Follow this steps **starting from project root directory**:
 - `npm install -g node-gyp`
 - `node-gyp --version` <br /> If it fails with 'node-gyp.js not found' go to `%ProgramFiles%\nodejs\node_modules\npm\node_modules\npm-lifecycle\node-gyp-bin\node-gyp.cmd` and remove ..\node_modules\ .. on line 2. 
 
@@ -8,17 +10,19 @@
 **NB**: node-gyp has some issues with Visual Studio 2019 (see [here](https://github.com/nodejs/node-gyp/issues/1663)). Install Visual Studio BuildTools **2017** from [here](https://visualstudio.microsoft.com/it/thank-you-downloading-visual-studio/?sku=BuildTools&rel=15). 
 <br/>
 Include also build tools v140. (**<- This will not be necessary if you use windows-build-tools**)
-
+<br>
+**NB (2021)**: Now node-gyp works aslw with Visual Studio 2019
+  
 - `npm install --save-dev electron-rebuild`
-
 - `npm install --save better-sqlite3`
 
 
 - go to terminal in the ide and run
-``` bash
-set PYTHON=/path/to/python3/exe
-electron-rebuild -f -w better-sqlite3
-``` 
+  ``` bash
+  $ set PYTHON=/path/to/python3/exe
+  $ cd app
+  $ electron-rebuild -f -w better-sqlite3
+  ``` 
 
 # OLD: Instructions to build sqlite3 with Electron
 
