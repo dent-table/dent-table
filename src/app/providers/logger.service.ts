@@ -1,22 +1,30 @@
 import { Injectable } from '@angular/core';
-import * as winston from 'winston';
+import { format, createLogger, Logger, transports } from "winston";
 import {ElectronService} from './electron.service';
-import {Logger} from 'winston';
 import * as path from 'path';
-// import {format} from 'winston';
-import format from 'date-fns/format';
+import formatDate from "date-fns/format";
 
+/**
+ * ************************** LoggerService **************************
+ * Logs message both on console and a file. If a file name is
+ * not provided, a default "logs_<date>.log" file will be used.
+ *
+ * NOTE: this class has a mirror class Logger
+ * in app/data/src/logger.ts
+ *
+ * Please KEEP both synced!
+ * *******************************************************************
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class LoggerService {
 
-  // **NOTE**: this code has a mirror in data_entry.js, keep both synced!
-  logFormat = winston.format.combine(
-    winston.format.timestamp({
+  logFormat = format.combine(
+    format.timestamp({
       format: 'HH:mm:ss'
     }),
-    winston.format.printf((info => {
+    format.printf((info => {
       const message = info.label ? `${info.label} | ${info.message}` : info.message;
       // TODO: pad level string to a specific length?
       return `[${info.level}] ${info.timestamp}: ${message}`;
@@ -26,41 +34,36 @@ export class LoggerService {
   logger: Logger;
 
   constructor(private electronService: ElectronService) {
-    this.logger = this.createLogger('logs_' + format(new Date(), 'yyyy-MM-dd'));
+    this.logger = this.createLogger('logs_' + formatDate(new Date(), 'yyyy-MM-dd'));
   }
 
-  /*  getLogger(filename: string): Logger {
-      if (path.extname(filename) !== '.log') {
-        filename = filename + '.log';
-      }
-
-      return winston.createLogger({
-        transports: [
-          new winston.transports.Console({level: 'debug'}),
-          new winston.transports.File({dirname: this.electronService.getLogPath(), filename: filename})
-        ]
-      });
-    }*/
-
-  private createLogger(filename: string): Logger {
+  private createLogger(filename: string, target: "console" | "file" | "both" = "both"): Logger {
     if (path.extname(filename) !== '.log') {
       filename = filename + '.log';
     }
 
-    // **NOTE**: this code has a mirror in data_entry.js, keep both synced!
-    return winston.createLogger({
-      transports: [
-        new winston.transports.Console({
-          level: 'debug',
-          format: winston.format.combine(
-            winston.format.colorize(),
-            this.logFormat)
-        }),
-        new winston.transports.File({
-          dirname: this.electronService.getLogPath(),
-          filename: filename,
-          format: this.logFormat})
-      ],
+
+    // noinspection DuplicatedCode
+    const outputs: any[] = [];
+    if (target == "console" || target == "both" ) {
+      outputs.push(new transports.Console({
+        level: 'debug',
+        format: format.combine(
+          format.colorize(),
+          this.logFormat)
+      }));
+    }
+
+    if (target == "file" || target == "both") {
+      outputs.push(new transports.File({
+        dirname: this.electronService.getLogPath(),
+        filename: filename || `data_${formatDate(new Date(), 'yyyy-MM-dd')}.log`,
+        format: this.logFormat
+      }));
+    }
+
+    return createLogger({
+      transports: outputs,
       format: this.logFormat
     });
   }
