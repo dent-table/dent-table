@@ -1,8 +1,7 @@
 import {Injectable, NgZone} from '@angular/core';
 import {ElectronService} from './electron.service';
 import {Observable, OperatorFunction} from 'rxjs';
-import {map} from 'rxjs/operators';
-import {Questionnaire, QuestionnaireAnswers, TableDefinition, ToDeliver, ToDo} from '../model/model';
+import {Questionnaire, QuestionnaireAnswers, TableDefinition} from '../model/model';
 import * as crypto from 'crypto';
 import {LoggerService} from './logger.service';
 import {enterZone} from '../commons/RxjsZone';
@@ -20,32 +19,6 @@ import isValid from 'date-fns/isValid';
   providedIn: 'root'
 })
 export class DatabaseService {
-  static toDoMapFunction: OperatorFunction<Array<any>, Array<ToDo>> = map((values: Array<any>) => {
-    const res: Array<ToDo> = [];
-    values.forEach(value => res.push(new ToDo(
-      value.slot_number,
-      value.table_ref,
-      value.table_id,
-      value.name,
-      value.type,
-      value.date
-    )));
-    return res;
-  });
-
-  static toDeliverMapFunction: OperatorFunction<Array<any>, Array<ToDeliver>> = map((values: Array<any>) => {
-    const res: Array<ToDeliver> = [];
-    values.forEach(value => res.push(new ToDeliver(
-      value.slot_number,
-      value.table_ref,
-      value.table_id,
-      value.name,
-      value.type,
-      value.date
-    )));
-    return res;
-  });
-
   databaseWebContentId: number;
 
   algorithm = 'aes-192-cbc';

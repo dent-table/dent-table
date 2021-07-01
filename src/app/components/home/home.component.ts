@@ -11,6 +11,7 @@ import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component
 import {QuestionnaireComponent} from '../questionnaire/questionnaire.component';
 import {updateVerifiedColumn} from '../../tables/common/TableUtils';
 import {TableRow} from '../../model/model';
+import {PreferencesService} from "../../providers/preferences.service";
 
 @Component({
   selector: 'app-home',
@@ -20,6 +21,7 @@ import {TableRow} from '../../model/model';
 export class HomeComponent implements OnInit {
   logTag = HomeComponent.name;
 
+  // TODO(fork): update table objects according customer requirements
   @ViewChild('table1', { static: true }) table1;
   @ViewChild('table2', { static: true }) table2;
   @ViewChild('table3', { static: true }) table3;
@@ -142,6 +144,7 @@ export class HomeComponent implements OnInit {
   }
 
   reloadTable(tableId: number): void {
+    // TODO(fork): update switch according to the declared table objects
     switch (tableId) {
       case 1: this.table1.reload(); break;
       case 2: this.table2.reload(); break;

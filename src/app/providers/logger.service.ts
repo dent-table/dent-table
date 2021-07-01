@@ -10,7 +10,7 @@ import formatDate from "date-fns/format";
  * not provided, a default "logs_<date>.log" file will be used.
  *
  * NOTE: this class has a mirror class Logger
- * in app/data/src/logger.ts
+ * in dent-table-sqlite library
  *
  * Please KEEP both synced!
  * *******************************************************************
