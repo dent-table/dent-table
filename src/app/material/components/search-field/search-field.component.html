@@ -1,0 +1,13 @@
+<mat-form-field class="mat-search_field" [appearance]="appearance" [color]="color"
+                [@easeInOut]="searchVisible">
+  <input #input matInput type="text" [placeholder]="placeholder" [formControl]="formControl"
+         autocapitalize="none"/>
+</mat-form-field>
+<span class="mat-search_icons" [class.mat-search_icons--active]="searchVisible">
+  <mat-icon class="mat-search_icon-close" (click)="close()" matRipple>
+    close
+  </mat-icon>
+  <mat-icon class="mat-search_icon-search" (click)="open()" matRipple>
+    search
+  </mat-icon>
+</span>

@@ -18,7 +18,6 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {FlexLayoutModule} from '@angular/flex-layout';
 // import {MAT_MOMENT_DATE_FORMATS, MatMomentDateModule, MomentDateAdapter} from '@angular/material-moment-adapter';
-import {NgMatSearchBarModule} from 'ng-mat-search-bar';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatListModule} from '@angular/material/list';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
@@ -30,20 +29,24 @@ import {MatChipsModule} from '@angular/material/chips';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatSelectModule} from '@angular/material/select';
 import {MatBadgeModule} from '@angular/material/badge';
+import { SearchFieldComponent } from './components/search-field/search-field.component';
+import { ReactiveFormsModule } from "@angular/forms";
 
 @NgModule({
-  declarations: [ ],
+  declarations: [
+    SearchFieldComponent
+  ],
   imports: [
     CommonModule, BrowserAnimationsModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, MatFormFieldModule, MatInputModule,
     FlexLayoutModule, MatPaginatorModule, MatIconModule, MatToolbarModule, MatCardModule, MatDatepickerModule, NgxMatDateFnsDateModule,
-    MatRippleModule, NgMatSearchBarModule, MatSnackBarModule, MatProgressSpinnerModule, MatTabsModule, MatExpansionModule, MatListModule,
-    MatButtonToggleModule, MatChipsModule, MatDialogModule, MatSelectModule, MatBadgeModule
+    MatRippleModule, MatSnackBarModule, MatProgressSpinnerModule, MatTabsModule, MatExpansionModule, MatListModule,
+    MatButtonToggleModule, MatChipsModule, MatDialogModule, MatSelectModule, MatBadgeModule, ReactiveFormsModule
   ],
   exports: [
     BrowserAnimationsModule, MatButtonModule, MatCheckboxModule, MatTableModule, MatTooltipModule, MatFormFieldModule, MatInputModule,
     FlexLayoutModule, MatPaginatorModule, MatIconModule, MatToolbarModule, MatCardModule, MatDatepickerModule, NgxMatDateFnsDateModule,
-    MatRippleModule, NgMatSearchBarModule, MatSnackBarModule, MatProgressSpinnerModule, MatTabsModule, MatExpansionModule, MatListModule,
-    MatButtonToggleModule, MatChipsModule, MatDialogModule, MatSelectModule, MatBadgeModule
+    MatRippleModule, MatSnackBarModule, MatProgressSpinnerModule, MatTabsModule, MatExpansionModule, MatListModule,
+    MatButtonToggleModule, MatChipsModule, MatDialogModule, MatSelectModule, MatBadgeModule, SearchFieldComponent
   ],
   providers: [
     // {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},

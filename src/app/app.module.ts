@@ -17,7 +17,6 @@ import {TablesModule} from './tables/tables.module';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import { LoginComponent } from './components/login/login.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
-import {NgMatSearchBarModule} from 'ng-mat-search-bar';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
@@ -62,7 +61,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     FormsModule,
     SharedModule,
     ReactiveFormsModule,
-    NgMatSearchBarModule,
     MatDialogModule,
     MatTabsModule,
     MatSelectModule

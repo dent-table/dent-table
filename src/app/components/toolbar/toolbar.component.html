@@ -1,6 +1,6 @@
 <mat-toolbar [ngClass]="{hidden: loadedPageUrl === '/'}" class="mat-elevation-z3" color="primary">
   <button mat-button routerLink="/home">Home</button>
   <span class="toolbar-empty-space"></span>
-  <mat-search-bar #searchBar [(ngModel)]="searchQueryString" (ngModelChange)="onSearchFieldChange(searchQueryString)" class="toolbar-search-bar"></mat-search-bar>
+  <app-search-field #searchBar [(ngModel)]="searchQueryString" (ngModelChange)="onSearchFieldChange(searchQueryString)" class="toolbar-search-bar"></app-search-field>
 <!--  <button class="preferences-button" type="button" mat-icon-button routerLink="/preferences"><mat-icon>settings_applications</mat-icon></button>-->
 </mat-toolbar>
