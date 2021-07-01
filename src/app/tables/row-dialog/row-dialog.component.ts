@@ -39,7 +39,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private logger: LoggerService
   ) {
-    if ('string' === typeof data.tableId) {
+    if (typeof data.tableId === "string") {
       this.data.tableId = Number.parseInt(this.data.tableId, 10);
     }
 
@@ -121,7 +121,7 @@ export class RowDialogComponent implements OnInit, AfterViewInit {
         {validators: validators, asyncValidators: asyncValidators, updateOn: "change"});
     }
     this.formGroup = new FormGroup(group);
-    this.cdr.detectChanges();
+    // this.cdr.detectChanges();
   }
 
   onInsert(): void {

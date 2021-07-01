@@ -129,7 +129,7 @@ export class DatabaseService {
   login(user: string, password: string): Observable<number> {
     const params = {username: user, password: this.encrypt(password)};
 
-    return new Observable((subscriber) => {
+    const obs: Observable<number> = new Observable((subscriber) => {
       this.sendToDatabase('login', params);
       this.electronService.ipcOnce('login', (event, response) => {
         if (response.result === 'error') {
@@ -140,6 +140,8 @@ export class DatabaseService {
         }
       });
     });
+
+    return obs.pipe(enterZone(this.zone));
   }
 
   getAll<R>(tableId: number, limit?: number, orderColumn?: string, mapFun?: OperatorFunction<Array<any>, Array<R>>): Observable<Array<R>> {
@@ -170,12 +172,12 @@ export class DatabaseService {
       obs = obs.pipe(mapFun);
     }
 
-    return obs;
+    return obs.pipe(enterZone(this.zone));
   }
 
   insertRow(tableId: number, values: any): Observable<any> {
     const params = {tableId: tableId, values: this.valuesSanitize(values)};
-    return new Observable((subscriber => {
+    const obs: Observable<any> = new Observable((subscriber => {
       const returnChannel = this.sendToDatabase('table-insert-row', params, tableId);
       this.electronService.ipcOnce(returnChannel, (event, data) => {
         if (data.result === 'error') {
@@ -186,11 +188,13 @@ export class DatabaseService {
         }
       });
     }));
+
+    return obs.pipe(enterZone(this.zone));
   }
 
   deleteRow(tableId: number, slotNumber: any): Observable<any> {
     const params = {tableId: tableId, slotNumber: slotNumber};
-    return new Observable((subscriber => {
+    const obs: Observable<any> = new Observable((subscriber => {
       const returnChannel = this.sendToDatabase('table-delete-row', params, tableId);
       this.electronService.ipcOnce(returnChannel, (event, data) => {
         if (data.result === 'error') {
@@ -201,12 +205,14 @@ export class DatabaseService {
         }
       });
     }));
+
+    return obs.pipe(enterZone(this.zone));
   }
 
   getTableDefinition(tableId: number): Observable<TableDefinition> {
     const params = {tableId: tableId};
 
-    return new Observable((subscriber) => {
+    const obs: Observable<TableDefinition> = new Observable((subscriber) => {
       const returnChannel = this.sendToDatabase('table-get-definition', params, tableId);
       this.electronService.ipcOnce(returnChannel, (event, data) => {
           // if (data.response.id === tableId) {
@@ -222,12 +228,14 @@ export class DatabaseService {
 
       return (() => {});
     });
+
+    return obs.pipe(enterZone(this.zone));
   }
 
   getAvailableSlots(tableId: number): Observable<number[]> {
     const params = {tableId: tableId};
 
-    return new Observable((subscriber) => {
+    const obs: Observable<number[]> = new Observable((subscriber) => {
       const returnChannel = this.sendToDatabase('table-get-available-slots', params, tableId);
       this.electronService.ipcOnce(returnChannel, (event, data) => {
         if (data.result === 'error') {
@@ -238,12 +246,14 @@ export class DatabaseService {
         }
       });
     });
+
+    return obs.pipe(enterZone(this.zone));
   }
 
   moveRow(fromTableId: number, slotNumber: number, toTableId: number): Observable<any> {
     const params = {fromTableId: fromTableId, slotNumber: slotNumber, toTableId: toTableId};
 
-    return new Observable((subscriber) => {
+    const obs: Observable<any> = new Observable((subscriber) => {
       // if starting table and target table are same we there's nothing to do
       if (fromTableId === toTableId) {
         subscriber.complete();
@@ -260,12 +270,14 @@ export class DatabaseService {
         }
       });
     });
+
+    return obs.pipe(enterZone(this.zone));
   }
 
   updateRow(tableId: number, rowId: number, values: {[name: string]: unknown}): Observable<any> {
     const params = {tableId: tableId, rowId: rowId, values: this.valuesSanitize(values)};
 
-    return new Observable((subscriber) => {
+    const obs: Observable<any> = new Observable((subscriber) => {
         const returnChannel = this.sendToDatabase('table-update-row', params, tableId);
         this.electronService.ipcOnce(returnChannel, (event, data) => {
           if (data.result === 'error') {
@@ -277,6 +289,8 @@ export class DatabaseService {
         });
       }
     );
+
+    return obs.pipe(enterZone(this.zone));
   }
 
   getQuestionnairesBy(tableId: number): Observable<Questionnaire[]> {
