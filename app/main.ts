@@ -62,7 +62,7 @@ function createMainWindow() {
     });
     mainWindow.loadURL('http://localhost:4200');
   } else {
-    const indexPath = path.join(__dirname, '..', 'dist', 'index.html');
+    const indexPath = path.join(__dirname, '..', 'app', 'index.html');
     logger.info('Loading ' + indexPath);
     mainWindow.loadURL(url.format({
       pathname: indexPath,
@@ -128,7 +128,7 @@ function createDatabaseWindow() {
       enableRemoteModule: true,
       contextIsolation: false
     },
-    show: serve
+    show: true
   };
 
   // Create the browser window.
@@ -139,14 +139,15 @@ function createDatabaseWindow() {
       electron: require(`${__dirname}/../node_modules/electron`)
     });
     // databaseWin.loadURL('http://localhost:4200/data/index.html');
-    // databaseWin.loadURL('http://localhost:5000');
-    databaseWin.loadURL(url.format({
-      pathname: path.join(__dirname, 'data/index.html'),
-      protocol: 'file:',
-      slashes: true
-    }));
+    databaseWin.loadURL('http://localhost:5000');
+    // databaseWin.loadURL(url.format({
+    //   pathname: path.join(__dirname, 'data/index.html'),
+    //   protocol: 'file:',
+    //   slashes: true
+    // }));
   } else {
-    const indexPath = path.join(__dirname, 'data', 'index.html');
+    const indexPath = path.join(__dirname, '..', 'app', 'data', 'index.html');
+    // const indexPath = path.join(__dirname, 'data', 'index.html');
     logger.info('Loading ' + indexPath);
     databaseWin.loadURL(url.format({
       pathname: indexPath,

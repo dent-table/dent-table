@@ -1,10 +1,10 @@
 {
   "productName": "MyOdPlan",
   "artifactName": "${productName}-${version}-${os}.${ext}",
-  "buildDependenciesFromSource": true,
   "directories": {
     "output": "release/"
   },
+  "asar": false,
   "files": [
     "**/*",
     "!**/*.ts",
@@ -16,14 +16,14 @@
   "extraResources": [
     {
       "from": "dist",
-      "to": "dist",
+      "to": "app",
       "filter": [
         "**/*"
       ]
     },
     {
-      "from": "node_modules/@electron/remote",
-      "to": "node_modules/@electron/remote",
+      "from": "data/dist",
+      "to": "app/data",
       "filter": [
         "**/*"
       ]
