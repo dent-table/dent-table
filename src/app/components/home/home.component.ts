@@ -28,17 +28,25 @@ export class HomeComponent implements OnInit {
   @ViewChild('table4', { static: true }) table4;
   @ViewChild('table5', { static: true }) table5;
 
+  orderColumns: {[tableId: string]: string};
+
   constructor(
     private databaseService: DatabaseService,
     private zone: NgZone,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private logger: LoggerService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private preferencesService: PreferencesService,
   ) {
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.orderColumns = this.preferencesService.get(
+      PreferencesService.CATEGORIES.tables,
+      PreferencesService.PREFERENCES_KEYS.tables.order_columns
+    );
+  }
 
 
   cellClicked(tableId: number, event: CellClickEvent): void {

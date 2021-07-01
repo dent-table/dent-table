@@ -9,13 +9,18 @@ import * as path from 'path';
 export class PreferencesService {
 
   public static CATEGORIES = {
-    login: 'login'
+    login: 'login',
+    tables: 'tables',
   };
 
   public static PREFERENCES_KEYS = {
     login: {
       rememberUser: 'rememberUser',
       username: 'username'
+    },
+    tables: {
+      // TODO(fork): update order column for each table id into "src/assets/preferences.json"
+      order_columns: "order_columns"
     }
   };
 

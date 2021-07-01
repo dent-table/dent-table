@@ -12,6 +12,7 @@ import {QuestionnaireComponent} from '../../components/questionnaire/questionnai
 import {openSnackbar} from '../../commons/Utils';
 import {TableRow} from '../../model/model';
 import {updateVerifiedColumn} from '../common/TableUtils';
+import {PreferencesService} from "../../providers/preferences.service";
 
 @Component({
   selector: 'app-table-page',
@@ -34,12 +35,15 @@ export class TablePageComponent implements OnInit {
     private databaseService: DatabaseService,
     private logger: LoggerService,
     private snackBar: MatSnackBar,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private preferencesService: PreferencesService,
   ) { }
 
   ngOnInit(): void {
     this.tableId = Number.parseInt(this.activatedRoute.snapshot.params['id'], 10);
-    this.orderColumn = this.tableId === 3 ? 'date_out' : 'date';
+    this.orderColumn = this.preferencesService.get(
+      PreferencesService.CATEGORIES.tables,
+      PreferencesService.PREFERENCES_KEYS.tables.order_columns)[this.tableId] || "date";
     this.warnDateColumnName = this.orderColumn;
   }
 

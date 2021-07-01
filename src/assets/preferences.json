@@ -3,12 +3,21 @@
     "rememberUser": false,
     "username": ""
   },
-  "tables_color": {
-    "1": "red",
-    "2": "blue",
-    "3": "deep-purple",
-    "4": "teal",
-    "5": "pink"
+  "tables": {
+    "colors": {
+      "1": "red",
+      "2": "blue",
+      "3": "deep-purple",
+      "4": "teal",
+      "5": "pink"
+    },
+    "order_columns": {
+      "1": "date",
+      "2": "date",
+      "3": "date_out",
+      "4": "date",
+      "5": "date"
+    }
   },
   "general": {
     "days_before_alert": 7
