@@ -28,18 +28,9 @@ With this sample, you can:
 ⚠️ Angular 12.x CLI needs Node 11 or later to work correctly.
 
 ## Getting Started
+**This project uses a master repo, [dent-table](https://github.com/dent-table/dent-table), that is a shared (common) codebase for customer specific forks**. 
 
-Clone this repository locally:
-
-``` bash
-git clone https://github.com/maximegris/angular-electron.git
-```
-
-Install dependencies with npm:
-
-``` bash
-npm install
-```
+See [FORK.md](FORK.md) to see how to create a new customer fork.
 
 There is an issue with `yarn` and `node_modules` when the application is built by the packager. Please use `npm` as dependencies manager.
 
@@ -127,15 +118,15 @@ Finally from VsCode press **Ctrl+Shift+D** and select **Application Debug** and 
 
 Please note that Hot reload is only available in Renderer process.
 
-[app-logo]: https://github.com/vincios/dent-table/blob/master/src/assets/icons/favicon.png
+[app-logo]: https://github.com/dent-table/dent-table/blob/master/src/assets/icons/favicon.png
 [maintained-badge]: https://img.shields.io/badge/maintained-yes-brightgreen
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[license]: https://github.com/vincios/dent-table/blob/master/LICENSE.md
+[license]: https://github.com/dent-table/dent-table/blob/master/LICENSE.md
 
-[build]: https://github.com/vincios/dent-table/actions/workflows/build_release.yml
-[build-badge]: https://github.com/vincios/dent-table/actions/workflows/build_release.yml/badge.svg?branch=v1.0.0-beta.13
+[build]: https://github.com/dent-table/dent-table-xxx/actions/workflows/build_release.yml
+[build-badge]: https://github.com/dent-table/dent-table-xxx/actions/workflows/build_release.yml/badge.svg?branch=v1.0.0-beta.13
 
-[github-watch-badge]: https://img.shields.io/github/watchers/vincios/dent-table.svg?style=social
-[github-watch]: https://github.com/vincios/dent-table/watchers
-[github-star-badge]: https://img.shields.io/github/stars/vincios/dent-table.svg?style=social
-[github-star]: https://github.com/vincios/dent-table/stargazers
+[github-watch-badge]: https://img.shields.io/github/watchers/dent-table/dent-table.svg?style=social
+[github-watch]: https://github.com/dent-table/dent-table/watchers
+[github-star-badge]: https://img.shields.io/github/stars/dent-table/dent-table.svg?style=social
+[github-star]: https://github.com/dent-table/dent-table/stargazers

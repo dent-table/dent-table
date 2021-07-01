@@ -1,4 +1,19 @@
 # New: Instructions to install better-sqlite3
+
+This project uses a library submodule, [dent-table-sqlite](https://github.com/dent-table/dent-table-sqlite), to handle sqlite database operations. 
+This library uses the native module `better-sqlite3` as peer dependency. So, projects that use `dent-table-sqlite` must provide `better-sqlite3` as a dependency both for development and production builds.
+
+This project declare `better-sqlite3` as app dependency (in `app/package.json`).
+Then, specific scripts in `package.json` and custom build configurations in `electron-builder.json` builds the native module against correct node (and electron) version (and include it in dev and production builds).
+
+On Windows, this requires that python3 and Visual Studio BuildTools are correctly installed on system. 
+You can easily install both with [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools).
+
+In case of issues, you can manually rebuild `better-sqlite3` by run `npm run sqlite:build` or by run this command:
+```shell
+electron-rebuild -f -w better-sqlite3 -m ./app
+```
+# OLD (2019): Instructions to install better-sqlite3
 (From [here](https://github.com/JoshuaWise/better-sqlite3/issues/126))
 
 Follow this steps **starting from project root directory**:
