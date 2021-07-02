@@ -1,4 +1,11 @@
 # Changelog
+## [1.0.0-beta.18](https://github.com/dent-table/dent-table/compare/v1.0.0-beta.17...v1.0.0-beta.18) (2021-07-02)
+
+
+### Continuous Integration
+
+* workaround for electron-builder "EEXIST: file already exists" error ([79e0d23](https://github.com/dent-table/dent-table/commit/79e0d238d08bd8b64482d6962474c9174db82a9d))
+
 ## [1.0.0-beta.17](https://github.com/dent-table/dent-table/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2021-07-02)
 
 ## [1.0.0-beta.16](https://github.com/dent-table/dent-table/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2021-07-02)
