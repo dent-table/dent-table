@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self, ViewChild } from "@angular/core";
+import {  Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self, ViewChild } from "@angular/core";
 import { MatFormField, MatFormFieldAppearance, MatFormFieldControl } from "@angular/material/form-field";
 import { ControlValueAccessor, FormBuilder, FormControl, FormControlDirective, NgControl } from "@angular/forms";
 import { Subject } from "rxjs";
@@ -44,7 +44,6 @@ export class SearchFieldComponent implements MatFormFieldControl<string>, Contro
   }
   @Input()
   get value(): string | null {
-    // return val.length === 4 ? val : null;
     return this.formControl.value;
   }
   set value(val: string | null) {
@@ -112,12 +111,7 @@ export class SearchFieldComponent implements MatFormFieldControl<string>, Contro
     this.describedBy = ids.join(' ');
   }
 
-  // onContainerClick(event: MouseEvent) {
-  //   if ((event.target as Element).tagName.toLowerCase() != 'input') {
-  //     this.elRef.nativeElement.querySelector('input').focus();
-  //   }
-  // }
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onContainerClick(event: MouseEvent): void {
     if(!this.disabled) {
       this._onTouched();

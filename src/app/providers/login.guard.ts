@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export class LoginGuard implements CanActivate, CanLoad {
 
   constructor(private router: Router) {}

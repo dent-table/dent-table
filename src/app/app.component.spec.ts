@@ -27,7 +27,11 @@ describe('AppComponent', () => {
   }));
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 class TranslateServiceStub {
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setDefaultLang(lang: string): void {
   }
+
 }
