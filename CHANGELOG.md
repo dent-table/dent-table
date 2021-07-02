@@ -1,4 +1,6 @@
 # Changelog
+## [1.0.0-beta.17](https://github.com/dent-table/dent-table/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2021-07-02)
+
 ## [1.0.0-beta.16](https://github.com/dent-table/dent-table/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2021-07-02)
 
 
