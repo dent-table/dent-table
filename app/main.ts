@@ -10,7 +10,7 @@ require('@electron/remote/main').initialize();
 let mainWindow, databaseWin, serve = null, canQuit = false;
 const args = process.argv.slice(1);
 const appPath = app.getPath('userData');
-const dataPath = appPath + path.sep + 'data' + path.sep;
+const dataPath = path.join(appPath, 'data');
 
 serve = args.some(val => val === '--serve');
 
@@ -39,7 +39,7 @@ function createMainWindow() {
     y: 0,
     width: size.width,
     height: size.height,
-    icon: nativeImage.createFromPath('./src/assets/icons/favicon.png'),
+    icon: nativeImage.createFromPath('./../src/assets/icons/favicon.png'),
     webPreferences: {
       nodeIntegration: true,
       // allowRunningInsecureContent: (serve) ? true : false,
@@ -62,7 +62,7 @@ function createMainWindow() {
     });
     mainWindow.loadURL('http://localhost:4200');
   } else {
-    const indexPath = path.join(__dirname, '..', 'app', 'index.html');
+    const indexPath = path.join(__dirname, 'index.html');
     logger.info('Loading ' + indexPath);
     mainWindow.loadURL(url.format({
       pathname: indexPath,
@@ -146,7 +146,7 @@ function createDatabaseWindow() {
     //   slashes: true
     // }));
   } else {
-    const indexPath = path.join(__dirname, '..', 'app', 'data', 'index.html');
+    const indexPath = path.join(__dirname, 'data', 'index.html');
     // const indexPath = path.join(__dirname, 'data', 'index.html');
     logger.info('Loading ' + indexPath);
     databaseWin.loadURL(url.format({
@@ -208,25 +208,25 @@ try {
     fs.mkdirSync(dataPath);
   }
 
-  let preferencePath;
+  const preferenceDestPath = path.join(dataPath, 'preferences.json');
+  let preferencesSourcePath;
 
   if (serve) {
-    preferencePath = path.join(__dirname, 'src', 'assets', 'preferences.json');
+    preferencesSourcePath = path.join(__dirname, '..', 'src', 'assets', 'preferences.json');
   } else {
-    preferencePath = path.join('src', 'assets', 'preferences.json');
+    preferencesSourcePath = path.join(__dirname, 'assets', 'preferences.json');
   }
 
-  if (!fs.existsSync(dataPath + 'preferences.json')) {
-    fs.copyFileSync(
-      preferencePath,
-      path.join(dataPath + 'preferences.json')
-    );
+
+  if (!fs.existsSync(preferenceDestPath)) {
+    fs.copyFileSync(preferencesSourcePath, preferenceDestPath);
   }
 
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
+  // Added 400 ms to fix the black background issue while using transparent window.
+  // More details at https://github.com/electron/electron/issues/15947
   app.on('ready', () => setTimeout(createWindows, 400));
 
   // Quit when all windows are closed.
