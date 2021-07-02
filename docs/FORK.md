@@ -2,7 +2,7 @@
 `dent-table` is the master project containing general codebase for all customer specific variants.
 
 If you want to create a new customer variant you'll have to:
- 1. fork `dent-table` master repo (upsteram) to a new `dent-table-xxx` repository
+ 1. fork `dent-table` master repo (upsteram) to a new `dent-table-xxx` repository [➡️](#1-fork-dent-table-master-repo-upsteram-to-a-new-dent-table-xxx-repository)
  1. fork data, if necessary, from [dent-table-sqlite](https://github.com/dent-table/dent-table-sqlite)
  1. add data as `dent-table-xxx` git submodule
  1. apply custom modifications
