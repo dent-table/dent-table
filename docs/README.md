@@ -13,9 +13,9 @@ Bootstrap and package your project with Angular 12 and Electron 13 (Typescript +
 
 Currently runs with:
 
-- Angular v12.0.2
-- Electron v13.0.1
-- Electron Builder v22.10.5
+- Angular v12
+- Electron v13
+- Electron Builder v22
 
 With this sample, you can:
 
@@ -23,24 +23,46 @@ With this sample, you can:
 - Run your app in a production environment
 - Package your app into an executable file for Linux, Windows & Mac
 
-⚠️ Hot reload only pertains to the renderer process. The main electron process is not able to be hot reloaded, only restarted.
-
-⚠️ Angular 12.x CLI needs Node 11 or later to work correctly.
-
 ## Getting Started
 **This project uses a master repo, [dent-table](https://github.com/dent-table/dent-table), that is a shared (common) codebase for customer specific forks**. 
 
 See [FORK.md](FORK.md) to see how to create a new customer fork from master repo.
 
 ## ⚠️Only in forks: clone
-**If you are cloning this fork**, don't forget to add `dent-table` codebase as upstream remote:
-```bash
-git clone https://github.com/dent-table/dent-table-xxx.git
-cd dent-table-xxx
-git remote add upstream https://github.com/dent-table/dent-table.git
-```
+**If you want to clone this fork**, follows steps in [FORK.md](FORK.md) **starting from** paragraph [2. Fork `dent-table` master repo (upsteram) to a new `dent-table-xxx` repository](FORK.md#2-fork-dent-table-to-a-new-dent-table-xxx-repository).
 
-## Note
+As stated into the guide, you can skip steps `2.1`, `3.1` and `3.2`.
+
+## ⚠️Only in master repo: clone
+**If you want to clone the master shared codebase (i.e. `dent-table`)**, follow this steps:
+
+_(extracted from [FORK.md](FORK.md), see this document for more info)_
+
+1. Clone `dent-table`
+
+    ```bash
+    git clone https://github.com/dent-table/dent-table.git dent-table
+    ```
+
+2. Initialize the submodule `dent-table-sqlite`
+
+    ```bash
+    git submodule init
+    git submodule update
+    ```
+
+5. Configure the git environment
+ 
+   ```bash
+   # Keep repo and submodule pushes synchronized
+   git config push.recurseSubmodules on-demand
+   
+   # Track submodule master branch
+   cd data
+   git checkout master
+    ```
+
+## Notes
 There is an issue with `yarn` and `node_modules` when the application is built by the packager. Please use `npm` as dependencies manager.
 
 If you want to generate Angular components with Angular-cli , you **MUST** install `@angular/cli` in npm global context.
@@ -49,6 +71,10 @@ Please follow [Angular-cli documentation](https://github.com/angular/angular-cli
 ``` bash
 npm install -g @angular/cli
 ```
+
+Hot reload only pertains to the renderer process. The main electron process is not able to be hot reloaded, only restarted.
+
+Angular 12.x CLI needs Node 11 or later to work correctly.
 
 ## To build for development
 
@@ -85,6 +111,7 @@ You may encounter some difficulties with `ng-add` because this project doesn't u
 For example you can find [here](HOW_TO.md) how to install Angular-Material with `ng-add`.
 
 ## Browser mode
+_NOT CURRENTLY SUPPORTED_
 
 Maybe you only want to execute the application in the browser with hot reload? Just run `npm run ng:serve:web`.
 
