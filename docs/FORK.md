@@ -80,12 +80,6 @@ git remote add upstream https://github.com/dent-table/dent-table.git
 git pull upstream master
 ```
 
-5. Push to `dent-table-xxx`
-
-```bash
-git push origin master
-```
-
 ## 3. Add `dent-table-xxx-sqlite` as `dent-table-xxx` git submodule
 `dent-table` main repo (cloned in the paragraph `2`) comes out with `dent-table-sqlite` configured as data submodule.
 We have to change it pointing to our `dent-table-xxx-sqlite` repo (forked on paragraph `1`). 
@@ -95,12 +89,14 @@ Note: **If you are cloning an existing `dent-table-xxx` fork** (instead of make 
 you have to skip steps `3.1` and `3.2`.
 
 1. Point data submodule url to `dent-table-xxx-sqlite`
+
 In `dent-table-xxx` root folder there should be a `.gitmodules` file, with following content:
 
 ```git
 [submodule "data"]
-    path = data
-    url = https://github.com/dent-table/dent-table-sqlite.git
+	path = data
+	url = https://github.com/dent-table/dent-table-sqlite.git
+	branch = master
 ```
 
 Change `url` to point our `dent-table-xxx-sqlite` repo:
@@ -127,7 +123,7 @@ git submodule update
 ```
 
 ## 4. Push `dent-table-xxx` to github.com
-Now, we'll push the new fork to github.com.
+Now, we are ready to push the new fork to github.com.
 
 Simply run:
 
@@ -166,7 +162,7 @@ cd data
 git checkout master
 ```
 
-3. Re-add `dent-table-sqlite` upstream to submodule.
+3. Add `dent-table-sqlite` upstream to submodule.
 When pull down the data submodule, git doesn't configure its upstream (i.e. `dent-table-sqlite`) is not configured. We have to re-add it manually.
    
 ```bash
@@ -178,16 +174,69 @@ git remote add upstream https://github.com/dent-table/dent-table-sqlite.git
 ## 6. Apply customer modifications
 DONE! The fork is now correctly configured and ready for customer-specific modifications.
 
-If you want, at some point, pull down updates from the shared codebase (i.e. `dent-table`), 
-or from the data submodule shared codebase, simply pull them form the upstreams
+## Pull updates from upstreams
+If you want, at some point, pull down updates from the shared codebase (i.e. `dent-table`),
+**first pull updates from submodule, then from main repo**:
 
-```bash
-git pull upstream master
-```
-
-or 
-
+1. Pull updates from submodule upstream
 ```bash
 cd data
-git pull upstream master
+git fetch upstream
+git merge upstream/master
 ```
+
+2. Commit main repo 
+
+Commands above will result to a new commit (caused by `git merge`) added to data submodule. 
+Main repo have updated submodule reference to refer to this new commit.
+You can see it running `git status` from main repo folder. 
+
+
+```bash
+cd .. # go back to the main repo folder
+git status
+```
+
+In the output, you  should see an uncommitted change, something like:
+
+```bash
+> git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   data (new commits)  # <--- uncommited change (in red)
+```
+
+So, before to pull updates from main repo upstream we have to commit this update.
+
+```bash
+# always from main repo folder
+git commit -am "chore(data): version bump"
+```
+
+3. Pull updates from main repo upstream
+
+Now we can safely update the main repo:
+
+```bash
+# always from main repo folder
+git fetch upstream
+git merge upstream/master
+```
+
+Note: if a conflict with `data` file appears during the merge, **don't accept change from upstream**.
+Indeed, `data` file that comes from upstream contains a reference to a commit form upstream data submodule (i.e. `dent-table-sqlite`) that doesn't exist on our fork submodule (i.e. `dent-table-xxx-sqlite`).
+So, we have to leave our `data` file (i.e. the one we have committed in step `3`) untouched.
+
+## Delete a submodule
+If you made some mistake on the submodule and want to delete it and recreate, currently Git provides no standard interface to delete a submodule. To remove a submodule called mymodule you need to:
+
+```bash
+git submodule deinit -f mymodule
+rm -rf .git/modules/mymodule
+git rm -f mymodule
+```
+
+Then, follow again this guide to add the submodule again.
