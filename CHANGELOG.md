@@ -1,4 +1,11 @@
 # Changelog
+## [1.0.0-beta.15](https://github.com/dent-table/dent-table/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2021-07-02)
+
+
+### Continuous Integration
+
+* checkout submodule ([8e0614a](https://github.com/dent-table/dent-table/commit/8e0614a713199e66a91db1f5b68046bbc46839ad))
+
 ## [1.0.0-beta.14](https://github.com/dent-table/dent-table/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2021-07-02)
 
 
