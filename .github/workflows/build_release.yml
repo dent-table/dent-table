@@ -18,6 +18,10 @@ jobs:
 
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
+    env:
+      # workaround for electron-builder "EEXIST: file already exists" error
+      # (https://github.com/electron-userland/electron-builder/issues/3179)
+      USE_HARD_LINKS: false
 
     steps:
       - uses: actions/checkout@v2
