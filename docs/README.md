@@ -30,8 +30,17 @@ With this sample, you can:
 ## Getting Started
 **This project uses a master repo, [dent-table](https://github.com/dent-table/dent-table), that is a shared (common) codebase for customer specific forks**. 
 
-See [FORK.md](FORK.md) to see how to create a new customer fork.
+See [FORK.md](FORK.md) to see how to create a new customer fork from master repo.
 
+## ⚠️Only in forks: clone
+**If you are cloning this fork**, don't forget to add `dent-table` codebase as upstream remote:
+```bash
+git clone https://github.com/dent-table/dent-table-xxx.git
+cd dent-table-xxx
+git remote add upstream https://github.com/dent-table/dent-table.git
+```
+
+## Note
 There is an issue with `yarn` and `node_modules` when the application is built by the packager. Please use `npm` as dependencies manager.
 
 If you want to generate Angular components with Angular-cli , you **MUST** install `@angular/cli` in npm global context.
