@@ -1,4 +1,11 @@
 # Changelog
+## [1.0.0-beta.16](https://github.com/dent-table/dent-table/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2021-07-02)
+
+
+### Continuous Integration
+
+* add access token to organization private repos ([d39996d](https://github.com/dent-table/dent-table/commit/d39996d115973f1749615ee149eea547d17b769a))
+
 ## [1.0.0-beta.15](https://github.com/dent-table/dent-table/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2021-07-02)
 
 
