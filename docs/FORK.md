@@ -10,13 +10,6 @@ If you want to create a new customer variant you'll have to:
  1. Configure git environment [➡️](#5-configure-git-environment)
  1. Apply customer modifications [➡️](#6-apply-customer-modifications)
 
-**Note**: the codebase leaves some pieces of code (referred to `dent-table-car`) as example of implementation.
-**Comments starting with:**
-```javascript
-// TODO(fork): 
-``` 
-**highlight the parts of code that forks should change with customer-specific requests.**
-
 ## 1. Fork dent-table-sqlite
 [dent-table-sqlite](https://github.com/dent-table/dent-table-sqlite) data library follow the same "shared main codebase > forks" architecture as the master project `dent-table`.
 
@@ -173,6 +166,19 @@ git remote add upstream https://github.com/dent-table/dent-table-sqlite.git
 
 ## 6. Apply customer modifications
 DONE! The fork is now correctly configured and ready for customer-specific modifications.
+
+As starting point, **search for all the comments starting with:**
+```javascript
+TODO(fork): 
+``` 
+**they highlight the parts of code that forks should change with customer-specific requests.**
+If a comment ends with `(SEE GUIDELINES)`, you can find a more detailed description into the `FORK_GUIDELINES.md` doc file.
+Simply search for a paragraph named as the comment.
+
+NOTE: there are two `FORK_GUIDELINES.md` files: one into the master project (into `docs` folder) and another into the data submodule!
+
+NOTE 2: remember that not all comments starts with `//`. 
+For example, html comments are of form `<!-- COMMENT -->`.
 
 ## Pull updates from upstreams
 If you want, at some point, pull down updates from the shared codebase (i.e. `dent-table`),
