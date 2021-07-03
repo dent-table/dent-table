@@ -7,6 +7,7 @@ import * as path from 'path';
   providedIn: 'root'
 })
 export class PreferencesService {
+  // TODO(fork): change table ids into "src/assets/preferences.json" (SEE GUIDELINES)
 
   public static CATEGORIES = {
     login: 'login',
@@ -19,7 +20,6 @@ export class PreferencesService {
       username: 'username'
     },
     tables: {
-      // TODO(fork): update order column for each table id into "src/assets/preferences.json"
       order_columns: "order_columns"
     }
   };

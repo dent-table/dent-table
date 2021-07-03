@@ -1,5 +1,5 @@
-import {Component, NgZone, OnInit, ViewChild} from '@angular/core';
-import {CellClickEvent} from '../../tables/table-widget/table-widget.component';
+import {AfterViewInit, Component, NgZone, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {CellClickEvent, TableWidgetComponent} from '../../tables/table-widget/table-widget.component';
 import {RowDialogComponent} from '../../tables/row-dialog/row-dialog.component';
 import {DatabaseService} from '../../providers/database.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,12 +21,7 @@ import {PreferencesService} from "../../providers/preferences.service";
 export class HomeComponent implements OnInit {
   logTag = HomeComponent.name;
 
-  // TODO(fork): update table objects according customer requirements
-  @ViewChild('table1', { static: true }) table1;
-  @ViewChild('table2', { static: true }) table2;
-  @ViewChild('table3', { static: true }) table3;
-  @ViewChild('table4', { static: true }) table4;
-  @ViewChild('table5', { static: true }) table5;
+  @ViewChildren(TableWidgetComponent) tables: QueryList<TableWidgetComponent>;
 
   orderColumns: {[tableId: string]: string};
 
@@ -38,8 +33,7 @@ export class HomeComponent implements OnInit {
     private logger: LoggerService,
     private translateService: TranslateService,
     private preferencesService: PreferencesService,
-  ) {
-  }
+  ) { }
 
   ngOnInit(): void {
     this.orderColumns = this.preferencesService.get(
@@ -47,7 +41,6 @@ export class HomeComponent implements OnInit {
       PreferencesService.PREFERENCES_KEYS.tables.order_columns
     );
   }
-
 
   cellClicked(tableId: number, event: CellClickEvent): void {
     const el = event.element;
@@ -152,13 +145,13 @@ export class HomeComponent implements OnInit {
   }
 
   reloadTable(tableId: number): void {
-    // TODO(fork): update switch according to the declared table objects
-    switch (tableId) {
-      case 1: this.table1.reload(); break;
-      case 2: this.table2.reload(); break;
-      case 3: this.table3.reload(); break;
-      case 4: this.table4.reload(); break;
-      case 5: this.table5.reload(); break;
+    for (let i = 0; i < this.tables.length; i++) {
+      const table = this.tables.get(i);
+
+      if (table.tableId === tableId) {
+        table.reload();
+        break;
+      }
     }
   }
 }
