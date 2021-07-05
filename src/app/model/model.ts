@@ -11,7 +11,7 @@ export interface TableRow {
 }
 
 export interface ColumnTypeDefinition {
-  name: string;
+  name: "string" | "text" | "date" | "boolean" | "select";
   special: boolean;
   options?: any; // options for option type
 }
