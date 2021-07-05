@@ -18,6 +18,7 @@ For example, if in the codebase you find a comment
 ```
 then, you have to search in this document for a paragraph named `update blah blah blah`.
 
+--------------------------------------------------------
 
 ### create home layout according customer requirements
 You have to manually build the layout of the home page, putting each table to your preferred position. 
