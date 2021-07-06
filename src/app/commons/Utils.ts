@@ -179,11 +179,7 @@ const randomHexString = function (size: number): string {
 };
 
 const specialCases: SpecialCasesDefinition = {
-  // adds here special slot number special cases. Like this example:
-  // 'CEREC': {
-  //   tables: [1],
-  //   bounds: [9000, 9099]
-  // }
+  // TODO(fork): add special cases (SEE GUIDELINES)
 };
 
 const specialCasesKeys = keys(specialCases);
