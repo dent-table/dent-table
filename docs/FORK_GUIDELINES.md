@@ -62,3 +62,8 @@ table-widget-brow
 Some preference values stored by `PreferenceService` are specified for each single table.
 
 So, for that preferences you have to edit `src/assets/preferences.json` file according to the ids of your tables. 
+
+### add special cases
+For more info about special cases, see `FORK_GUIDELINES.md` into data submodule.
+
+You have to add special case definition also here.
