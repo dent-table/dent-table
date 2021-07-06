@@ -174,7 +174,8 @@ As starting point, **search for all the comments starting with:**
 ```
 TODO(fork): 
 ```
-**they highlight the parts of code that forks should change with customer-specific requests.**
+**as they highlight the parts of code that forks should change with customer-specific requests.**
+
 If a comment ends with `(SEE GUIDELINES)`, you can find a more detailed description into the `FORK_GUIDELINES.md` doc file.
 Simply search for a paragraph named as the comment.
 
