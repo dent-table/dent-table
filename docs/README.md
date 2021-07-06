@@ -26,17 +26,17 @@ With this sample, you can:
 ## Getting Started
 **This project uses a master repo, [dent-table](https://github.com/dent-table/dent-table), that is a shared (common) codebase for customer specific forks**. 
 
-See [FORK.md](FORK.md) to see how to create a new customer fork from master repo.
+See [FORK.md](HOW_TO_FORK.md) to see how to create a new customer fork from master repo.
 
 ## ⚠️Only in forks: clone
-**If you want to clone this fork**, follows steps in [FORK.md](FORK.md) **starting from** paragraph [2. Fork `dent-table` master repo (upsteram) to a new `dent-table-xxx` repository](FORK.md#2-fork-dent-table-to-a-new-dent-table-xxx-repository).
+**If you want to clone this fork**, follows steps in [FORK.md](HOW_TO_FORK.md) **starting from** paragraph [2. Fork `dent-table` master repo (upsteram) to a new `dent-table-xxx` repository](HOW_TO_FORK.md#2-fork-dent-table-to-a-new-dent-table-xxx-repository).
 
 As stated into the guide, you can skip steps `2.1`, `3.1` and `3.2`.
 
 ## ⚠️Only in master repo: clone
 **If you want to clone the master shared codebase (i.e. `dent-table`)**, follow this steps:
 
-_(extracted from [FORK.md](FORK.md), see this document for more info)_
+_(extracted from [FORK.md](HOW_TO_FORK.md), see this document for more info)_
 
 1. Clone `dent-table`
 

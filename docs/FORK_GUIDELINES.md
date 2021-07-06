@@ -14,7 +14,7 @@ In this document you'll then find a paragraph named like the comment message wit
 
 For example, if in the codebase you find a comment 
 ```
-// TODO(fork): update blah blah blah (SEE GUIDELINE)
+// TODO(fork): update blah blah blah (SEE GUIDELINES)
 ```
 then, you have to search in this document for a paragraph named `update blah blah blah`.
 
