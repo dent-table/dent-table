@@ -18,6 +18,8 @@ For example, if in the codebase you find a comment
 ```
 then, you have to search in this document for a paragraph named `update blah blah blah`.
 
+NOTE: remember that not all comments starts with `//`.
+For example, html comments are of form `<!-- COMMENT -->`.
 --------------------------------------------------------
 
 ### create home layout according customer requirements
@@ -42,17 +44,17 @@ NOTE: **carefully substitute the `TABLE-ID` value**. `TableWidgetCompnent` uses 
 #### Table style classes
 Table style classes define the color of the table. You can choose between these 10 classes:
 
-```css
-.table-widget-red,
-.table-widget-pink,
-.table-widget-deep-purple,
-.table-widget-blue,
-.table-widget-cyan,
-.table-widget-teal,
-.table-widget-green,
-.table-widget-amber,
-.table-widget-deep-orange,
-.table-widget-brown
+``` jquery-css
+table-widget-red
+table-widget-pink
+table-widget-deep-purple
+table-widget-blue
+table-widget-cyan
+table-widget-teal
+table-widget-green
+table-widget-amber
+table-widget-deep-orange
+table-widget-brow
 ```
 
 

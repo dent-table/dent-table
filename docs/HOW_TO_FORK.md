@@ -16,29 +16,29 @@ If you want to create a new customer variant you'll have to:
 So, same as we'll do soon for the master project, we have to fork it.
 
 ### On github.com
-1. Create a new empty `dent-table-xxx-sqlite` repository on GitHub
+**1.** Create a new empty `dent-table-xxx-sqlite` repository on GitHub
 
 ### On local
-2. Clone `dent-table-xxx-sqlite`
+**2.** Clone `dent-table-xxx-sqlite`
 
 ```bash
 git clone https://github.com/dent-table/dent-table-xxx-sqlite.git dent-table-xxx-sqlite
 ```
 
-3. Add an upstream remote pointing to `dent-table-sqlite`
+**3.** Add an upstream remote pointing to `dent-table-sqlite`
 
 ```bash
 cd dent-table-xxx-sqlite
 git remote add upstream https://github.com/dent-table/dent-table-sqlite.git
 ```
 
-4. Pull from master `dent-table-sqlite`
+**4.** Pull from master `dent-table-sqlite`
 
 ```bash
 git pull upstream master
 ```
 
-5. Push to `dent-table-xxx-sqlite`
+**5.** Push to `dent-table-xxx-sqlite`
 
 ```bash
 git push origin master
@@ -51,27 +51,29 @@ Note: **If you are cloning an existing `dent-table-xxx` fork** (instead of make 
 you have to skip step `2.1`.
 
 ### On github.com
-1. Create a new empty `dent-table-xxx` repository on GitHub
+**1.** Create a new empty `dent-table-xxx` repository on GitHub
 
 ### On local
-2. Clone `dent-table-xxx`
+**2.** Clone `dent-table-xxx`
 
 ```bash
 git clone https://github.com/dent-table/dent-table-xxx.git dent-table-xxx
 ```
 
-3. Add an upstream remote pointing to `dent-table`
+**3.** Add an upstream remote pointing to `dent-table`
 
 ```bash
 cd dent-table-xxx
 git remote add upstream https://github.com/dent-table/dent-table.git
 ```
 
-4. Pull from master `dent-table`
+**4.** Pull from master `dent-table`
 
 ```bash
 git pull upstream master
 ```
+
+⚠️ **DON'T push yet changes to `dent-table-xxx`!** First, we have to add the `dent-table-xxx-sqlite` submodule.  
 
 ## 3. Add `dent-table-xxx-sqlite` as `dent-table-xxx` git submodule
 `dent-table` main repo (cloned in the paragraph `2`) comes out with `dent-table-sqlite` configured as data submodule.
@@ -81,36 +83,37 @@ Then, we have to pull down the submodule.
 Note: **If you are cloning an existing `dent-table-xxx` fork** (instead of make a brand-new fork),
 you have to skip steps `3.1` and `3.2`.
 
-1. Point data submodule url to `dent-table-xxx-sqlite`
+**1.** Point data submodule url to `dent-table-xxx-sqlite`
 
 In `dent-table-xxx` root folder there should be a `.gitmodules` file, with following content:
 
 ```git
 [submodule "data"]
-	path = data
-	url = https://github.com/dent-table/dent-table-sqlite.git
-	branch = master
+  path = data
+  url = https://github.com/dent-table/dent-table-sqlite.git
+  branch = master
 ```
 
 Change `url` to point our `dent-table-xxx-sqlite` repo:
 
 ```
-https://github.com/dent-table/dent-table-xxx-sqlite.git
+url = https://github.com/dent-table/dent-table-xxx-sqlite.git
 ```
 
-2. Commit the change
+**2.** Commit the change on `dent-table-xxx`
 
 ```bash
+# from dent-table-xxx folder
 git commit -am 'chore: add data module'
 ```
 
-3. Initialize the submodule `dent-table-xxx-sqlite`
+**3.** Initialize the submodule `dent-table-xxx-sqlite`
 
 ```bash
 git submodule init
 ```
 
-4. Pull down from the submodule
+**4.** Pull down from the submodule
 ```bash
 git submodule update
 ```
@@ -124,26 +127,26 @@ Simply run:
 git push origin master
 ```
 
-Note: if you are cloning an existing `dent-table-xxx` fork (instead of make a brand-new fork),
-this step could be not necessary. But hey!, run it anyway, a little push doesn't hurt anyone 😉.
+_Note: if you are cloning an existing `dent-table-xxx` fork (instead of make a brand-new fork),
+this step could be not necessary. But hey! run it anyway, a little push doesn't hurt anyone_ 😉.
 
 ## 5. Configure git environment
 Git environment configurations, like project and data upstreams (and other configurations), are stored **locally** into `.git` folder.
 
-So, each time we fork (or clone) the project we lost them, and we have to reconfigure.
+So, each time we fork (or clone) the project we lost them, and we have to reconfigure them.
 
-1. Keep repo and submodule pushes synchronized
+**1.** Keep repo and submodule pushes synchronized
 
 **This step is really important!** Suppose you have made commit on both main repo and data submodule. 
-If you push main repo commits **before** submodule commits the repo could mess up (because main repo is now referencing to a submodule commit not yet pushed).
+If you push main repo commits **before** submodule commits the repo might get messed up (because main repo now references to a submodule commit not yet pushed).
 
-So, the following command configure git to always push together main repo and submodule commits.
+So, the following command configure git to always push together main repo commits and submodule commits.
 
 ```bash
 git config push.recurseSubmodules on-demand
 ```
 
-2. Track submodule master branch
+**2.** Track submodule master branch
 
 When git initialize the submodule (step `3.3`), puts it to a _detached HEAD_ state (i.e. submodule HEAD refers to a specific commit instead of to a tracking branch).
 So, any changes you make on master branch aren't being tracked well.
@@ -155,20 +158,20 @@ cd data
 git checkout master
 ```
 
-3. Add `dent-table-sqlite` upstream to submodule.
-When pull down the data submodule, git doesn't configure its upstream (i.e. `dent-table-sqlite`) is not configured. We have to re-add it manually.
-   
+**3.** Add `dent-table-sqlite` upstream to submodule.
+
+When we pull down the data submodule, git doesn't configure its upstream (i.e. `dent-table-sqlite`) is not configured. 
+We have to re-add it manually. 
 ```bash
 # always from data folder
 git remote add upstream https://github.com/dent-table/dent-table-sqlite.git
 ```
 
-
 ## 6. Apply customer modifications
 DONE! The fork is now correctly configured and ready for customer-specific modifications.
 
 As starting point, **search for all the comments starting with:**
-```javascript
+```
 TODO(fork): 
 ```
 **they highlight the parts of code that forks should change with customer-specific requests.**
@@ -184,14 +187,14 @@ For example, html comments are of form `<!-- COMMENT -->`.
 If you want, at some point, pull down updates from the shared codebase (i.e. `dent-table`),
 **first pull updates from submodule, then from main repo**:
 
-1. Pull updates from submodule upstream
+**1.** Pull updates from submodule upstream
 ```bash
 cd data
 git fetch upstream
 git merge upstream/master
 ```
 
-2. Commit main repo 
+**2.** Commit main repo 
 
 Commands above will result to a new commit (caused by `git merge`) added to data submodule. 
 Main repo have updated submodule reference to refer to this new commit.
@@ -222,7 +225,7 @@ So, before to pull updates from main repo upstream we have to commit this update
 git commit -am "chore(data): version bump"
 ```
 
-3. Pull updates from main repo upstream
+**3.** Pull updates from main repo upstream
 
 Now we can safely update the main repo:
 
@@ -232,9 +235,9 @@ git fetch upstream
 git merge upstream/master
 ```
 
-Note: if a conflict with `data` file appears during the merge, **don't accept change from upstream**.
+Note: if a conflict with `data` file appears during the merge, **don't accept change from upstream**.  
 Indeed, `data` file that comes from upstream contains a reference to a commit form upstream data submodule (i.e. `dent-table-sqlite`) that doesn't exist on our fork submodule (i.e. `dent-table-xxx-sqlite`).
-So, we have to leave our `data` file (i.e. the one we have committed in step `3`) untouched.
+So, we have to leave untouched our `data` file (i.e. the one we have committed in step `3`).
 
 ## Delete a submodule
 If you made some mistake on the submodule and want to delete it and recreate, currently Git provides no standard interface to delete a submodule. To remove a submodule called mymodule you need to:
