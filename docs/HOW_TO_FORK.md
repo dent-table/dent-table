@@ -8,7 +8,8 @@ If you want to create a new customer variant you'll have to:
  1. Add `dent-table-xxx-sqlite` as `dent-table-xxx` git submodule [](#3-add-dent-table-xxx-sqlite-as-dent-table-xxx-git-submodule)
  1. Push dent-table-xxx to github.com [➡️](#4-push-dent-table-xxx-to-githubcom)
  1. Configure git environment [➡️](#5-configure-git-environment)
- 1. Apply customer modifications [➡️](#6-apply-customer-modifications)
+ 1. Install dependencies [➡️](#6-install-dependencies)
+ 1. Apply customer modifications [➡️](#7-apply-customer-modifications)
 
 ## 1. Fork dent-table-sqlite
 [dent-table-sqlite](https://github.com/dent-table/dent-table-sqlite) data library follow the same "shared main codebase > forks" architecture as the master project `dent-table`.
@@ -167,7 +168,19 @@ We have to re-add it manually.
 git remote add upstream https://github.com/dent-table/dent-table-sqlite.git
 ```
 
-## 6. Apply customer modifications
+## 6. Install dependencies
+Go back to the root folder and run
+
+```bash
+npm install
+```
+
+This will install all dependecies needed:
+  - dev dependencies (`package.json`)
+  - production dependencies (`app/package.json`)
+  - data dependencies (`data/package.json`)
+
+## 7. Apply customer modifications
 DONE! The fork is now correctly configured and ready for customer-specific modifications.
 
 As starting point, **search for all the comments starting with:**

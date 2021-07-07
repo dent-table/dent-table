@@ -154,9 +154,11 @@ Finally from VsCode press **Ctrl+Shift+D** and select **Application Debug** and 
 
 Please note that Hot reload is only available in Renderer process.
 
-[app-logo]: https://github.com/dent-table/dent-table/blob/master/src/assets/icons/favicon.png
 [maintained-badge]: https://img.shields.io/badge/maintained-yes-brightgreen
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+
+[comment]: <> (TODO fork: update link referring to dent-table)
+[app-logo]: https://github.com/dent-table/dent-table/blob/master/src/assets/icons/favicon.png
 [license]: https://github.com/dent-table/dent-table/blob/master/LICENSE.md
 
 [build]: https://github.com/dent-table/dent-table-xxx/actions/workflows/build_release.yml
