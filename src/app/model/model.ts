@@ -17,12 +17,27 @@ export interface ColumnTypeDefinition {
   disable_default?: boolean; // only for select type
 }
 
+export interface ColumnMapInfo {
+  [tableId: string]: {
+    to: string
+  }
+}
+
+export interface ForeignTableInfo {
+  join_table: string;
+  join_column: string;
+  prefix: string;
+  columns?: string[];
+}
+
 export class ColumnDefinition {
   constructor(
     public name: string,
     public type: ColumnTypeDefinition,
     public required: boolean,
-    public displayed: boolean
+    public displayed: boolean,
+    public map?: ColumnMapInfo,
+    public foreign?: ForeignTableInfo
   ) { }
 }
 
@@ -37,7 +52,9 @@ export class TableDefinition {
     const columnsDefinitions: Array<ColumnDefinition> = [];
 
     for (const column of columnsDef) {
-      columnsDefinitions.push(new ColumnDefinition(column.name, column.type, column.required, column.displayed));
+      columnsDefinitions.push(
+        new ColumnDefinition(column.name, column.type, column.required, column.displayed, column.map, column.foreign)
+      );
     }
 
     return new TableDefinition(object.id, object.name, columnsDefinitions);
