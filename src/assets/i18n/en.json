@@ -15,19 +15,21 @@
     "ROW_DIALOG": {
       "SUBMIT_ERROR": "Impossibile completare l'operazione",
       "REQUIRED_FIELD": "Campo obbligatorio",
-      "COLORS": {
-        "red": "Rosso",
-        "pink": "Rosa",
-        "purple":  "Viola",
-        "deep_purple": "Viola scuro",
-        "indigo":  "Indaco",
-        "blue": "Blu",
-        "cyan":  "Ciano",
-        "teal": "Verde acqua",
-        "green":  "Verde",
-        "yellow": "Giallo",
-        "orange":  "Arancione",
-        "deep_orange": "Arancione scuro"
+      "OPTIONS": {
+        "text_color": {
+          "red": "Rosso",
+          "pink": "Rosa",
+          "purple": "Viola",
+          "deep_purple": "Viola scuro",
+          "indigo": "Indaco",
+          "blue": "Blu",
+          "cyan": "Ciano",
+          "teal": "Verde acqua",
+          "green": "Verde",
+          "yellow": "Giallo",
+          "orange": "Arancione",
+          "deep_orange": "Arancione scuro"
+        }
       }
     },
     "CONFIRM_DIALOG": {
@@ -39,11 +41,11 @@
       "DIALOG_FORM_INVALID_CONTENT": "Non tutti i campi sono stati compilati correttamente, procedere ugualmente?"
     },
     "PREFERENCES_DIALOG": {
-     "GENERALS": {
-       "TITLE": "Generali",
-       "ALERT_DAYS_LABEL": "Notifica date inferiori a",
-       "DAYS_LABEL": "giorni"
-     }
+      "GENERALS": {
+        "TITLE": "Generali",
+        "ALERT_DAYS_LABEL": "Notifica date inferiori a",
+        "DAYS_LABEL": "giorni"
+      }
     }
   },
   "TABLES": {
