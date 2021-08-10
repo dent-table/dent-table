@@ -43,7 +43,7 @@ export class TablePageComponent implements OnInit {
     this.tableId = Number.parseInt(this.activatedRoute.snapshot.params['id'], 10);
     this.orderColumn = this.preferencesService.get(
       PreferencesService.CATEGORIES.tables,
-      PreferencesService.PREFERENCES_KEYS.tables.order_columns)[this.tableId] || "date";
+      PreferencesService.PREFERENCES_KEYS.tables.order_columns)[this.tableId];
     this.warnDateColumnName = this.orderColumn;
   }
 
