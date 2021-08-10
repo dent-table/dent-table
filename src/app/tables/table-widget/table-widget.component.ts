@@ -59,7 +59,7 @@ export class TableWidgetComponent implements OnInit, AfterViewInit, AfterContent
   @Input() buttonsSize = 16;
   @Input() showButtons: any = true;
   @Input() orderColumn: string;
-  @Input() warnDateColumnName = 'date';
+  @Input() warnDateColumnName: string;
 
   @ViewChild(MatPaginator, { static: true }) matPaginator: MatPaginator;
   @ViewChild(MatSort) matSort: MatSort;

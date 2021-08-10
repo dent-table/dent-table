@@ -2,8 +2,10 @@
 <div class="home-container" fxLayout="column" fxLayoutGap="5px">
   <div fxLayout="row" fxLayoutGap="3px" fxFlex="1 1 55">
     <app-table-widget class="table-widget-red" draggable="false" fxFlex="1 1 50" tableId="1" showButtons="true"
+                      warnDateColumnName="date"
                       [orderColumn]="orderColumns['1']" (cellClick)="cellClicked(1, $event)"></app-table-widget>
     <app-table-widget class="table-widget-blue" draggable="false" fxFlex="1 1 50" tableId="2" showButtons="true"
+                      warnDateColumnName="date"
                       [orderColumn]="orderColumns['2']" (cellClick)="cellClicked(2, $event)"></app-table-widget>
   </div>
   <div fxLayout="row" fxLayoutGap="3px" fxFlex="1 1 45">
@@ -11,8 +13,10 @@
                       [orderColumn]="orderColumns['3']" showButtons="true" warnDateColumnName="date_out"
                       (cellClick)="cellClicked(3, $event)"></app-table-widget>
     <app-table-widget class="table-widget-teal" draggable="false" fxFlex="1 1 33" tableId="4" showButtons="true"
+                      warnDateColumnName="date"
                       [orderColumn]="orderColumns['4']" (cellClick)="cellClicked(4, $event)"></app-table-widget>
     <app-table-widget class="table-widget-pink" draggable="false" fxFlex="1 1 33" tableId="5" showButtons="true"
+                      warnDateColumnName="date"
                       [orderColumn]="orderColumns['5']" (cellClick)="cellClicked(5, $event)"></app-table-widget>
   </div>
 </div>

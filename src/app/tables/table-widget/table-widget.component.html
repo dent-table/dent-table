@@ -40,7 +40,7 @@
               </ng-container>
               <!-- CASE DATE -->
               <span *ngSwitchCase="'date'" class="cell-text">
-              <span *ngIf="row.table_ref && column.name === warnDateColumnName; else defaultDate"
+              <span *ngIf="row.table_ref && warnDateColumnName && column.name === warnDateColumnName; else defaultDate"
                     [ngClass]="{'date-warn': checkDateRow(row)}">
                 {{row[column.name] | date: 'dd/MM'}}
               </span>
