@@ -13,7 +13,8 @@ export interface TableRow {
 export interface ColumnTypeDefinition {
   name: "string" | "text" | "date" | "boolean" | "select";
   special: boolean;
-  options?: any; // options for option type
+  options?: { name: string, value: any }[]; // options for select type
+  disable_default?: boolean; // only for select type
 }
 
 export class ColumnDefinition {

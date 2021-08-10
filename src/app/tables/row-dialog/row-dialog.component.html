@@ -58,8 +58,10 @@
             <mat-form-field *ngSwitchCase="'select'" appearance="outline">
               <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
               <mat-select [formControlName]="column.name" [id]="column.name">
-                <mat-option value="">Default</mat-option>
-                <mat-option *ngFor="let opt of column.type.options" [value]="opt.value" [ngStyle]="{backgroundColor: opt.value, color: 'whitesmoke'}">{{'PAGES.ROW_DIALOG.COLORS.' + opt.name | translate}}</mat-option>
+                <mat-option value="" *ngIf="!column.type.disable_default">Default</mat-option>
+                <mat-option *ngFor="let opt of column.type.options" [value]="opt.value" [ngStyle]="getDropdownItemStyle(column, opt)">
+                  {{'PAGES.ROW_DIALOG.OPTIONS.' + column.name + '.' + opt.name | translate}}
+                </mat-option>
               </mat-select>
               <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
             </mat-form-field>
