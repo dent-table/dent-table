@@ -42,19 +42,28 @@
         <div *ngSwitchCase="'object'">
           <!--**** LEGACY PART END ****-->
 
+          <!-- START OF SWITCH BY column.type FOR COMMON COLUMNS. FOR SPECIAL COLUMNS ITS DEFINITION IS IN ITS OWN POSITION IN PAGE-->
           <div [ngSwitch]="column.type.name" *ngIf="!column.type.special">
+
+            <!-- DATE FIELD -->
             <mat-form-field *ngSwitchCase="'date'" appearance="outline">
               <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
               <input matInput [matDatepicker]="datePicker" [formControlName]="column.name" [id]="column.name">
               <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
               <mat-datepicker #datePicker></mat-datepicker>
             </mat-form-field>
+
+            <!-- BOOLEAN FIELD -->
             <mat-checkbox *ngSwitchCase="'boolean'" [formControlName]="column.name" [id]="column.name">{{'TABLES.COLUMNS.' + column.name | translate}}</mat-checkbox>
+
+            <!-- NUMBER FIELD -->
             <mat-form-field *ngSwitchCase="'number'" appearance="outline">
               <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
               <input [tabindex]="index" type="number" matInput [formControlName]="column.name" [id]="column.name">
               <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
             </mat-form-field>
+
+            <!-- SELECT FIELD -->
             <mat-form-field *ngSwitchCase="'select'" appearance="outline">
               <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>
               <mat-select [formControlName]="column.name" [id]="column.name">
@@ -65,6 +74,8 @@
               </mat-select>
               <mat-error>{{'PAGES.ROW_DIALOG.REQUIRED_FIELD' | translate}}</mat-error>
             </mat-form-field>
+
+            <!-- DEFAULT (TEXT OR STRING)-->
             <ng-container *ngSwitchDefault>
               <mat-form-field [ngSwitch]="column.type.name" appearance="outline">
                 <mat-label>{{'TABLES.COLUMNS.' + column.name | translate}}</mat-label>

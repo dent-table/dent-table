@@ -22,6 +22,8 @@
   <div class="overlay-container">
     <mat-table class="mat-elevation-z5" *ngIf="isLoaded" [dataSource]="data">
       <ng-container *ngFor="let column of table_def.columnsDefinition">
+
+        <!-- START OF COMMON COLUMN DEFINITION. IF COLUMN IS SPECIAL, THE DEFINITION IS BELOW THIS BLOCK-->
         <ng-container *ngIf="!column.type.special" [matColumnDef]="column.name">
           <mat-header-cell *matHeaderCellDef>
             <div class="cell">
@@ -29,11 +31,14 @@
             </div>
           </mat-header-cell>
           <mat-cell (click)="fireTableCellClicked(column.name, row)" *matCellDef="let row">
+            <!-- START OF COLUMN SWITCH BY COLUMN.TYPE-->
             <div class="cell" [ngSwitch]="column.type.name" [ngStyle]="{color: row['text_color']}">
+              <!-- CASE BOOLEAN -->
               <ng-container *ngSwitchCase="'boolean'">
                 <mat-checkbox *ngIf="row.table_ref" (change)="fireTableCellClicked(column.name, row)"
                               [checked]="row[column.name] === 1"></mat-checkbox>
               </ng-container>
+              <!-- CASE DATE -->
               <span *ngSwitchCase="'date'" class="cell-text">
               <span *ngIf="row.table_ref && column.name === warnDateColumnName; else defaultDate"
                     [ngClass]="{'date-warn': checkDateRow(row)}">
@@ -43,9 +48,14 @@
             </span>
               <span *ngSwitchDefault class="cell-text" >{{row[column.name]}}</span>
             </div>
+            <!-- END OF COLUMN SWITCH BY COLUMN.TYPE-->
           </mat-cell>
         </ng-container>
+        <!-- END OF COMMON COLUMN DEFINITION-->
+
       </ng-container>
+
+      <!-- START OF SPECIAL COLUMN TYPES DEFINITION-->
       <ng-container matColumnDef="slotNumber">
         <mat-header-cell *matHeaderCellDef><span class="mat-column-slotNumber-span cell-text">#</span></mat-header-cell>
         <mat-cell [ngStyle]="{color: row['text_color']}" *matCellDef="let row" (click)="fireTableCellClicked('slot_number', row)">
@@ -70,6 +80,8 @@
           </button>
         </mat-cell>
       </ng-container>
+      <!-- END OF SPECIAL COLUMN TYPES DEFINITION-->
+
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [ngStyle]="{height: rowSize + 'px', 'min-height': rowSize + 'px' }"
                mwlDraggable [dropData]="row" (dragStart)="onDragEvent('start')" (dragEnd)="onDragEvent('end')"
