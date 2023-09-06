@@ -80,7 +80,7 @@
     "@typescript-eslint/parser": "4.26.1",
     "chai": "4.3.4",
     "cross-env": "7.0.3",
-    "electron": "13.1.2",
+    "electron": "22.3.21",
     "electron-builder": "22.11.7",
     "electron-rebuild": "2.3.5",
     "electron-reload": "1.5.0",
